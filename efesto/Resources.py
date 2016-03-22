@@ -8,7 +8,7 @@ import falcon
 from .Models import *
 
 
-def make_resource(name, model):
+def make_resource(model):
     """
     Generates a resource class.
     """
