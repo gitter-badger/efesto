@@ -12,6 +12,16 @@ import pytest
 from efesto.Models import Fields
 
 
+@pytest.mark.parametrize('column',
+    ['name', 'email', 'password', 'rank', 'last_login']
+)
+def test_users_model(column):
+    """
+    Tests the Users model.
+    """
+    assert column in Users.__dict__
+
+
 @pytest.mark.parametrize('column', ['name', 'type', 'foreign', 'unique', 'description', 'label'])
 def test_fields_model(column):
     """
