@@ -13,7 +13,7 @@ from efesto.Models import Fields
 
 
 @pytest.mark.parametrize('column',
-    ['name', 'email', 'password', 'rank', 'last_login']
+    ['id', 'name', 'email', 'password', 'rank', 'last_login']
 )
 def test_users_model(column):
     """
@@ -22,7 +22,7 @@ def test_users_model(column):
     assert column in Users.__dict__
 
 
-@pytest.mark.parametrize('column', ['name', 'type', 'foreign', 'unique', 'description', 'label'])
+@pytest.mark.parametrize('column', ['id', 'name', 'type', 'foreign', 'unique', 'description', 'label'])
 def test_fields_model(column):
     """
     Tests the Fields model.
