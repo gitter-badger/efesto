@@ -22,7 +22,7 @@ def test_users_model(column):
     assert column in Users.__dict__
 
 
-@pytest.mark.parametrize('column', ['name', 'enabled'])
+@pytest.mark.parametrize('column', ['id','name', 'enabled'])
 def test_types_model(column):
     """
     Tests the Types model.
