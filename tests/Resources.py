@@ -16,4 +16,4 @@ from efesto.Resources import *
 )
 def test_make_resource(model, method):
     resource = make_resource(model)
-    assert hasattr(resource, method) == True
+    assert hasattr(resource, method)
