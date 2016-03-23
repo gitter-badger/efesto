@@ -16,9 +16,9 @@ from efesto.Models import Users, Types, Fields, AccessRules
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': IntegerField },
-        { 'column': 'name', 'field': CharField },
+        { 'column': 'name', 'field': CharField, 'constraints':{'unique': True} },
         { 'column': 'email', 'field': CharField },
-        { 'column': 'password', 'field': CharField },
+        { 'column': 'password', 'field': CharField, 'constraints':{'null': False} },
         { 'column': 'rank', 'field': IntegerField },
         { 'column': 'last_login', 'field': DateTimeField }
     ]
@@ -31,6 +31,10 @@ def test_users_model(column_dict):
     field = column_dict['field']
     field_object = getattr(Users, column)
     assert isinstance(field_object, field)
+    if 'constraints' in column_dict:
+        constraints = column_dict['constraints']
+        for constraint in constraints:
+            assert getattr(field_object, constraint) == constraints[constraint]
 
 
 @pytest.mark.parametrize('column_dict',
