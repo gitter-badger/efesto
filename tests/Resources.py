@@ -10,6 +10,12 @@ from efesto.Models import *
 from efesto.Resources import *
 
 
+@pytest.fixture
+def app():
+    application = falcon.API()
+    return application
+
+
 @pytest.mark.parametrize('model', [Users])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'on_patch', 'on_delete']
