@@ -5,12 +5,7 @@
 from peewee import *
 
 
-db = PostgresqlDatabase(
-    'test',
-    user='postgres',
-    password='postgres',
-    host='localhost'
-)
+from .Base import db
 
 
 class Base(Model):
