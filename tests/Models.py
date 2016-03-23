@@ -9,7 +9,7 @@ sys.path.insert(0, "")
 import pytest
 
 
-from efesto.Models import Fields, Users
+from efesto.Models import Fields, Users, Types
 
 
 @pytest.mark.parametrize('column',
@@ -20,6 +20,14 @@ def test_users_model(column):
     Tests the Users model.
     """
     assert column in Users.__dict__
+
+
+@pytest.mark.parametrize('column', ['name', 'enabled'])
+def test_types_model(column):
+    """
+    Tests the Types model.
+    """
+    assert column in Types.__dict__
 
 
 @pytest.mark.parametrize('column', ['id', 'name', 'type', 'foreign', 'unique', 'description', 'label'])
