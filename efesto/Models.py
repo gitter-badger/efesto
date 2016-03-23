@@ -42,3 +42,15 @@ class Fields(Base):
     unique = BooleanField()
     label = CharField()
     description = CharField()
+
+
+class AccessRules(Base):
+    id = IntegerField(primary_key=True)
+    user = ForeignKeyField(Users, null=True)
+    rank = IntegerField(null=True)
+    item = IntegerField(null=True)
+    type = ForeignKeyField(Types, null=True)
+    level = IntegerField()
+    read = IntegerField(null=True)
+    edit = IntegerField(null=True)
+    delete = IntegerField(null=True)
