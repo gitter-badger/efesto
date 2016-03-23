@@ -37,7 +37,7 @@ class Types(Base):
 class Fields(Base):
     id = IntegerField(primary_key=True)
     name = CharField()
-    type = ForeignKeyField(Types, related_name='types')
+    type = ForeignKeyField(Types)
     foreign = CharField()
     unique = BooleanField()
     label = CharField()
