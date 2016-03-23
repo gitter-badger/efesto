@@ -9,7 +9,7 @@ sys.path.insert(0, "")
 import pytest
 
 
-from efesto.Models import Fields, Users, Types
+from efesto.Models import Fields, Users, Types, AccessRules
 
 
 @pytest.mark.parametrize('column',
@@ -36,3 +36,13 @@ def test_fields_model(column):
     Tests the Fields model.
     """
     assert column in Fields.__dict__
+
+
+@pytest.mark.parametrize('column',
+    ['id','user', 'rank', 'item', 'type', 'level', 'read', 'edit', 'delete']
+)
+def test_access_rules_model(column):
+    """
+    Tests the AccessRules model.
+    """
+    assert column in AccessRules.__dict__
