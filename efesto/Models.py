@@ -26,3 +26,9 @@ class Users(Base):
     password = CharField()
     rank = IntegerField()
     last_login = DateTimeField()
+
+
+class Types(Base):
+    id = IntegerField(primary_key=True)
+    name = CharField()
+    enabled = BooleanField()
