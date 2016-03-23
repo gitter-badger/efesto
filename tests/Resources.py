@@ -23,3 +23,11 @@ def app():
 def test_make_resource(model, method):
     resource = make_resource(model)
     assert hasattr(resource, method)
+
+
+@pytest.mark.parametrize('model', [Users])
+def test_get(client, app, model):
+    resource = make_resource(model)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint')
+    assert response.status == falcon.HTTP_UNAUTHORIZED
