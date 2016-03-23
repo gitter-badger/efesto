@@ -31,3 +31,17 @@ def test_get(client, app, model):
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint')
     assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
+@pytest.mark.parametrize('test_args',
+    [
+        {'model': Users, 'data': {'name':'test', 'password':'passwd'} }
+    ]
+)
+def test_post(client, app, test_args):
+    model = test_args['model']
+    data = test_args['data']
+    resource = make_resource(model)()
+    app.add_route('/endpoint', resource)
+    response = client.post('/endpoint', data)
+    assert response.status == falcon.HTTP_UNAUTHORIZED
