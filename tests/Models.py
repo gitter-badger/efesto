@@ -9,7 +9,7 @@ sys.path.insert(0, "")
 import pytest
 
 
-from efesto.Models import Fields, Users, Types, AccessRules
+from efesto.Models import Users, Types, Fields, AccessRules
 
 
 @pytest.mark.parametrize('column',
