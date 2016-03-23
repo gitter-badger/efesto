@@ -32,3 +32,13 @@ class Types(Base):
     id = IntegerField(primary_key=True)
     name = CharField()
     enabled = BooleanField()
+
+
+class Fields(Base):
+    id = IntegerField(primary_key=True)
+    name = CharField()
+    type = ForeignKeyField(Types, related_name='types')
+    foreign = CharField()
+    unique = BooleanField()
+    label = CharField()
+    description = CharField()
