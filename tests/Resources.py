@@ -21,12 +21,19 @@ def app():
     ['on_get', 'on_post', 'on_patch', 'on_delete']
 )
 def test_make_resource(model, method):
+    """
+    Tests whether make_resource can correctly generate a resource.
+    """
     resource = make_resource(model)
     assert hasattr(resource, method)
 
 
 @pytest.mark.parametrize('model', [Users])
 def test_get(client, app, model):
+    """
+    Tests the behaviour of a generated resource when a simple GET request is
+    performed.
+    """
     resource = make_resource(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint')
@@ -39,6 +46,10 @@ def test_get(client, app, model):
     ]
 )
 def test_post(client, app, test_args):
+    """
+    Tests the behaviour of a generated resource when a simple POST request is
+    performed.
+    """
     model = test_args['model']
     data = test_args['data']
     resource = make_resource(model)()
