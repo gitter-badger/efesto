@@ -78,14 +78,14 @@ def test_fields_model(column_dict):
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': IntegerField },
-        { 'column': 'user', 'field': IntegerField },
-        { 'column': 'rank', 'field': IntegerField },
-        { 'column': 'item', 'field': IntegerField },
-        { 'column': 'type', 'field': IntegerField },
+        { 'column': 'user', 'field': ForeignKeyField, 'constraints':{'null': True} },
+        { 'column': 'rank', 'field': IntegerField, 'constraints':{'null': True} },
+        { 'column': 'item', 'field': IntegerField, 'constraints':{'null': True} },
+        { 'column': 'type', 'field': ForeignKeyField, 'constraints':{'null': True} },
         { 'column': 'level', 'field': IntegerField },
-        { 'column': 'read', 'field': IntegerField },
-        { 'column': 'edit', 'field': IntegerField },
-        { 'column': 'delete', 'field': IntegerField }
+        { 'column': 'read', 'field': IntegerField, 'constraints': {'null': True} },
+        { 'column': 'edit', 'field': IntegerField, 'constraints': {'null': True} },
+        { 'column': 'delete', 'field': IntegerField, 'constraints':{'null': True} }
     ]
 )
 def test_access_rules_model(column_dict):
@@ -96,3 +96,7 @@ def test_access_rules_model(column_dict):
     field = column_dict['field']
     field_object = getattr(AccessRules, column)
     assert isinstance(field_object, field)
+    if 'constraints' in column_dict:
+        constraints = column_dict['constraints']
+        for constraint in constraints:
+            assert getattr(field_object, constraint) == constraints[constraint]
