@@ -7,7 +7,7 @@
 import sys
 sys.path.insert(0, "")
 import pytest
-from peewee import IntegerField, CharField, DateTimeField, BooleanField
+from peewee import IntegerField, CharField, DateTimeField, BooleanField, ForeignKeyField
 
 
 from efesto.Models import Users, Types, Fields, AccessRules
@@ -58,7 +58,7 @@ def test_types_model(column_dict):
     [
         { 'column': 'id', 'field': IntegerField },
         { 'column': 'name', 'field': CharField },
-        { 'column': 'type', 'field': IntegerField },
+        { 'column': 'type', 'field': ForeignKeyField },
         { 'column': 'foreign', 'field': CharField },
         { 'column': 'unique', 'field': BooleanField },
         { 'column': 'description', 'field': CharField },
