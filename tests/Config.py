@@ -46,3 +46,11 @@ def test_config_has_parser(config):
     assert hasattr(config, 'parser')
     if hasattr(config, 'parser'):
         assert isinstance( getattr(config, 'parser'), configparser.ConfigParser)
+
+
+@pytest.mark.parametrize('option',
+    ['version', 'secret']
+)
+def test_default_config(config, option):
+    value = config.parser.get('main', option)
+    assert value != None
