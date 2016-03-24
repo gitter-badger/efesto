@@ -6,7 +6,7 @@ sys.path.insert(0, "")
 import pytest
 
 
-from efesto.Models import *
+from efesto.Models import Users, Types, Fields, AccessRules
 from efesto.Resources import *
 
 
@@ -16,7 +16,7 @@ def app():
     return application
 
 
-@pytest.mark.parametrize('model', [Users])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'on_patch', 'on_delete']
 )
@@ -28,7 +28,7 @@ def test_make_resource(model, method):
     assert hasattr(resource, method)
 
 
-@pytest.mark.parametrize('model', [Users])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 def test_get(client, app, model):
     """
     Tests the behaviour of a generated resource when a simple GET request is
