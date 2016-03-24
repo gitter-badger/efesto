@@ -7,6 +7,7 @@
 import sys
 sys.path.insert(0, "")
 import os
+import configparser
 import pytest
 
 
@@ -33,3 +34,15 @@ def test_find_path_exception(config):
     """
     with pytest.raises(ValueError) as e_info:
         config.find_path('somerandomname')
+
+
+def test_config_has_path(config):
+    assert hasattr(config, 'path')
+    if hasattr(config, 'path'):
+        assert getattr(config, 'path') == os.path.abspath('efesto.cfg')
+
+
+def test_config_has_parser(config):
+    assert hasattr(config, 'parser')
+    if hasattr(config, 'parser'):
+        assert isinstance( getattr(config, 'parser'), configparser.ConfigParser)
