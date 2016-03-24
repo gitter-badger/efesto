@@ -37,12 +37,18 @@ def test_find_path_exception(config):
 
 
 def test_config_has_path(config):
+    """
+    Tests whether the config has a path attribute.
+    """
     assert hasattr(config, 'path')
     if hasattr(config, 'path'):
         assert getattr(config, 'path') == os.path.abspath('efesto.cfg')
 
 
 def test_config_has_parser(config):
+    """
+    Tests whether the config has a parser attribute.
+    """
     assert hasattr(config, 'parser')
     if hasattr(config, 'parser'):
         assert isinstance( getattr(config, 'parser'), configparser.ConfigParser)
@@ -52,5 +58,8 @@ def test_config_has_parser(config):
     ['version', 'secret']
 )
 def test_default_config(config, option):
+    """
+    Tests for existance of default configuration
+    """
     value = config.parser.get('main', option)
     assert value != None
