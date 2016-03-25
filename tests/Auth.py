@@ -43,3 +43,12 @@ def test_generate_token_expiration(config, serializer):
     time.sleep(1)
     with pytest.raises(SignatureExpired) as e_info:
         serializer.loads(token)
+
+
+def test_read_token(config, serializer):
+    """
+    Tests read_token
+    """
+    token = generate_token(user='random')
+    token_dict = read_token(token)
+    assert token_dict == {'user':'random'}
