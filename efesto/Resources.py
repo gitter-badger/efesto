@@ -45,7 +45,8 @@ class TokensResource:
             raise falcon.HTTPBadRequest('', '')
 
         try:
-            user = Users.get(Users.name == request.params['username'])
+            user = Users.get(Users.name == request.params['username'],
+                             Users.password == request.params['password'])
         except:
             user = None
 
