@@ -37,7 +37,7 @@ def test_generate_token(config, serializer):
 
 def test_generate_token_expiration(config, serializer):
     """
-    Tests the parsing of an expired token
+    Tests the generation of an expired token
     """
     token = generate_token(expiration=0, user='myuser')
     time.sleep(1)
