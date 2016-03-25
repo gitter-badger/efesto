@@ -34,3 +34,9 @@ def make_resource(model):
         'on_delete': on_delete
     }
     return type('myresource', (object, ), attributes)
+
+
+class TokensResource:
+    def on_post(self, request, response):
+        if not 'password' in request.params or not 'username' in request.params:
+            raise falcon.HTTPBadRequest('', '')
