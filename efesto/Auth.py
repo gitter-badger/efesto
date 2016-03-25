@@ -10,8 +10,10 @@ from .Config import Config
 
 
 config = Config()
-def generate_token(expiration=600, **kwargs):
+def generate_token(expiration=600, decode=False, **kwargs):
     s = Serializer(config.parser.get('main', 'secret'), expires_in=expiration)
+    if decode == True:
+        return s.dumps(kwargs).decode('UTF-8')
     return s.dumps(kwargs)
 
 
