@@ -15,6 +15,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
 
 from efesto.Config import Config
 from efesto.Auth import *
+from efesto.Base import db
 
 
 @pytest.fixture
@@ -25,6 +26,18 @@ def config():
 @pytest.fixture
 def serializer(config):
     return Serializer(config.parser.get('main', 'secret'))
+
+
+@pytest.fixture(scope='module')
+def dummy_user(request):
+    db.connect()
+    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
+    dummy.save()
+
+    def teardown():
+        dummy.delete_instance()
+    request.addfinalizer(teardown)
+    return dummy
 
 
 def test_generate_token(config, serializer):
