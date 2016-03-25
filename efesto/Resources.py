@@ -10,7 +10,7 @@ from .Models import *
 
 def make_resource(model):
     """
-    Generates a resource class.
+    The make_resource function acts as generator of resources for models.
     """
     def on_get(self, request, response):
         if request.auth:
@@ -37,6 +37,9 @@ def make_resource(model):
 
 
 class TokensResource:
+    """
+    The TokensResource resource handles tokens requests.
+    """
     def on_post(self, request, response):
         if not 'password' in request.params or not 'username' in request.params:
             raise falcon.HTTPBadRequest('', '')
