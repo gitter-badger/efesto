@@ -5,6 +5,7 @@
 import sys
 sys.path.insert(0, "")
 import time
+import json
 import pytest
 
 
@@ -43,6 +44,15 @@ def test_generate_token_expiration(config, serializer):
     time.sleep(1)
     with pytest.raises(SignatureExpired) as e_info:
         serializer.loads(token)
+
+
+def test_jsonify_token(config, serializer):
+    """
+    Tests whether generate_token can make a jsonificable token.
+    """
+    token = generate_token(decode=True, user='someuser')
+    jsonified_token = json.dumps({'token': token})
+    assert type(jsonified_token) == str
 
 
 def test_read_token(config, serializer):
