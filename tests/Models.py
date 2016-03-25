@@ -37,6 +37,16 @@ def test_users_model(column_dict):
             assert getattr(field_object, constraint) == constraints[constraint]
 
 
+def test_users_io():
+    """
+    Verifies that is possible to create and delete an user.
+    """
+    user = Users(name='dummy', email='email', password='passwd', rank=1)
+    user.save()
+    assert getattr(user, 'id') != None
+    user.delete_instance()
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
