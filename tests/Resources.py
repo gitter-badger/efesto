@@ -78,7 +78,7 @@ def test_post(client, app, test_args):
 ])
 def test_tokens_resource_bad_request(client, app, data):
     """
-    Verifies that TokensResource returns bad requests statuses when
+    Verifies that TokensResource returns bad requests status when
     an incomplete POST request is made
     """
     resource = TokensResource()
