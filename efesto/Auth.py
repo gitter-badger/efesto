@@ -20,3 +20,10 @@ def generate_token(expiration=600, decode=False, **kwargs):
 def read_token(token):
     s = Serializer(config.parser.get('main', 'secret'))
     return s.loads(token)
+
+
+def verify_credentials(username, password):
+    try:
+        return Users.get(Users.name == username, Users.password == password)
+    except:
+        return None
