@@ -38,6 +38,7 @@ def test_get(client, app, model):
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint')
     assert response.status == falcon.HTTP_UNAUTHORIZED
+    assert response.__dict__['headers']['www-authenticate'] != None
 
 
 @pytest.mark.parametrize('test_args',
