@@ -7,6 +7,7 @@ import pytest
 
 
 from efesto.Models import Users, Types, Fields, AccessRules
+from efesto.Base import db
 from efesto.Resources import *
 
 
@@ -14,6 +15,18 @@ from efesto.Resources import *
 def app():
     application = falcon.API()
     return application
+
+
+@pytest.fixture(scope='module')
+def dummy_user(request):
+    db.connect()
+    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
+    dummy.save()
+
+    def teardown():
+        dummy.delete_instance()
+    request.addfinalizer(teardown)
+    return dummy
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
