@@ -57,3 +57,17 @@ def test_post(client, app, test_args):
     app.add_route('/endpoint', resource)
     response = client.post('/endpoint', data)
     assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
+@pytest.mark.parametrize('data', [
+    {'username':'user'}, {'password': 'passwd'}, {'somevar':'var'}
+])
+def test_tokens_resource_bad_request(client, app, data):
+    """
+    Verifies that TokensResource returns bad requests statuses when
+    an incomplete POST request is made
+    """
+    resource = TokensResource()
+    app.add_route('/token', resource)
+    response = client.post('/token', data)
+    assert response.status == falcon.HTTP_BAD_REQUEST
