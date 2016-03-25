@@ -10,6 +10,7 @@ import pytest
 from efesto.Models import Users, Types, Fields, AccessRules
 from efesto.Base import db
 from efesto.Resources import *
+from efesto.Auth import *
 
 
 @pytest.fixture
@@ -101,7 +102,7 @@ def test_tokens_resource_failure(client, app):
 
 def test_tokens_resource_passwd_failure(client, app, dummy_user):
     """
-    Verifies that sending wrong credentials to TokensResource results
+    Verifies that sending a wrong password to TokensResource results
     in a unauthorized response.
     """
     resource = TokensResource()
@@ -122,3 +123,12 @@ def test_tokens_resource(client, app, dummy_user):
     response = client.post('/token', data)
     assert response.status == falcon.HTTP_OK
     assert 'token' in json.loads(response.body)
+
+
+def test_tokens_resource_valid_token(client, app, dummy_user):
+    resource = TokensResource()
+    data = {'username':dummy_user.name, 'password':dummy_user.password}
+    app.add_route('/token', resource)
+    response = client.post('/token', data)
+    token = read_token( json.loads(response.body)['token'] )
+    assert token['user'] == dummy_user.name
