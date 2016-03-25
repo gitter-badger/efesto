@@ -75,3 +75,13 @@ def test_read_token(config, serializer):
     token = generate_token(user='random')
     token_dict = read_token(token)
     assert token_dict == {'user':'random'}
+
+
+def test_verify_credentials_failure():
+    result = verify_credentials('myuser', 'mypasswd')
+    assert result == None
+
+
+def test_verify_credentials(dummy_user):
+    result = verify_credentials(dummy_user.name, dummy_user.password)
+    assert result == dummy_user
