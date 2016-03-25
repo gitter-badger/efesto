@@ -55,7 +55,7 @@ def test_config_has_parser(config):
 
 
 @pytest.mark.parametrize('option',
-    ['version', 'secret']
+    ['version', 'secret', 'installed']
 )
 def test_default_config(config, option):
     """
