@@ -40,3 +40,14 @@ class TokensResource:
     def on_post(self, request, response):
         if not 'password' in request.params or not 'username' in request.params:
             raise falcon.HTTPBadRequest('', '')
+
+        try:
+            user = Users.get(Users.name == request.params['username'])
+        except:
+            user = None
+
+        if user == None:
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+
+        response.status = falcon.HTTP_OK
+        response.body = '{"token":"mytoken"}'
