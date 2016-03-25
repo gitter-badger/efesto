@@ -3,6 +3,7 @@
 """
 import sys
 sys.path.insert(0, "")
+import json
 import pytest
 
 
@@ -96,3 +97,16 @@ def test_tokens_resource_failure(client, app):
     app.add_route('/token', resource)
     response = client.post('/token', data)
     assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
+def test_tokens_resource(client, app, dummy_user):
+    """
+    Verifies that TokensResource returns a token when valid credentials
+    are set.
+    """
+    resource = TokensResource()
+    data = {'username':dummy_user.name, 'password':dummy_user.password}
+    app.add_route('/token', resource)
+    response = client.post('/token', data)
+    assert response.status == falcon.HTTP_OK
+    assert 'token' in json.loads(response.body)
