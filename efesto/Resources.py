@@ -3,9 +3,11 @@
     Resources
 """
 import falcon
+import json
 
 
 from .Models import *
+from .Auth import *
 
 
 def make_resource(model):
@@ -44,14 +46,10 @@ class TokensResource:
         if not 'password' in request.params or not 'username' in request.params:
             raise falcon.HTTPBadRequest('', '')
 
-        try:
-            user = Users.get(Users.name == request.params['username'],
-                             Users.password == request.params['password'])
-        except:
-            user = None
-
+        user = verify_credentials(request.params['username'], request.params['password'])
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
+        token = generate_token(decode=True, user=request.params['username'])
         response.status = falcon.HTTP_OK
-        response.body = '{"token":"mytoken"}'
+        response.body = json.dumps({'token': token})
