@@ -71,3 +71,15 @@ def test_tokens_resource_bad_request(client, app, data):
     app.add_route('/token', resource)
     response = client.post('/token', data)
     assert response.status == falcon.HTTP_BAD_REQUEST
+
+
+def test_tokens_resource_failure(client, app):
+    """
+    Verifies that sending wrong credentials to TokensResource results
+    in a unauthorized response.
+    """
+    resource = TokensResource()
+    data = {'username':'name', 'password':'passwd'}
+    app.add_route('/token', resource)
+    response = client.post('/token', data)
+    assert response.status == falcon.HTTP_UNAUTHORIZED
