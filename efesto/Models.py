@@ -19,11 +19,11 @@ class Users(Base):
     Users.
     """
     id = PrimaryKeyField(primary_key=True)
-    name = CharField()
+    name = CharField(unique=True)
     email = CharField()
     password = CharField()
     rank = IntegerField()
-    last_login = DateTimeField()
+    last_login = DateTimeField(null=True)
 
 
 class Types(Base):
