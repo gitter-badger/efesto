@@ -13,7 +13,10 @@ def make_resource(model):
     Generates a resource class.
     """
     def on_get(self, request, response):
-        pass
+        if request.auth:
+            pass
+        else:
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
     def on_post():
         pass
