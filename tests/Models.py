@@ -7,7 +7,7 @@
 import sys
 sys.path.insert(0, "")
 import pytest
-from peewee import IntegerField, CharField, DateTimeField, BooleanField, ForeignKeyField
+from peewee import IntegerField, CharField, DateTimeField, BooleanField, ForeignKeyField, PrimaryKeyField
 
 
 from efesto.Models import Users, Types, Fields, AccessRules
@@ -15,7 +15,7 @@ from efesto.Models import Users, Types, Fields, AccessRules
 
 @pytest.mark.parametrize('column_dict',
     [
-        { 'column': 'id', 'field': IntegerField },
+        { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'name', 'field': CharField, 'constraints':{'unique': True} },
         { 'column': 'email', 'field': CharField },
         { 'column': 'password', 'field': CharField, 'constraints':{'null': False} },
@@ -39,7 +39,7 @@ def test_users_model(column_dict):
 
 @pytest.mark.parametrize('column_dict',
     [
-        { 'column': 'id', 'field': IntegerField },
+        { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'name', 'field': CharField },
         { 'column': 'enabled', 'field': BooleanField }
     ]
@@ -56,7 +56,7 @@ def test_types_model(column_dict):
 
 @pytest.mark.parametrize('column_dict',
     [
-        { 'column': 'id', 'field': IntegerField },
+        { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'name', 'field': CharField },
         { 'column': 'type', 'field': ForeignKeyField },
         { 'column': 'foreign', 'field': CharField },
@@ -77,7 +77,7 @@ def test_fields_model(column_dict):
 
 @pytest.mark.parametrize('column_dict',
     [
-        { 'column': 'id', 'field': IntegerField },
+        { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'user', 'field': ForeignKeyField, 'constraints':{'null': True} },
         { 'column': 'rank', 'field': IntegerField, 'constraints':{'null': True} },
         { 'column': 'item', 'field': IntegerField, 'constraints':{'null': True} },
