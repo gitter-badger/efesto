@@ -99,6 +99,18 @@ def test_tokens_resource_failure(client, app):
     assert response.status == falcon.HTTP_UNAUTHORIZED
 
 
+def test_tokens_resource_passwd_failure(client, app, dummy_user):
+    """
+    Verifies that sending wrong credentials to TokensResource results
+    in a unauthorized response.
+    """
+    resource = TokensResource()
+    data = {'username':dummy_user.name, 'password':'passwd'}
+    app.add_route('/token', resource)
+    response = client.post('/token', data)
+    assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
 def test_tokens_resource(client, app, dummy_user):
     """
     Verifies that TokensResource returns a token when valid credentials
