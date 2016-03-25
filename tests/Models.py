@@ -18,9 +18,9 @@ from efesto.Models import Users, Types, Fields, AccessRules
         { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'name', 'field': CharField, 'constraints':{'unique': True} },
         { 'column': 'email', 'field': CharField },
-        { 'column': 'password', 'field': CharField, 'constraints':{'null': False} },
+        { 'column': 'password', 'field': CharField},
         { 'column': 'rank', 'field': IntegerField },
-        { 'column': 'last_login', 'field': DateTimeField }
+        { 'column': 'last_login', 'field': DateTimeField, 'constraints':{'null': True} }
     ]
 )
 def test_users_model(column_dict):
