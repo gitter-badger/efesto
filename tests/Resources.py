@@ -4,6 +4,7 @@
 import sys
 sys.path.insert(0, "")
 import json
+import base64
 import pytest
 
 
@@ -54,6 +55,23 @@ def test_get(client, app, model):
     response = client.get('/endpoint')
     assert response.status == falcon.HTTP_UNAUTHORIZED
     assert response.__dict__['headers']['www-authenticate'] != None
+
+
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+def test_get_auth(client, app, model):
+    """
+    Tests the behaviour of a generated resource when a GET request that includes
+    a basic auth header is performed.
+    """
+    resource = make_resource(model)()
+    app.add_route('/endpoint', resource)
+
+    token = "%s:" % (generate_token(decode=True, user='myuser'))
+    string64 = base64.b64encode( token.encode("latin-1") ).decode("latin-1")
+    auth_string = "Basic %s" % (string64)
+
+    response = client.get('/endpoint', headers={'authorization':auth_string})
+    assert response.status == falcon.HTTP_OK
 
 
 @pytest.mark.parametrize('test_args',
