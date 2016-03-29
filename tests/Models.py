@@ -12,6 +12,7 @@ from peewee import IntegerField, CharField, DateTimeField, BooleanField, Foreign
 
 from efesto.Base import db
 from efesto.Models import Users, Types, Fields, AccessRules
+from efesto.Crypto import compare_hash
 
 
 @pytest.mark.parametrize('column_dict',
@@ -47,6 +48,7 @@ def test_users_signal():
     dummy.save()
     dummy.delete_instance()
     assert dummy.password != 'sample'
+    assert compare_hash('sample', dummy.password)
 
 
 @pytest.mark.parametrize('column_dict',
