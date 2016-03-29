@@ -7,6 +7,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from .Models import Users
 from .Base import config
+from .Crypto import compare_hash
 
 
 def generate_token(expiration=600, decode=False, **kwargs):
@@ -21,8 +22,9 @@ def read_token(token):
     return s.loads(token)
 
 
-def verify_credentials(username, password):
+def authenticate(username, password):
     try:
-        return Users.get(Users.name == username, Users.password == password)
+        user = Users.get(Users.name == username)
+        return compare_hash(password, user.password)
     except:
-        return None
+        return False
