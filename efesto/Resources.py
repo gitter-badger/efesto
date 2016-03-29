@@ -25,8 +25,8 @@ def make_resource(model):
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
-    def on_post():
-        pass
+    def on_post(self, request, response):
+        raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
     def on_delete():
         pass
