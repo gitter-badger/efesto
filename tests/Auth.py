@@ -77,3 +77,15 @@ def test_authentication_failure():
 
 def test_authentication(dummy_user):
     assert authenticate(dummy_user.name, 'sample')
+
+
+"""
+def test_generate_eternal_token():
+    #Tests the generation of an eternal token.
+    raise NotImplementedError("This test has not been implemented yet!")
+
+
+def test_revoke_eternal_token():
+    #Tests the revocation of an eternal token
+    raise NotImplementedError("This test has not been implemented yet!")
+"""
