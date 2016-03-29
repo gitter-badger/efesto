@@ -76,7 +76,10 @@ def test_get_auth(client, app, model):
 
 @pytest.mark.parametrize('test_args',
     [
-        {'model': Users, 'data': {'name':'test', 'password':'passwd'} }
+        {'model': Users, 'data': {'name':'test', 'password':'passwd'} },
+        {'model': Types, 'data':{'name': 'sometype', 'enabled':0} },
+        {'model': Fields, 'data':{'name':'somefield', 'type':1}},
+        {'model': AccessRules, 'data':{'user':1, 'level':5}}
     ]
 )
 def test_post(client, app, test_args):
