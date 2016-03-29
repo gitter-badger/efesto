@@ -13,18 +13,12 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                            SignatureExpired)
 
 
-from efesto.Config import Config
 from efesto.Auth import *
-from efesto.Base import db
+from efesto.Base import db, config
 
 
 @pytest.fixture
-def config():
-    return Config()
-
-
-@pytest.fixture
-def serializer(config):
+def serializer():
     return Serializer(config.parser.get('security', 'secret'))
 
 
@@ -40,7 +34,7 @@ def dummy_user(request):
     return dummy
 
 
-def test_generate_token(config, serializer):
+def test_generate_token(serializer):
     """
     Tests the generation of a token
     """
@@ -49,7 +43,7 @@ def test_generate_token(config, serializer):
     assert r == {'user':'myuser'}
 
 
-def test_generate_token_expiration(config, serializer):
+def test_generate_token_expiration(serializer):
     """
     Tests the generation of an expired token
     """
@@ -59,7 +53,7 @@ def test_generate_token_expiration(config, serializer):
         serializer.loads(token)
 
 
-def test_jsonify_token(config, serializer):
+def test_jsonify_token(serializer):
     """
     Tests whether generate_token can make a jsonificable token.
     """
@@ -68,7 +62,7 @@ def test_jsonify_token(config, serializer):
     assert type(jsonified_token) == str
 
 
-def test_read_token(config, serializer):
+def test_read_token(serializer):
     """
     Tests read_token
     """
