@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    The Base used for database connection.
+    The Base module.
 """
 from peewee import PostgresqlDatabase
+
+
+from .Config import Config
+
+config = Config()
 
 
 db = PostgresqlDatabase(
