@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, "")
 import time
 import json
+import base64
 import pytest
 
 
@@ -77,6 +78,14 @@ def test_authentication_failure():
 
 def test_authentication(dummy_user):
     assert authenticate(dummy_user.name, 'sample')
+
+
+def test_parse_auth_header():
+    original_string = "myuser:mypasswd"
+    string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
+    auth_string = "Basic %s" % (string64)
+    result = parse_auth_header(auth_string)
+    assert result == original_string
 
 
 """
