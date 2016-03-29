@@ -2,6 +2,7 @@
 """
     The Efesto authentication module.
 """
+import base64
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
@@ -28,3 +29,10 @@ def authenticate(username, password):
         return compare_hash(password, user.password)
     except:
         return False
+
+
+def parse_auth_header(auth_string):
+    """
+    Parses a basic auth header.
+    """
+    return base64.b64decode(auth_string.split()[1]).decode("latin-1")
