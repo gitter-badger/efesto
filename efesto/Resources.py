@@ -15,9 +15,14 @@ def make_resource(model):
     The make_resource function acts as generator of resources for models.
     """
     def on_get(self, request, response):
+        user = None
         if request.auth:
-            pass
-        else:
+            try:
+                user = read_token(parse_auth_header(request.auth)[:-1])['user']
+            except:
+                user = None
+
+        if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
     def on_post():
