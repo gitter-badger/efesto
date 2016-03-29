@@ -71,11 +71,9 @@ def test_read_token(serializer):
     assert token_dict == {'user':'random'}
 
 
-def test_verify_credentials_failure():
-    result = verify_credentials('myuser', 'mypasswd')
-    assert result == None
+def test_authentication_failure():
+    assert authenticate('myuser', 'mypasswd') == False
 
 
-def test_verify_credentials(dummy_user):
-    result = verify_credentials(dummy_user.name, dummy_user.password)
-    assert result == dummy_user
+def test_authentication(dummy_user):
+    assert authenticate(dummy_user.name, 'sample')
