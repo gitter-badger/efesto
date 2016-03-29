@@ -35,6 +35,7 @@ def make_resource(model):
         pass
 
     attributes = {
+        'model': model,
         'on_get': on_get,
         'on_post': on_post,
         'on_patch': on_patch,
