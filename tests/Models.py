@@ -51,6 +51,20 @@ def test_users_signal():
     assert compare_hash('sample', dummy.password)
 
 
+def test_users_signal_on_update():
+    """
+    Verifies that the Users model's signal does not overwrite the password
+    when is not necessary.
+    """
+    db.connect()
+    dummy = Users(name='dummy2', email='mail', password='sample', rank=0)
+    dummy.save()
+    dummy.email = 'changesomeattr'
+    dummy.save()
+    dummy.delete_instance()
+    assert compare_hash('sample', dummy.password)
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
