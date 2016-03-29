@@ -11,8 +11,8 @@ config = Config()
 
 
 db = PostgresqlDatabase(
-    'test',
-    user='postgres',
-    password='postgres',
-    host='localhost'
+    config.parser.get('db', 'name'),
+    user=config.parser.get('db', 'user'),
+    password=config.parser.get('db', 'password'),
+    host=config.parser.get('db', 'host')
 )
