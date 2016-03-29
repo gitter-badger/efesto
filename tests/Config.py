@@ -54,12 +54,16 @@ def test_config_has_parser(config):
         assert isinstance( getattr(config, 'parser'), configparser.ConfigParser)
 
 
-@pytest.mark.parametrize('option',
-    ['version', 'secret', 'installed']
-)
-def test_default_config(config, option):
+@pytest.mark.parametrize('options', [
+    ['main', 'version', 'installed'],
+    ['db', 'name', 'user', 'password', 'host'],
+    ['security', 'secret', 'token_expiration', 'salt_length', 'iterations', 'key_length']
+])
+def test_default_config(config, options):
     """
     Tests for existance of default configuration
     """
-    value = config.parser.get('main', option)
-    assert value != None
+    section = options.pop(0)
+    for option in options:
+        value = config.parser.get(section, option)
+        assert value != None
