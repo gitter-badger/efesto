@@ -5,6 +5,5 @@
 import falcon
 
 
-from .Base import db
+from .Base import db, config
 from .Resources import *
-from .Config import Config
