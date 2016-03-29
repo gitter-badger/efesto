@@ -2,7 +2,9 @@
 """
     The models used by Efesto.
 """
-from peewee import *
+from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
+                    BooleanField, ForeignKeyField)
+from playhouse.signals import Model
 
 
 from .Base import db
