@@ -87,10 +87,10 @@ def test_types_model(column_dict):
         { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'name', 'field': CharField },
         { 'column': 'type', 'field': ForeignKeyField },
-        { 'column': 'foreign', 'field': CharField },
-        { 'column': 'unique', 'field': BooleanField },
-        { 'column': 'description', 'field': CharField },
-        { 'column': 'label', 'field': CharField }
+        { 'column': 'foreign', 'field': CharField, 'constraints': {'null':True} },
+        { 'column': 'unique', 'field': BooleanField, 'constraints': {'null':True} },
+        { 'column': 'description', 'field': CharField, 'constraints': {'null':True} },
+        { 'column': 'label', 'field': CharField, 'constraints': {'null':True} }
     ]
 )
 def test_fields_model(column_dict):
@@ -101,6 +101,10 @@ def test_fields_model(column_dict):
     field = column_dict['field']
     field_object = getattr(Fields, column)
     assert isinstance(field_object, field)
+    if 'constraints' in column_dict:
+        constraints = column_dict['constraints']
+        for constraint in constraints:
+            assert getattr(field_object, constraint) == constraints[constraint]
 
 
 @pytest.mark.parametrize('column_dict',
