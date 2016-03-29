@@ -25,7 +25,7 @@ def config():
 
 @pytest.fixture
 def serializer(config):
-    return Serializer(config.parser.get('main', 'secret'))
+    return Serializer(config.parser.get('security', 'secret'))
 
 
 @pytest.fixture(scope='module')

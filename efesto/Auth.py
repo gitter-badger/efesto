@@ -10,14 +10,14 @@ from .Base import config
 
 
 def generate_token(expiration=600, decode=False, **kwargs):
-    s = Serializer(config.parser.get('main', 'secret'), expires_in=expiration)
+    s = Serializer(config.parser.get('security', 'secret'), expires_in=expiration)
     if decode == True:
         return s.dumps(kwargs).decode('UTF-8')
     return s.dumps(kwargs)
 
 
 def read_token(token):
-    s = Serializer(config.parser.get('main', 'secret'))
+    s = Serializer(config.parser.get('security', 'secret'))
     return s.loads(token)
 
 
