@@ -6,10 +6,9 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 from .Models import Users
-from .Config import Config
+from .Base import config
 
 
-config = Config()
 def generate_token(expiration=600, decode=False, **kwargs):
     s = Serializer(config.parser.get('main', 'secret'), expires_in=expiration)
     if decode == True:
