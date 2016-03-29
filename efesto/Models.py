@@ -57,10 +57,10 @@ class Fields(Base):
     id = PrimaryKeyField(primary_key=True)
     name = CharField()
     type = ForeignKeyField(Types)
-    foreign = CharField()
-    unique = BooleanField()
-    label = CharField()
-    description = CharField()
+    foreign = CharField(null=True)
+    unique = BooleanField(null=True)
+    label = CharField(null=True)
+    description = CharField(null=True)
 
 
 class AccessRules(Base):
@@ -77,3 +77,11 @@ class AccessRules(Base):
     read = IntegerField(null=True)
     edit = IntegerField(null=True)
     delete = IntegerField(null=True)
+
+"""
+def make_model():
+    attributes = {
+    }
+
+    return type('mymodel', (Base, ), attributes)
+"""
