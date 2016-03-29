@@ -46,8 +46,8 @@ class TokensResource:
         if not 'password' in request.params or not 'username' in request.params:
             raise falcon.HTTPBadRequest('', '')
 
-        user = verify_credentials(request.params['username'], request.params['password'])
-        if user == None:
+        authentication = authenticate(request.params['username'], request.params['password'])
+        if authentication == False:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
         token = generate_token(decode=True, user=request.params['username'])

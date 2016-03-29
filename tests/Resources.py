@@ -118,7 +118,7 @@ def test_tokens_resource(client, app, dummy_user):
     are set.
     """
     resource = TokensResource()
-    data = {'username':dummy_user.name, 'password':dummy_user.password}
+    data = {'username':dummy_user.name, 'password':'sample'}
     app.add_route('/token', resource)
     response = client.post('/token', data)
     assert response.status == falcon.HTTP_OK
@@ -127,7 +127,7 @@ def test_tokens_resource(client, app, dummy_user):
 
 def test_tokens_resource_valid_token(client, app, dummy_user):
     resource = TokensResource()
-    data = {'username':dummy_user.name, 'password':dummy_user.password}
+    data = {'username':dummy_user.name, 'password':'sample'}
     app.add_route('/token', resource)
     response = client.post('/token', data)
     token = read_token( json.loads(response.body)['token'] )
