@@ -4,10 +4,11 @@
 """
 from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
                     BooleanField, ForeignKeyField)
-from playhouse.signals import Model
+from playhouse.signals import Model, pre_save
 
 
 from .Base import db
+from .Crypto import generate_hash
 
 
 class Base(Model):
@@ -26,6 +27,16 @@ class Users(Base):
     password = CharField()
     rank = IntegerField()
     last_login = DateTimeField(null=True)
+
+
+@pre_save(sender=Users)
+def on_user_save(model_class, instance, created):
+    """
+    Hashes the password.
+    """
+    dirty = getattr(instance, '_dirty')
+    if 'password' in dirty:
+        instance.password = generate_hash(instance.password)
 
 
 class Types(Base):
