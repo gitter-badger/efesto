@@ -34,7 +34,7 @@ def dummy_user(request):
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 @pytest.mark.parametrize('method',
-    ['on_get', 'on_post', 'on_patch', 'on_delete']
+    ['on_get', 'on_post', 'on_patch', 'on_delete', 'model']
 )
 def test_make_resource(model, method):
     """
