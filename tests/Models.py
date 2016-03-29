@@ -10,6 +10,7 @@ import pytest
 from peewee import IntegerField, CharField, DateTimeField, BooleanField, ForeignKeyField, PrimaryKeyField
 
 
+from efesto.Base import db
 from efesto.Models import Users, Types, Fields, AccessRules
 
 
@@ -35,6 +36,17 @@ def test_users_model(column_dict):
         constraints = column_dict['constraints']
         for constraint in constraints:
             assert getattr(field_object, constraint) == constraints[constraint]
+
+
+def test_users_signal():
+    """
+    Verifies that the Users model hashes an user's password before saving it.
+    """
+    db.connect()
+    dummy = Users(name='dummy2', email='mail', password='sample', rank=0)
+    dummy.save()
+    dummy.delete_instance()
+    assert dummy.password != 'sample'
 
 
 @pytest.mark.parametrize('column_dict',
