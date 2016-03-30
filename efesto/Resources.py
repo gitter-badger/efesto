@@ -6,7 +6,6 @@ import falcon
 import json
 
 
-from .Models import *
 from .Auth import *
 
 
