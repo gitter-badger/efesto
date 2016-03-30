@@ -45,7 +45,7 @@ class Types(Base):
     types will be generated.
     """
     id = PrimaryKeyField(primary_key=True)
-    name = CharField()
+    name = CharField(unique=True)
     enabled = BooleanField()
 
 
