@@ -172,7 +172,7 @@ def test_items_io(item):
     item.delete_instance()
 
 
-def test_make_model_disabled(custom_type):
+def test_make_model_disabled(custom_type, custom_field):
     """
     Verifies that make_model raises an exception when trying to generate
     a disabled type's model.
@@ -181,7 +181,7 @@ def test_make_model_disabled(custom_type):
         make_model(custom_type)
 
 
-def test_make_model_create_table(custom_type):
+def test_make_model_create_table(custom_type, custom_field):
     """
     Verifies that make_model generates the model's table.
     """
@@ -210,7 +210,7 @@ def test_make_model_columns(custom_type, custom_field):
             assert getattr(field_object, 'nullable') == True
 
 
-def test_make_model_ownership(custom_type):
+def test_make_model_ownership(custom_type, custom_field):
     """
     Verifies that the make_model generated model has an owner attribute.
     """
