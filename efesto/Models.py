@@ -57,6 +57,7 @@ class Fields(Base):
     id = PrimaryKeyField(primary_key=True)
     name = CharField()
     type = ForeignKeyField(Types)
+    field_type = CharField()
     foreign = CharField(null=True)
     unique = BooleanField(null=True)
     label = CharField(null=True)
