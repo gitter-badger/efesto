@@ -52,7 +52,7 @@ def test_make_collection(model, method):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-def test_get(client, app, model):
+def test_make_collection_get(client, app, model):
     """
     Tests the behaviour of a generated resource when a simple GET request is
     performed.
@@ -65,7 +65,7 @@ def test_get(client, app, model):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-def test_get_auth(client, app, auth_string, model):
+def test_make_collection_get_auth(client, app, auth_string, model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed.
@@ -86,7 +86,7 @@ def test_get_auth(client, app, auth_string, model):
         {'model': AccessRules, 'data':{'user':1, 'level':5}}
     ]
 )
-def test_post(client, app, test_args):
+def test_make_collection_post(client, app, test_args):
     """
     Tests the behaviour of a generated resource when a simple POST request is
     performed.
@@ -103,7 +103,7 @@ def test_post(client, app, test_args):
     {'model': Users, 'data': {'name':'test', 'password':'passwd', 'email':'mail', 'rank':1} },
     {'model': Types, 'data': {'name': 't_one', 'enabled':0} }
 ])
-def test_post_auth(client, app, auth_string, test_args):
+def test_make_collection_post_auth(client, app, auth_string, test_args):
     """
     Tests the behaviour of a generated resource when a POST request that includes
     a basic auth header is performed.
