@@ -87,6 +87,7 @@ def test_types_model(column_dict):
         { 'column': 'id', 'field': PrimaryKeyField },
         { 'column': 'name', 'field': CharField },
         { 'column': 'type', 'field': ForeignKeyField },
+        { 'column': 'field_type', 'field': CharField },
         { 'column': 'foreign', 'field': CharField, 'constraints': {'null':True} },
         { 'column': 'unique', 'field': BooleanField, 'constraints': {'null':True} },
         { 'column': 'description', 'field': CharField, 'constraints': {'null':True} },
