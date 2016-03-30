@@ -31,7 +31,20 @@ def make_resource(model):
         response.body = json.dumps(body)
 
     def on_post(self, request, response):
-        raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        user = None
+        if request.auth:
+            try:
+                user = read_token(parse_auth_header(request.auth)[:-1])['user']
+            except:
+                user = None
+
+        if user == None:
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+
+        new_item = self.model(**request.params)
+        new_item.save()
+        response.status = falcon.HTTP_CREATED
+        response.body = json.dumps(new_item.__dict__['_data'])
 
     def on_delete():
         pass
