@@ -9,9 +9,9 @@ import json
 from .Auth import *
 
 
-def make_resource(model):
+def make_collection(model):
     """
-    The make_resource function acts as generator of resources for models.
+    The make_collection function acts as generator of collection for models.
     """
     def on_get(self, request, response):
         user = None
@@ -50,7 +50,7 @@ def make_resource(model):
         'on_get': on_get,
         'on_post': on_post
     }
-    return type('myresource', (object, ), attributes)
+    return type('mycollection', (object, ), attributes)
 
 
 class TokensResource:

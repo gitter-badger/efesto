@@ -43,11 +43,11 @@ def auth_string():
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'model']
 )
-def test_make_resource(model, method):
+def test_make_collection(model, method):
     """
-    Tests whether make_resource can correctly generate a resource.
+    Tests whether make_collection can correctly generate a resource.
     """
-    resource = make_resource(model)
+    resource = make_collection(model)
     assert hasattr(resource, method)
 
 
@@ -57,7 +57,7 @@ def test_get(client, app, model):
     Tests the behaviour of a generated resource when a simple GET request is
     performed.
     """
-    resource = make_resource(model)()
+    resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint')
     assert response.status == falcon.HTTP_UNAUTHORIZED
@@ -70,7 +70,7 @@ def test_get_auth(client, app, auth_string, model):
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed.
     """
-    resource = make_resource(model)()
+    resource = make_collection(model)()
     app.add_route('/endpoint', resource)
 
     response = client.get('/endpoint', headers={'authorization':auth_string})
@@ -93,7 +93,7 @@ def test_post(client, app, test_args):
     """
     model = test_args['model']
     data = test_args['data']
-    resource = make_resource(model)()
+    resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.post('/endpoint', data)
     assert response.status == falcon.HTTP_UNAUTHORIZED
@@ -110,7 +110,7 @@ def test_post_auth(client, app, auth_string, test_args):
     """
     model = test_args['model']
     data = test_args['data']
-    resource = make_resource(model)()
+    resource = make_collection(model)()
     app.add_route('/endpoint', resource)
 
     response = client.post('/endpoint', data=data, headers={'authorization':auth_string})
