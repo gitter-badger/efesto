@@ -25,6 +25,11 @@ def make_resource(model):
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
+        body = []
+        for i in self.model.select().limit(20).dicts():
+            body.append(i)
+        response.body = json.dumps(body)
+
     def on_post(self, request, response):
         raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
