@@ -86,7 +86,8 @@ def make_model(custom_type):
     Fields.
     """
     attributes = {}
+    fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
     columns = Fields.select().where( Fields.type==custom_type.id )
     for column in columns:
-        attributes[column.name] = CharField()
+        attributes[column.name] = fields_dict[column.field_type]()
     return type("%s_model" % (custom_type.name), (Base, ), attributes)
