@@ -92,6 +92,8 @@ def make_model(custom_type):
         columns = Fields.select().where( Fields.type==custom_type.id )
         for column in columns:
             attributes[column.name] = fields_dict[column.field_type]()
-        return type("%s_model" % (custom_type.name), (Base, ), attributes)
+        model = type("%s" % (custom_type.name), (Base, ), attributes)
+        db.create_tables([model], safe=True)
+        return model
     else:
         raise ValueError("Cannot generate a model for a disabled type")
