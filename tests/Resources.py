@@ -99,6 +99,29 @@ def test_post(client, app, test_args):
     assert response.status == falcon.HTTP_UNAUTHORIZED
 
 
+@pytest.mark.parametrize('test_args', [
+    {'model': Users, 'data': {'name':'test', 'password':'passwd', 'email':'mail', 'rank':1} },
+    {'model': Types, 'data': {'name': 't_one', 'enabled':0} }
+])
+def test_post_auth(client, app, auth_string, test_args):
+    """
+    """
+    model = test_args['model']
+    data = test_args['data']
+    resource = make_resource(model)()
+    app.add_route('/endpoint', resource)
+
+    response = client.post('/endpoint', data=data, headers={'authorization':auth_string})
+    assert response.status == falcon.HTTP_CREATED
+    body = json.loads(response.body)
+    assert 'id' in body
+    for key in data:
+        assert key in body
+    # teardown
+    item = model.get( getattr(model, 'id') == int(body['id']))
+    item.delete_instance()
+
+
 @pytest.mark.parametrize('data', [
     {'username':'user'}, {'password': 'passwd'}, {'somevar':'var'}
 ])
