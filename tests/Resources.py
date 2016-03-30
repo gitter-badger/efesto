@@ -41,7 +41,7 @@ def auth_string():
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 @pytest.mark.parametrize('method',
-    ['on_get', 'on_post', 'on_patch', 'on_delete', 'model']
+    ['on_get', 'on_post', 'model']
 )
 def test_make_resource(model, method):
     """

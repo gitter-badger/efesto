@@ -45,18 +45,10 @@ def make_resource(model):
         response.status = falcon.HTTP_CREATED
         response.body = json.dumps(new_item.__dict__['_data'])
 
-    def on_delete():
-        pass
-
-    def on_patch():
-        pass
-
     attributes = {
         'model': model,
         'on_get': on_get,
-        'on_post': on_post,
-        'on_patch': on_patch,
-        'on_delete': on_delete
+        'on_post': on_post
     }
     return type('myresource', (object, ), attributes)
 
