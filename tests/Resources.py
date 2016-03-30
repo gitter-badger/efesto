@@ -72,6 +72,7 @@ def test_get_auth(client, app, model):
 
     response = client.get('/endpoint', headers={'authorization':auth_string})
     assert response.status == falcon.HTTP_OK
+    assert len(json.loads(response.body)) == model.select().limit(20).count()
 
 
 @pytest.mark.parametrize('test_args',
