@@ -105,6 +105,8 @@ def test_post(client, app, test_args):
 ])
 def test_post_auth(client, app, auth_string, test_args):
     """
+    Tests the behaviour of a generated resource when a POST request that includes
+    a basic auth header is performed.
     """
     model = test_args['model']
     data = test_args['data']
