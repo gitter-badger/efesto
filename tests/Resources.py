@@ -32,6 +32,13 @@ def dummy_user(request):
     return dummy
 
 
+@pytest.fixture
+def auth_string():
+    token = "%s:" % (generate_token(decode=True, user='myuser'))
+    string64 = base64.b64encode( token.encode("latin-1") ).decode("latin-1")
+    return "Basic %s" % (string64)
+
+
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'on_patch', 'on_delete', 'model']
@@ -58,17 +65,13 @@ def test_get(client, app, model):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-def test_get_auth(client, app, model):
+def test_get_auth(client, app, auth_string, model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed.
     """
     resource = make_resource(model)()
     app.add_route('/endpoint', resource)
-
-    token = "%s:" % (generate_token(decode=True, user='myuser'))
-    string64 = base64.b64encode( token.encode("latin-1") ).decode("latin-1")
-    auth_string = "Basic %s" % (string64)
 
     response = client.get('/endpoint', headers={'authorization':auth_string})
     assert response.status == falcon.HTTP_OK
