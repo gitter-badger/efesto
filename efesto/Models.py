@@ -85,10 +85,13 @@ def make_model(custom_type):
     Generates a model based on a Type entry, using the columns specified in
     Fields.
     """
-    attributes = {}
-    attributes['owner'] = ForeignKeyField(Users)
-    fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
-    columns = Fields.select().where( Fields.type==custom_type.id )
-    for column in columns:
-        attributes[column.name] = fields_dict[column.field_type]()
-    return type("%s_model" % (custom_type.name), (Base, ), attributes)
+    if custom_type.enabled == True:
+        attributes = {}
+        attributes['owner'] = ForeignKeyField(Users)
+        fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
+        columns = Fields.select().where( Fields.type==custom_type.id )
+        for column in columns:
+            attributes[column.name] = fields_dict[column.field_type]()
+        return type("%s_model" % (custom_type.name), (Base, ), attributes)
+    else:
+        raise ValueError("Cannot generate a model for a disabled type")
