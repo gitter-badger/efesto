@@ -124,6 +124,42 @@ def test_make_collection_post_auth(client, app, auth_string, test_args):
     item.delete_instance()
 
 
+def test_make_resource():
+    pass
+
+
+def test_make_resource_get():
+    pass
+
+
+def test_make_resource_get_auth():
+    pass
+
+
+def test_make_resource_post():
+    pass
+
+
+def test_make_resource_post_auth():
+    pass
+
+
+def test_make_resource_patch():
+    pass
+
+
+def test_make_resource_patch_auth():
+    pass
+
+
+def test_make_resource_delete():
+    pass
+
+
+def test_make_resource_delete_auth():
+    pass
+
+
 @pytest.mark.parametrize('data', [
     {'username':'user'}, {'password': 'passwd'}, {'somevar':'var'}
 ])
