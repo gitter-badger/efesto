@@ -173,9 +173,10 @@ def test_make_model(custom_type, custom_field):
     Verifies that make_model can correctly generate a model.
     """
     model = make_model(custom_type)
+    fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
     columns = Fields.select().where(Fields.type==custom_type.id)
     for column in columns:
-        field = CharField
+        field = fields_dict[column.field_type]
         field_object = getattr(model, column.name)
         assert isinstance(field_object, field)
 
