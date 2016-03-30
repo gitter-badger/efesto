@@ -86,6 +86,7 @@ def make_model(custom_type):
     Fields.
     """
     attributes = {}
+    attributes['owner'] = ForeignKeyField(Users)
     fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
     columns = Fields.select().where( Fields.type==custom_type.id )
     for column in columns:
