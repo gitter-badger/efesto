@@ -79,10 +79,14 @@ class AccessRules(Base):
     edit = IntegerField(null=True)
     delete = IntegerField(null=True)
 
-"""
-def make_model():
-    attributes = {
-    }
 
-    return type('mymodel', (Base, ), attributes)
-"""
+def make_model(custom_type):
+    """
+    Generates a model based on a Type entry, using the columns specified in
+    Fields.
+    """
+    attributes = {}
+    columns = Fields.select().where( Fields.type==custom_type.id )
+    for column in columns:
+        attributes[column.name] = CharField()
+    return type("%s_model" % (custom_type.name), (Base, ), attributes)
