@@ -58,8 +58,8 @@ class Fields(Base):
     name = CharField()
     type = ForeignKeyField(Types)
     field_type = CharField()
-    foreign = CharField(null=True)
     unique = BooleanField(null=True)
+    nullable = BooleanField(null=True)
     label = CharField(null=True)
     description = CharField(null=True)
 
