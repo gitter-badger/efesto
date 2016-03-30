@@ -25,6 +25,16 @@ def custom_type(request):
     return new_type
 
 
+@pytest.fixture
+def custom_field(request, custom_type):
+    new_field = Fields(name='myfield', type=custom_type.id, field_type='string')
+    new_field.save()
+    def teardown():
+        new_field.delete_instance()
+    request.addfinalizer(teardown)
+    return new_field
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
