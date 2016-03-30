@@ -166,3 +166,21 @@ def test_items_io(item):
     item.save()
     assert getattr(item, 'id') != None
     item.delete_instance()
+
+
+def test_make_model(custom_type, custom_field):
+    """
+    Verifies that make_model can correctly generate a model.
+    """
+    model = make_model(custom_type)
+    columns = Fields.select().where(Fields.type==custom_type.id)
+    for column in columns:
+        field = CharField
+        field_object = getattr(model, column.name)
+        assert isinstance(field_object, field)
+
+        if column.unique:
+            assert getattr(field_object, 'unique') == True
+
+        if column.nullable:
+            assert getattr(field_object, 'nullable') == True
