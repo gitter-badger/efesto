@@ -11,7 +11,7 @@ from peewee import IntegerField, CharField, DateTimeField, BooleanField, Foreign
 
 
 from efesto.Base import db
-from efesto.Models import Users, Types, Fields, AccessRules
+from efesto.Models import Users, Types, Fields, AccessRules, make_model
 from efesto.Crypto import compare_hash
 
 
@@ -88,8 +88,8 @@ def test_types_model(column_dict):
         { 'column': 'name', 'field': CharField },
         { 'column': 'type', 'field': ForeignKeyField },
         { 'column': 'field_type', 'field': CharField },
-        { 'column': 'foreign', 'field': CharField, 'constraints': {'null':True} },
         { 'column': 'unique', 'field': BooleanField, 'constraints': {'null':True} },
+        { 'column': 'nullable', 'field': BooleanField, 'constraints': {'null':True} },
         { 'column': 'description', 'field': CharField, 'constraints': {'null':True} },
         { 'column': 'label', 'field': CharField, 'constraints': {'null':True} }
     ]
