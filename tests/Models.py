@@ -168,10 +168,20 @@ def test_items_io(item):
     item.delete_instance()
 
 
+def test_make_model_disabled(custom_type):
+    """
+    Verifies that make_model raises an exception when trying to generate
+    a disabled type's model.
+    """
+    with pytest.raises(ValueError) as e_info:
+        make_model(custom_type)
+
+
 def test_make_model(custom_type, custom_field):
     """
     Verifies that make_model can correctly generate a model.
     """
+    custom_type.enabled = 1
     model = make_model(custom_type)
     fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
     columns = Fields.select().where(Fields.type==custom_type.id)
@@ -191,6 +201,7 @@ def test_make_model_ownership(custom_type):
     """
     Verifies that the make_model generated model has an owner attribute.
     """
+    custom_type.enabled = 1
     model = make_model(custom_type)
     assert hasattr(model, 'owner')
     assert isinstance( getattr(model, 'owner'), ForeignKeyField)
