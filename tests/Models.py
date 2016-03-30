@@ -88,7 +88,7 @@ def test_users_signal_on_update():
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
-        { 'column': 'name', 'field': CharField },
+        { 'column': 'name', 'field': CharField, 'constraints': {'unique': True} },
         { 'column': 'enabled', 'field': BooleanField }
     ]
 )
@@ -100,6 +100,10 @@ def test_types_model(column_dict):
     field = column_dict['field']
     field_object = getattr(Types, column)
     assert isinstance(field_object, field)
+    if 'constraints' in column_dict:
+        constraints = column_dict['constraints']
+        for constraint in constraints:
+            assert getattr(field_object, constraint) == constraints[constraint]
 
 
 @pytest.mark.parametrize('column_dict',
