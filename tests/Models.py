@@ -186,7 +186,7 @@ def test_make_model_create_table(custom_type):
     assert custom_type.name in db.get_tables()
 
 
-def test_make_model(custom_type, custom_field):
+def test_make_model_columns(custom_type, custom_field):
     """
     Verifies that make_model can correctly generate a model.
     """
