@@ -15,6 +15,16 @@ from efesto.Models import Users, Types, Fields, AccessRules, make_model
 from efesto.Crypto import compare_hash
 
 
+@pytest.fixture
+def custom_type(request):
+    new_type = Types(name='mytype', enabled=0)
+    new_type.save()
+    def teardown():
+        new_type.delete_instance()
+    request.addfinalizer(teardown)
+    return new_type
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
