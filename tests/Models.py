@@ -185,3 +185,12 @@ def test_make_model(custom_type, custom_field):
 
         if column.nullable:
             assert getattr(field_object, 'nullable') == True
+
+
+def test_make_model_ownership(custom_type):
+    """
+    Verifies that the make_model generated model has an owner attribute.
+    """
+    model = make_model(custom_type)
+    assert hasattr(model, 'owner')
+    assert isinstance( getattr(model, 'owner'), ForeignKeyField)
