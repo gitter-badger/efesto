@@ -77,7 +77,7 @@ def test_authentication_failure():
 
 
 def test_authentication(dummy_user):
-    assert authenticate(dummy_user.name, 'sample')
+    assert authenticate(dummy_user.name, 'sample') == True
 
 
 def test_parse_auth_header():
