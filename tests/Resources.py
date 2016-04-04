@@ -191,14 +191,6 @@ def test_make_resource_get_auth_with_item(client, app, auth_string, model):
         assert body[i] == getattr(item, i)
 
 
-def test_make_resource_post():
-    pass
-
-
-def test_make_resource_post_auth():
-    pass
-
-
 def test_make_resource_patch():
     pass
 
