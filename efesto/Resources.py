@@ -53,6 +53,16 @@ def make_collection(model):
     return type('mycollection', (object, ), attributes)
 
 
+def make_resource(model):
+    attributes = {
+        'model': model,
+        'on_get': '',
+        'on_patch': '',
+        'on_delete': ''
+    }
+    return type('mycollection', (object, ), attributes)
+
+
 class TokensResource:
     """
     The TokensResource resource handles tokens requests.
