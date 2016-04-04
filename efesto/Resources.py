@@ -55,7 +55,16 @@ def make_collection(model):
 
 def make_resource(model):
     def on_get(self, request, response, id=0):
-        raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        user = None
+        if request.auth:
+            try:
+                user = read_token(parse_auth_header(request.auth)[:-1])['user']
+            except:
+                user = None
+
+        if user == None:
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        raise falcon.HTTPNotFound()
 
 
     attributes = {
