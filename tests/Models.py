@@ -35,6 +35,18 @@ def custom_field(request, custom_type):
     return new_field
 
 
+@pytest.fixture(scope='module')
+def dummy_user(request):
+    db.connect()
+    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
+    dummy.save()
+
+    def teardown():
+        dummy.delete_instance()
+    request.addfinalizer(teardown)
+    return dummy
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
