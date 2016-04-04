@@ -173,7 +173,7 @@ def test_make_resource_not_found(client, app, auth_string, model, method):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-def test_make_resource_get_auth_with_item(client, app, auth_string, model):
+def test_make_resource_get_item(client, app, auth_string, model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed and an item is retrieved.
