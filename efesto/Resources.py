@@ -102,11 +102,27 @@ def make_resource(model):
         item.delete_instance()
         response.status = falcon.HTTP_NO_CONTENT
 
+    def on_patch(self, request, response, id=0):
+        user = None
+        if request.auth:
+            try:
+                user = read_token(parse_auth_header(request.auth)[:-1])['user']
+            except:
+                user = None
+
+        if user == None:
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+
+        try:
+            item = self.model.get( getattr(self.model, 'id') == id )
+        except:
+            raise falcon.HTTPNotFound()
+
 
     attributes = {
         'model': model,
         'on_get': on_get,
-        'on_patch': '',
+        'on_patch': on_patch,
         'on_delete': on_delete
     }
     return type('mycollection', (object, ), attributes)
