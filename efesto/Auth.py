@@ -26,9 +26,10 @@ def read_token(token):
 def authenticate(username, password):
     try:
         user = Users.get(Users.name == username)
-        return compare_hash(password, user.password)
+        if compare_hash(password, user.password) == True:
+            return user
     except:
-        return False
+        return None
 
 
 def parse_auth_header(auth_string):
