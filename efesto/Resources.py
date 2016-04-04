@@ -99,6 +99,9 @@ def make_resource(model):
         except:
             raise falcon.HTTPNotFound()
 
+        item.delete_instance()
+        response.status = falcon.HTTP_NO_CONTENT
+
 
     attributes = {
         'model': model,
