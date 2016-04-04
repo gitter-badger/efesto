@@ -222,7 +222,10 @@ def test_make_resource_delete_item(client, app, auth_string, model):
 
 
 @pytest.mark.parametrize('data', [
-    {'username':'user'}, {'password': 'passwd'}, {'somevar':'var'}
+    {'username':'user'},
+    {'password': 'passwd'},
+    {'somevar':'var'},
+    {'username':'user', 'password':'passwd', 'eternal': 1}
 ])
 def test_tokens_resource_bad_request(client, app, data):
     """
