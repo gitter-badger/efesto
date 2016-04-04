@@ -2,13 +2,14 @@
 """
     The models used by Efesto.
 """
+import os
 from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
                     BooleanField, ForeignKeyField)
 from playhouse.signals import Model, pre_save
 
 
 from .Base import db
-from .Crypto import generate_hash
+from .Crypto import generate_hash, hexlify_
 
 
 class Base(Model):
@@ -89,6 +90,15 @@ class EternalTokens(Base):
     name = CharField()
     user = ForeignKeyField(Users)
     token = CharField()
+
+
+@pre_save(sender=EternalTokens)
+def on_token_save(model_class, instance, created):
+    """
+    """
+    dirty = getattr(instance, '_dirty')
+    if 'token' in dirty:
+        instance.token = hexlify_(os.urandom(24))
 
 
 def make_model(custom_type):
