@@ -73,11 +73,11 @@ def test_read_token(serializer):
 
 
 def test_authentication_failure():
-    assert authenticate('myuser', 'mypasswd') == False
+    assert authenticate('myuser', 'mypasswd') == None
 
 
 def test_authentication(dummy_user):
-    assert authenticate(dummy_user.name, 'sample') == True
+    assert authenticate(dummy_user.name, 'sample') == dummy_user
 
 
 def test_parse_auth_header():
