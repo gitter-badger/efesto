@@ -149,8 +149,17 @@ def test_make_resource_get(client, app, model):
     assert response.__dict__['headers']['www-authenticate'] != None
 
 
-def test_make_resource_get_auth():
-    pass
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+def test_make_resource_get_auth(client, app, auth_string, model):
+    """
+    Tests the behaviour of a generated resource when a GET request that includes
+    a basic auth header is performed.
+    """
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+
+    response = client.get('/endpoint/1234', headers={'authorization':auth_string})
+    assert response.status == falcon.HTTP_NOT_FOUND
 
 
 def test_make_resource_post():
