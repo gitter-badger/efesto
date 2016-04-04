@@ -191,6 +191,17 @@ def test_eternal_tokens(column_dict):
             assert getattr(field_object, constraint) == constraints[constraint]
 
 
+def test_eternal_tokens_signal(dummy_user):
+    """
+    Tests the EternalTokens pre_save signal.
+    """
+    token = EternalTokens(name='randomtoken', user=dummy_user, token='')
+    token.save()
+    assert len(token.token) == 48
+    # teardown
+    token.delete_instance()
+
+
 @pytest.mark.parametrize('item', [
     Users(name='dummy_user', email='email', password='passwd', rank=1),
     Types(name='mytype', enabled=0),
