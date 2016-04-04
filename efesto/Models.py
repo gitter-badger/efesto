@@ -80,6 +80,17 @@ class AccessRules(Base):
     delete = IntegerField(null=True)
 
 
+class EternalTokens(Base):
+    """
+    EternalTokens can be used to store server-side tokens that can need to be
+    revoked when needed.
+    """
+    id = PrimaryKeyField(primary_key=True)
+    name = CharField()
+    user = ForeignKeyField(Users)
+    token = CharField()
+
+
 def make_model(custom_type):
     """
     Generates a model based on a Type entry, using the columns specified in
