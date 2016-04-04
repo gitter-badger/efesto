@@ -11,7 +11,7 @@ from peewee import IntegerField, CharField, DateTimeField, BooleanField, Foreign
 
 
 from efesto.Base import db
-from efesto.Models import Users, Types, Fields, AccessRules, make_model
+from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
 from efesto.Crypto import compare_hash
 
 
@@ -152,6 +152,26 @@ def test_access_rules_model(column_dict):
     column = column_dict['column']
     field = column_dict['field']
     field_object = getattr(AccessRules, column)
+    assert isinstance(field_object, field)
+    if 'constraints' in column_dict:
+        constraints = column_dict['constraints']
+        for constraint in constraints:
+            assert getattr(field_object, constraint) == constraints[constraint]
+
+
+@pytest.mark.parametrize('column_dict', [
+    { 'column': 'id', 'field': PrimaryKeyField },
+    { 'column': 'name', 'field': CharField },
+    { 'column': 'user', 'field': ForeignKeyField },
+    { 'column': 'token', 'field': CharField }
+])
+def test_eternal_tokens(column_dict):
+    """
+    Tests the EternalTokens model
+    """
+    column = column_dict['column']
+    field = column_dict['field']
+    field_object = getattr(EternalTokens, column)
     assert isinstance(field_object, field)
     if 'constraints' in column_dict:
         constraints = column_dict['constraints']
