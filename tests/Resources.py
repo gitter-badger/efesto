@@ -124,8 +124,16 @@ def test_make_collection_post_auth(client, app, auth_string, test_args):
     item.delete_instance()
 
 
-def test_make_resource():
-    pass
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('method',
+    ['on_get', 'on_patch', 'on_delete', 'model']
+)
+def test_make_resource(model, method):
+    """
+    Tests whether make_resource can correctly generate a resource.
+    """
+    resource = make_resource(model)
+    assert hasattr(resource, method)
 
 
 def test_make_resource_get():
