@@ -83,11 +83,23 @@ def make_resource(model):
         response.body = json.dumps(item_dict)
 
 
+    def on_delete(self, request, response, id=0):
+        user = None
+        if request.auth:
+            try:
+                user = read_token(parse_auth_header(request.auth)[:-1])['user']
+            except:
+                user = None
+
+        if user == None:
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+
+
     attributes = {
         'model': model,
         'on_get': on_get,
         'on_patch': '',
-        'on_delete': ''
+        'on_delete': on_delete
     }
     return type('mycollection', (object, ), attributes)
 
