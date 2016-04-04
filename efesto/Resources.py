@@ -141,7 +141,7 @@ class TokensResource:
             raise falcon.HTTPBadRequest('', '')
 
         authentication = authenticate(request.params['username'], request.params['password'])
-        if authentication == False:
+        if authentication == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
         token = generate_token(decode=True, user=request.params['username'])
