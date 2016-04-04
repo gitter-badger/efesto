@@ -54,9 +54,13 @@ def make_collection(model):
 
 
 def make_resource(model):
+    def on_get(self, request, response, id=0):
+        raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+
+
     attributes = {
         'model': model,
-        'on_get': '',
+        'on_get': on_get,
         'on_patch': '',
         'on_delete': ''
     }
