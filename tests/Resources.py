@@ -136,8 +136,17 @@ def test_make_resource(model, method):
     assert hasattr(resource, method)
 
 
-def test_make_resource_get():
-    pass
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+def test_make_resource_get(client, app, model):
+    """
+    Tests the behaviour of a generated resource when a simple GET request is
+    performed.
+    """
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.get('/endpoint/1')
+    assert response.status == falcon.HTTP_UNAUTHORIZED
+    assert response.__dict__['headers']['www-authenticate'] != None
 
 
 def test_make_resource_get_auth():
