@@ -11,7 +11,7 @@ import pytest
 from peewee import FieldDescriptor, RelationDescriptor
 
 
-from efesto.Models import Users, Types, Fields, AccessRules
+from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens
 from efesto.Base import db
 from efesto.Resources import *
 from efesto.Auth import *
@@ -42,7 +42,7 @@ def auth_string():
     return "Basic %s" % (string64)
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'model']
 )
@@ -54,7 +54,7 @@ def test_make_collection(model, method):
     assert hasattr(resource, method)
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 def test_make_collection_get(client, app, model):
     """
     Tests the behaviour of a generated resource when a simple GET request is
@@ -67,7 +67,7 @@ def test_make_collection_get(client, app, model):
     assert response.__dict__['headers']['www-authenticate'] != None
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 def test_make_collection_get_auth(client, app, auth_string, model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
@@ -127,7 +127,7 @@ def test_make_collection_post_auth(client, app, auth_string, test_args):
     item.delete_instance()
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_patch', 'on_delete', 'model']
 )
@@ -139,7 +139,7 @@ def test_make_resource(model, method):
     assert hasattr(resource, method)
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method', ['get', 'delete', 'patch'])
 def test_make_resource_unathorized(client, app, model, method):
     """
@@ -158,7 +158,7 @@ def test_make_resource_unathorized(client, app, model, method):
     assert response.__dict__['headers']['www-authenticate'] != None
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method', ['get', 'patch', 'delete'])
 def test_make_resource_not_found(client, app, auth_string, model, method):
     """
@@ -176,7 +176,7 @@ def test_make_resource_not_found(client, app, auth_string, model, method):
     assert response.status == falcon.HTTP_NOT_FOUND
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 def test_make_resource_get_item(client, app, auth_string, model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
@@ -202,7 +202,7 @@ def test_make_resource_get_item(client, app, auth_string, model):
         assert body[i] == getattr(item, i)
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 def test_make_resource_delete_item(client, app, auth_string, model):
     """
     Tests the behaviour of a generated resource when a DELETE request that
