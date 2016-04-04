@@ -9,6 +9,7 @@ import json
 from peewee import FieldDescriptor, RelationDescriptor
 
 
+from .Models import EternalTokens
 from .Auth import *
 
 
@@ -134,6 +135,9 @@ class TokensResource:
     """
     def on_post(self, request, response):
         if not 'password' in request.params or not 'username' in request.params:
+            raise falcon.HTTPBadRequest('', '')
+
+        if 'eternal' in request.params and not 'token_name' in request.params:
             raise falcon.HTTPBadRequest('', '')
 
         authentication = authenticate(request.params['username'], request.params['password'])
