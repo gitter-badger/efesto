@@ -8,6 +8,9 @@ import base64
 import pytest
 
 
+from peewee import FieldDescriptor, RelationDescriptor
+
+
 from efesto.Models import Users, Types, Fields, AccessRules
 from efesto.Base import db
 from efesto.Resources import *
@@ -160,6 +163,32 @@ def test_make_resource_get_auth(client, app, auth_string, model):
 
     response = client.get('/endpoint/1234', headers={'authorization':auth_string})
     assert response.status == falcon.HTTP_NOT_FOUND
+
+
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
+def test_make_resource_get_auth_with_item(client, app, auth_string, model):
+    """
+    Tests the behaviour of a generated resource when a GET request that includes
+    a basic auth header is performed and an item is retrieved.
+    """
+    item = model.get()
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.get('/endpoint/%s' % (item.id), headers={'authorization':auth_string})
+    assert response.status == falcon.HTTP_OK
+
+    model_fields = []
+    attrs = model.__dict__
+    for k in attrs:
+        if (
+            isinstance(attrs[k], FieldDescriptor) and
+            not isinstance(attrs[k], RelationDescriptor)
+        ):
+            model_fields.append(k)
+
+    body = json.loads(response.body)
+    for i in model_fields:
+        assert body[i] == getattr(item, i)
 
 
 def test_make_resource_post():
