@@ -140,7 +140,7 @@ def test_make_resource(model, method):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-@pytest.mark.parametrize('method', ['get', 'delete'])
+@pytest.mark.parametrize('method', ['get', 'delete', 'patch'])
 def test_make_resource_unathorized(client, app, model, method):
     """
     Tests the behaviour of a generated resource when a GET or DELETE request is
@@ -152,12 +152,14 @@ def test_make_resource_unathorized(client, app, model, method):
         response = client.get('/endpoint/1')
     elif method == 'delete':
         response = client.delete('/endpoint/1')
+    elif method == 'patch':
+        response = client.patch('/endpoint/1', body='')
     assert response.status == falcon.HTTP_UNAUTHORIZED
     assert response.__dict__['headers']['www-authenticate'] != None
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-@pytest.mark.parametrize('method', ['get', 'delete'])
+@pytest.mark.parametrize('method', ['get', 'patch', 'delete'])
 def test_make_resource_not_found(client, app, auth_string, model, method):
     """
     Tests the behaviour of a generated resource when a GET or DELETE request that
@@ -169,6 +171,8 @@ def test_make_resource_not_found(client, app, auth_string, model, method):
         response = client.get('/endpoint/1234', headers={'authorization':auth_string})
     elif method == 'delete':
         response = client.delete('/endpoint/1234', headers={'authorization':auth_string})
+    elif method == 'patch':
+        response = client.patch('/endpoint/1234', headers={'authorization':auth_string}, body='')
     assert response.status == falcon.HTTP_NOT_FOUND
 
 
@@ -215,14 +219,6 @@ def test_make_resource_delete_item(client, app, auth_string, model):
     except:
         deleted = True
     assert deleted == True
-
-
-def test_make_resource_patch():
-    pass
-
-
-def test_make_resource_patch_auth():
-    pass
 
 
 @pytest.mark.parametrize('data', [
