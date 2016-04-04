@@ -6,6 +6,9 @@ import falcon
 import json
 
 
+from peewee import FieldDescriptor, RelationDescriptor
+
+
 from .Auth import *
 
 
@@ -64,7 +67,20 @@ def make_resource(model):
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
-        raise falcon.HTTPNotFound()
+
+        try:
+            item = self.model.get( getattr(self.model, 'id') == id )
+        except:
+            raise falcon.HTTPNotFound()
+
+        item_dict = {}
+        for k in self.model.__dict__:
+            if (
+                isinstance(self.model.__dict__[k], FieldDescriptor) and
+                not isinstance(self.model.__dict__[k], RelationDescriptor)
+            ):
+                item_dict[k] = getattr(item, k)
+        response.body = json.dumps(item_dict)
 
 
     attributes = {
