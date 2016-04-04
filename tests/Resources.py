@@ -140,14 +140,18 @@ def test_make_resource(model, method):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
-def test_make_resource_get(client, app, model):
+@pytest.mark.parametrize('method', ['get', 'delete'])
+def test_make_resource_unathorized(client, app, model, method):
     """
-    Tests the behaviour of a generated resource when a simple GET request is
+    Tests the behaviour of a generated resource when a GET or DELETE request is
     performed.
     """
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
-    response = client.get('/endpoint/1')
+    if method == 'get':
+        response = client.get('/endpoint/1')
+    elif method == 'delete':
+        response = client.delete('/endpoint/1')
     assert response.status == falcon.HTTP_UNAUTHORIZED
     assert response.__dict__['headers']['www-authenticate'] != None
 
@@ -196,10 +200,6 @@ def test_make_resource_patch():
 
 
 def test_make_resource_patch_auth():
-    pass
-
-
-def test_make_resource_delete():
     pass
 
 
