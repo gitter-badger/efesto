@@ -273,6 +273,9 @@ def test_tokens_resource(client, app, dummy_user):
 
 
 def test_tokens_resource_valid_token(client, app, dummy_user):
+    """
+    Verifies the contents of the token.
+    """
     resource = TokensResource()
     data = {'username':dummy_user.name, 'password':'sample'}
     app.add_route('/token', resource)
