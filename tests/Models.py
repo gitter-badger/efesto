@@ -180,7 +180,7 @@ def test_eternal_tokens(column_dict):
 
 
 @pytest.mark.parametrize('item', [
-    Users(name='dummy', email='email', password='passwd', rank=1),
+    Users(name='dummy_user', email='email', password='passwd', rank=1),
     Types(name='mytype', enabled=0),
 ])
 def test_items_io(item):
