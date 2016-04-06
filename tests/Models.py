@@ -219,6 +219,18 @@ def test_items_io(item_dict):
     item.delete_instance()
 
 
+def test_fields_io():
+    """
+    Verfies that is possible to create and delete a Fields instance.
+    """
+    custom_type = Types(name='sometype', enabled=0)
+    custom_type.save()
+    field = Fields(name='myfield', type=custom_type.id, field_type='string')
+    field.save()
+    assert getattr(field, 'id') != None
+    field.delete_instance()
+
+
 def test_make_model_disabled(custom_type, custom_field):
     """
     Verifies that make_model raises an exception when trying to generate
