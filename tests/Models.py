@@ -202,14 +202,18 @@ def test_eternal_tokens_signal(dummy_user):
     token.delete_instance()
 
 
-@pytest.mark.parametrize('item', [
-    Users(name='dummy_user', email='email', password='passwd', rank=1),
-    Types(name='mytype', enabled=0),
+@pytest.mark.parametrize('item_dict', [
+    {'model': Users, 'args': {'name':'dummy_user', 'email':'email', 'password':'passwd', 'rank':1}},
+    {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
+    {'model': AccessRules, 'args': {'level': 1}}
 ])
-def test_items_io(item):
+def test_items_io(item_dict):
     """
     Verifies that is possible to create and delete items.
     """
+    model = item_dict['model']
+    args = item_dict['args']
+    item = model(**args)
     item.save()
     assert getattr(item, 'id') != None
     item.delete_instance()
