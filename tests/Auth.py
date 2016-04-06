@@ -16,6 +16,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
 
 from efesto.Auth import *
 from efesto.Base import db, config
+from efesto.Models import Users, EternalTokens
 
 
 @pytest.fixture
@@ -96,3 +97,23 @@ def test_parse_auth_header():
     auth_string = "Basic %s" % (string64)
     result = parse_auth_header(auth_string)
     assert result == original_string
+
+
+def test_token_authentication_failure():
+    assert authenticate_by_token('notright') == None
+
+
+def test_token_authentication():
+    original_string = "%s:" % (generate_token(decode=True, user='user'))
+    string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
+    auth_string = "Basic %s" % (string64)
+    result = authenticate_by_token(auth_string)
+    assert result == 'user'
+
+
+def test_token_authentication_eternal(dummy_user, token):
+    original_string = "%s:" % (generate_token(decode=True, token=token.token))
+    string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
+    auth_string = "Basic %s" % (string64)
+    result = authenticate_by_token(auth_string)
+    assert result == dummy_user.name
