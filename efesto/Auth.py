@@ -23,7 +23,7 @@ def read_token(token):
     return s.loads(token)
 
 
-def authenticate(username, password):
+def authenticate_by_password(username, password):
     """
     Authenticates a user by username and password. Usually this occurs only
     when an user needs a token.

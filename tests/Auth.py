@@ -72,12 +72,12 @@ def test_read_token(serializer):
     assert token_dict == {'user':'random'}
 
 
-def test_authentication_failure():
-    assert authenticate('myuser', 'mypasswd') == None
+def test_password_authentication_failure():
+    assert authenticate_by_password('myuser', 'mypasswd') == None
 
 
-def test_authentication(dummy_user):
-    assert authenticate(dummy_user.name, 'sample') == dummy_user
+def test_password_authentication_failureauthentication(dummy_user):
+    assert authenticate_by_password(dummy_user.name, 'sample') == dummy_user
 
 
 def test_parse_auth_header():
