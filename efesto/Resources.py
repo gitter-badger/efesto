@@ -20,10 +20,7 @@ def make_collection(model):
     def on_get(self, request, response):
         user = None
         if request.auth:
-            try:
-                user = read_token(parse_auth_header(request.auth)[:-1])['user']
-            except:
-                user = None
+            user = authenticate_by_token(request.auth)
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
@@ -36,10 +33,7 @@ def make_collection(model):
     def on_post(self, request, response):
         user = None
         if request.auth:
-            try:
-                user = read_token(parse_auth_header(request.auth)[:-1])['user']
-            except:
-                user = None
+            user = authenticate_by_token(request.auth)
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
@@ -61,10 +55,7 @@ def make_resource(model):
     def on_get(self, request, response, id=0):
         user = None
         if request.auth:
-            try:
-                user = read_token(parse_auth_header(request.auth)[:-1])['user']
-            except:
-                user = None
+            user = authenticate_by_token(request.auth)
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
@@ -87,10 +78,7 @@ def make_resource(model):
     def on_delete(self, request, response, id=0):
         user = None
         if request.auth:
-            try:
-                user = read_token(parse_auth_header(request.auth)[:-1])['user']
-            except:
-                user = None
+            user = authenticate_by_token(request.auth)
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
@@ -106,10 +94,7 @@ def make_resource(model):
     def on_patch(self, request, response, id=0):
         user = None
         if request.auth:
-            try:
-                user = read_token(parse_auth_header(request.auth)[:-1])['user']
-            except:
-                user = None
+            user = authenticate_by_token(request.auth)
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
