@@ -231,6 +231,19 @@ def test_fields_io():
     field.delete_instance()
 
 
+def test_eternal_tokens_io():
+    """
+    Verifies that is possible to create and delete an EternalTokens instance.
+    """
+    user = Users(name='randuser', email='mail', password='p', rank=1)
+    user.save()
+    token = EternalTokens(name='mytoken', user=user.id, token='string')
+    token.save()
+    assert getattr(token, 'id') != None
+    token.delete_instance()
+    user.delete_instance()
+
+
 def test_make_model_disabled(custom_type, custom_field):
     """
     Verifies that make_model raises an exception when trying to generate
