@@ -36,13 +36,6 @@ def dummy_user(request):
 
 
 @pytest.fixture
-def auth_string():
-    token = "%s:" % (generate_token(decode=True, user='myuser'))
-    string64 = base64.b64encode( token.encode("latin-1") ).decode("latin-1")
-    return "Basic %s" % (string64)
-
-
-@pytest.fixture
 def token(request, dummy_user):
     new_token = EternalTokens(name='mytoken', user=dummy_user.id, token='token')
     new_token.save()
@@ -50,6 +43,16 @@ def token(request, dummy_user):
         new_token.delete_instance()
     request.addfinalizer(teardown)
     return new_token
+
+
+@pytest.fixture(params=['client', 'server'])
+def auth_string(request, token):
+    if request.param == 'client':
+        token_string = "%s:" % (generate_token(decode=True, user='myuser'))
+    else:
+        token_string = "%s:" % (generate_token(decode=True, token=token.token))
+    string64 = base64.b64encode( token_string.encode("latin-1") ).decode("latin-1")
+    return "Basic %s" % (string64)
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
