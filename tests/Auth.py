@@ -96,15 +96,3 @@ def test_parse_auth_header():
     auth_string = "Basic %s" % (string64)
     result = parse_auth_header(auth_string)
     assert result == original_string
-
-
-"""
-def test_generate_eternal_token():
-    #Tests the generation of an eternal token.
-    raise NotImplementedError("This test has not been implemented yet!")
-
-
-def test_revoke_eternal_token():
-    #Tests the revocation of an eternal token
-    raise NotImplementedError("This test has not been implemented yet!")
-"""
