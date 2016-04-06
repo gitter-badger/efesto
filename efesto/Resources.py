@@ -144,6 +144,13 @@ class TokensResource:
         if authentication == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
-        token = generate_token(decode=True, user=request.params['username'])
+        if 'eternal' in request.params and request.params['eternal'] == '1':
+            try:
+                t = EternalTokens.get( EternalTokens.name == request.params['token_name'], EternalTokens.user == authentication.id  ).token
+            except:
+                raise falcon.HTTPNotFound
+            token = generate_token(decode=True, token=t)
+        else:
+            token = generate_token(decode=True, user=request.params['username'])
         response.status = falcon.HTTP_OK
         response.body = json.dumps({'token': token})
