@@ -229,6 +229,7 @@ def test_fields_io():
     field.save()
     assert getattr(field, 'id') != None
     field.delete_instance()
+    custom_type.delete_instance()
 
 
 def test_eternal_tokens_io():
