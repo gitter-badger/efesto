@@ -189,12 +189,21 @@ def test_make_resource_not_found(client, app, auth_string, model, method):
     assert response.status == falcon.HTTP_NOT_FOUND
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
-def test_make_resource_get_item(client, app, auth_string, model):
+@pytest.mark.parametrize('item_dict', [
+    {'model': Users, 'args': {'name':'dummy_user', 'email':'email', 'password':'passwd', 'rank':1}},
+    {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
+    {'model': AccessRules, 'args': {'level': 1}}
+])
+def test_make_resource_get_item(client, app, auth_string, item_dict):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed and an item is retrieved.
     """
+    # setup
+    model = item_dict['model']
+    new_item = model(**item_dict['args'])
+    new_item.save()
+    # test
     item = model.get()
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
@@ -213,6 +222,8 @@ def test_make_resource_get_item(client, app, auth_string, model):
     body = json.loads(response.body)
     for i in model_fields:
         assert body[i] == getattr(item, i)
+    # teardown
+    new_item.delete_instance()
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
