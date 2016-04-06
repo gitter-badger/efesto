@@ -6,7 +6,7 @@ import base64
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
-from .Models import Users
+from .Models import Users, EternalTokens
 from .Base import config
 from .Crypto import compare_hash
 
@@ -41,3 +41,16 @@ def parse_auth_header(auth_string):
     Parses a basic auth header.
     """
     return base64.b64decode(auth_string.split()[1]).decode("latin-1")
+
+
+def authenticate_by_token(auth_header):
+    """
+    """
+    try:
+        auth_dict = read_token(parse_auth_header(auth_header)[:-1])
+        if 'token' in auth_dict:
+            return EternalTokens.get( EternalTokens.token == auth_dict['token']).user.name
+        else:
+            return auth_dict['user']
+    except:
+        return None
