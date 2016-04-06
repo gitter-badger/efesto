@@ -11,7 +11,7 @@ import pytest
 from peewee import FieldDescriptor, RelationDescriptor
 
 
-from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens
+from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
 from efesto.Base import db
 from efesto.Resources import *
 from efesto.Auth import *
@@ -92,6 +92,25 @@ def test_make_collection_get_auth(client, app, auth_string, model):
     response = client.get('/endpoint', headers={'authorization':auth_string})
     assert response.status == falcon.HTTP_OK
     assert len(json.loads(response.body)) == model.select().limit(20).count()
+
+
+def test_make_collection_make_model(client, app, auth_string):
+    """
+    Verifies that make_collection can use make_model's generated models.
+    """
+    custom_type = Types(name='mycustomtype', enabled=1)
+    custom_type.save()
+    custom_field = Fields(name='f', type=custom_type.id, field_type='string')
+    custom_field.save()
+    model = make_model(custom_type)
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint', headers={'authorization':auth_string})
+    assert response.status == falcon.HTTP_OK
+    assert len(json.loads(response.body)) == model.select().limit(20).count()
+    # teardown
+    custom_field.delete_instance()
+    custom_type.delete_instance()
 
 
 @pytest.mark.parametrize('test_args',
