@@ -106,9 +106,6 @@ def make_model(custom_type):
     Generates a model based on a Type entry, using the columns specified in
     Fields.
     """
-    if custom_type.name in db.get_tables():
-        raise ValueError("A model for this type has been already generated")
-
     if custom_type.enabled == True:
         attributes = {}
         attributes['owner'] = ForeignKeyField(Users)
