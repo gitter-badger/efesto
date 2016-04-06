@@ -24,6 +24,10 @@ def read_token(token):
 
 
 def authenticate(username, password):
+    """
+    Authenticates a user by username and password. Usually this occurs only
+    when an user needs a token.
+    """
     try:
         user = Users.get(Users.name == username)
         if compare_hash(password, user.password) == True:
