@@ -16,6 +16,7 @@ class Base(Model):
     """A base model that will use our Postgresql database"""
     class Meta:
         database = db
+        validate_backrefs = False
 
 
 class Users(Base):
