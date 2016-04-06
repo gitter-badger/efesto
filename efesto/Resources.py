@@ -133,7 +133,7 @@ class TokensResource:
             try:
                 t = EternalTokens.get( EternalTokens.name == request.params['token_name'], EternalTokens.user == authentication.id  ).token
             except:
-                raise falcon.HTTPNotFound
+                raise falcon.HTTPNotFound()
             token = generate_token(decode=True, token=t)
         else:
             token = generate_token(decode=True, user=request.params['username'])
