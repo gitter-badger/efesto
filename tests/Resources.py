@@ -42,6 +42,16 @@ def auth_string():
     return "Basic %s" % (string64)
 
 
+@pytest.fixture
+def token(request, dummy_user):
+    new_token = EternalTokens(name='mytoken', user=dummy_user.id, token='token')
+    new_token.save()
+    def teardown():
+        new_token.delete_instance()
+    request.addfinalizer(teardown)
+    return new_token
+
+
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'model']
