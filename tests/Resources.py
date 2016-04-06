@@ -226,6 +226,14 @@ def test_make_resource_get_item(client, app, auth_string, item_dict):
     new_item.delete_instance()
 
 
+def test_make_resource_get_fields():
+    raise NotImplemented("Not implemented!")
+
+
+def test_make_resource_get_tokens():
+    raise NotImplemented("Not implemented!")
+
+
 @pytest.mark.parametrize('item_dict', [
     {'model': Users, 'args': {'name':'dummy_user', 'email':'email', 'password':'passwd', 'rank':1}},
     {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
@@ -251,6 +259,14 @@ def test_make_resource_delete_item(client, app, auth_string, item_dict):
     except:
         deleted = True
     assert deleted == True
+
+
+def test_make_resource_delete_fields():
+    raise NotImplemented("Not implemented!")
+
+
+def test_make_resource_delete_tokens():
+    raise NotImplemented("Not implemented!")
 
 
 @pytest.mark.parametrize('data', [
