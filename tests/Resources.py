@@ -187,6 +187,27 @@ def test_make_collection_post_auth(client, app, auth_string, test_args):
     item.delete_instance()
 
 
+def test_make_collection_make_model_post(client, app, dummy_type, custom_field):
+    """
+    """
+    model = make_model(dummy_type)
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.post('/endpoint', {'f':'text'})
+    assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
+def test_make_collection_make_model_post_auth(client, app, auth_string,
+        dummy_type, custom_field):
+    """
+    """
+    model = make_model(dummy_type)
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.post('/endpoint', {'f':'text'})
+    assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_patch', 'on_delete', 'model']
