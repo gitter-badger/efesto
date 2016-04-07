@@ -114,10 +114,24 @@ def test_make_collection_get_auth(client, app, auth_string, model):
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
 
+def test_make_collection_make_model(client, app, dummy_type, custom_field):
+    """
+    Verifies that make_collection can use make_model's generated models and
+    return a 401 to simple GET requests.
+    """
+    model = make_model(dummy_type)
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint')
+    assert response.status == falcon.HTTP_UNAUTHORIZED
+    assert response.__dict__['headers']['www-authenticate'] != None
+
+
 def test_make_collection_make_model_get_auth(client, app, auth_string,
         dummy_type, custom_field):
     """
-    Verifies that make_collection can use make_model's generated models.
+    Verifies that make_collection can use make_model's generated models and
+    return a 200 when auth is sent.
     """
     model = make_model(dummy_type)
     resource = make_collection(model)()
