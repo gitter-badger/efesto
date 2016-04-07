@@ -80,7 +80,7 @@ class AccessRules(Base):
     user = ForeignKeyField(Users, null=True)
     rank = IntegerField(null=True)
     item = IntegerField(null=True)
-    type = ForeignKeyField(Types, null=True)
+    model = CharField(null=True)
     level = IntegerField()
     read = IntegerField(null=True)
     edit = IntegerField(null=True)
