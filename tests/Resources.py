@@ -114,7 +114,8 @@ def test_make_collection_get_auth(client, app, auth_string, model):
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
 
-def test_make_collection_make_model(client, app, auth_string, dummy_type, custom_field):
+def test_make_collection_make_model_get_auth(client, app, auth_string,
+        dummy_type, custom_field):
     """
     Verifies that make_collection can use make_model's generated models.
     """
