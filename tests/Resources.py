@@ -45,6 +45,26 @@ def token(request, dummy_user):
     return new_token
 
 
+@pytest.fixture
+def dummy_type(request):
+    custom_type = Types(name='mycustomtype', enabled=1)
+    custom_type.save()
+    def teardown():
+        custom_type.delete_instance()
+    request.addfinalizer(teardown)
+    return custom_type
+
+
+@pytest.fixture
+def custom_field(request, dummy_type):
+    custom_field = Fields(name='f', type=dummy_type.id, field_type='string')
+    custom_field.save()
+    def teardown():
+        custom_field.delete_instance()
+    request.addfinalizer(teardown)
+    return custom_field
+
+
 @pytest.fixture(params=['client', 'server'])
 def auth_string(request, token):
     if request.param == 'client':
@@ -94,23 +114,16 @@ def test_make_collection_get_auth(client, app, auth_string, model):
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
 
-def test_make_collection_make_model(client, app, auth_string):
+def test_make_collection_make_model(client, app, auth_string, dummy_type, custom_field):
     """
     Verifies that make_collection can use make_model's generated models.
     """
-    custom_type = Types(name='mycustomtype', enabled=1)
-    custom_type.save()
-    custom_field = Fields(name='f', type=custom_type.id, field_type='string')
-    custom_field.save()
-    model = make_model(custom_type)
+    model = make_model(dummy_type)
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint', headers={'authorization':auth_string})
     assert response.status == falcon.HTTP_OK
     assert len(json.loads(response.body)) == model.select().limit(20).count()
-    # teardown
-    custom_field.delete_instance()
-    custom_type.delete_instance()
 
 
 @pytest.mark.parametrize('test_args',
