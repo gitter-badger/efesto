@@ -154,7 +154,7 @@ def test_fields_model(column_dict):
         { 'column': 'level', 'field': IntegerField },
         { 'column': 'read', 'field': IntegerField, 'constraints': {'null': True} },
         { 'column': 'edit', 'field': IntegerField, 'constraints': {'null': True} },
-        { 'column': 'delete', 'field': IntegerField, 'constraints':{'null': True} }
+        { 'column': 'eliminate', 'field': IntegerField, 'constraints':{'null': True} }
     ]
 )
 def test_access_rules_model(column_dict):
