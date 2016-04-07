@@ -79,7 +79,7 @@ class AccessRules(Base):
     level = IntegerField()
     read = IntegerField(null=True)
     edit = IntegerField(null=True)
-    delete = IntegerField(null=True)
+    eliminate = IntegerField(null=True)
 
 
 class EternalTokens(Base):
