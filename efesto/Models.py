@@ -30,6 +30,11 @@ class Users(Base):
     rank = IntegerField()
     last_login = DateTimeField(null=True)
 
+    def can(self, action, item):
+        if self.rank == 10:
+            return True
+        return False
+
 
 @pre_save(sender=Users)
 def on_user_save(model_class, instance, created):
