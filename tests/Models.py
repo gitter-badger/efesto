@@ -150,7 +150,7 @@ def test_fields_model(column_dict):
         { 'column': 'user', 'field': ForeignKeyField, 'constraints':{'null': True} },
         { 'column': 'rank', 'field': IntegerField, 'constraints':{'null': True} },
         { 'column': 'item', 'field': IntegerField, 'constraints':{'null': True} },
-        { 'column': 'type', 'field': ForeignKeyField, 'constraints':{'null': True} },
+        { 'column': 'model', 'field': CharField, 'constraints':{'null': True} },
         { 'column': 'level', 'field': IntegerField },
         { 'column': 'read', 'field': IntegerField, 'constraints': {'null': True} },
         { 'column': 'edit', 'field': IntegerField, 'constraints': {'null': True} },
