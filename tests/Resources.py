@@ -302,6 +302,19 @@ def test_make_resource_get_tokens():
     raise NotImplemented("Not implemented!")
 
 
+@pytest.mark.parametrize('method',
+    ['on_get', 'on_patch', 'on_delete', 'model']
+)
+def test_make_resource_make_model(client, app, dummy_type, custom_field, method):
+    """
+    Tests whether make_resource can correctly generate a resource using
+    make_model.
+    """
+    model = make_model(dummy_type)
+    resource = make_resource(model)
+    assert hasattr(resource, method)
+
+
 @pytest.mark.parametrize('item_dict', [
     {'model': Users, 'args': {'name':'dummy_user', 'email':'email', 'password':'passwd', 'rank':1}},
     {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
