@@ -148,3 +148,59 @@ def test_users_override_stack_by_model(dummy_user, action, item):
     # tear down
     new_rule.delete_instance()
     rule.delete_instance()
+
+
+def test_users_override_by_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_users_override_check_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_users_override_stack_by_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_by_model():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_check_model():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_stack_by_model():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_by_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_check_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_stack_by_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_users_override_stack_by_item_on_model():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_rank_override_stack_by_item_on_model():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_users_override_rank_stack_by_model():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_users_override_rank_stack_by_item():
+    raise NotImplementedError("Not implemented!")
+
+
+def test_users_override_rank_stack_by_item_on_model():
+    raise NotImplementedError("Not implemented!")
