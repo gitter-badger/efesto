@@ -71,17 +71,20 @@ def test_admin_can(admin_user, action, args):
 
 
 @pytest.mark.parametrize('args', [
-    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}, 'name':'users' },
-    {'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'name':'types' },
-    {'model':AccessRules, 'args': {'level': 1}, 'name':'accessrules' }
+    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1} },
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
+    {'model':AccessRules, 'args': {'level': 1} }
 ])
 def test_users_read_override(dummy_user, args):
     """
     Tests overriding an user read permissions on models.
     """
-    rule = AccessRules(user=dummy_user, level=2, model=args['name'], read=1)
-    rule.save()
+    # set up
     model = args['model']
+    model_name = getattr(model._meta, 'db_table')
+    rule = AccessRules(user=dummy_user, level=2, model=model_name, read=1)
+    rule.save()
+    # test
     item = model(**args['args'])
     assert dummy_user.can('read', item) == True
     assert dummy_user.can('edit', item) == False
@@ -94,27 +97,29 @@ def test_users_read_override(dummy_user, args):
 @pytest.mark.parametrize('args', [
     {
         'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
-        'name':'users', 'model2': Types, 'args2':{'name':'mytype', 'enabled':0}
+        'model2': Types, 'args2':{'name':'mytype', 'enabled':0}
     },
     {
-        'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'name':'types',
+        'model':Types, 'args': {'name':'mytype', 'enabled':0},
         'model2':AccessRules, 'args2':{'level': 1}
     },
     {
-        'model':AccessRules, 'args': {'level': 1}, 'name':'accessrules',
-        'model2':Users, 'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
+        'model':AccessRules, 'args': {'level': 1}, 'model2':Users,
+        'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
     }
 ])
 def test_users_read_override_check_model(dummy_user, args):
     """
     Verifies that permissions rules affect only the specified model.
     """
-    rule = AccessRules(user=dummy_user, level=2, model=args['name'], read=1)
-    rule.save()
+    # set up
     model = args['model']
-
+    model_name = getattr(model._meta, 'db_table')
+    rule = AccessRules(user=dummy_user, level=2, model=model_name, read=1)
+    rule.save()
     item = args['model2'](**args['args2'])
     item.save()
+    # test
     new_item = model(**args['args'])
     assert dummy_user.can('read', new_item) == True
     assert dummy_user.can('read', item) == False
@@ -126,23 +131,26 @@ def test_users_read_override_check_model(dummy_user, args):
 
 @pytest.mark.parametrize('action', ['edit', 'eliminate'])
 @pytest.mark.parametrize('args', [
-    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}, 'name':'users' },
-    {'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'name':'types' },
-    {'model':AccessRules, 'args': {'level': 1}, 'name':'accessrules' }
+    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}},
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
+    {'model':AccessRules, 'args': {'level': 1} }
 ])
 def test_users_override(dummy_user, action, args):
     """
     Tests overriding an user edit and eliminate permissions on models.
     """
-    actions = ['read', 'edit', 'eliminate']
-    actions.remove(action)
-    rule_dict = {'user': dummy_user, 'level':2, 'model':args['name']}
+    # set up
+    model = args['model']
+    model_name = getattr(model._meta, 'db_table')
+    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
     rule_dict[action] = 1
     rule = AccessRules(**rule_dict)
     rule.save()
-    model = args['model']
+    actions = ['read', 'edit', 'eliminate']
+    actions.remove(action)
     item = model(**args['args'])
     item.save()
+    # test
     assert dummy_user.can(action, item) == True
     for i in actions:
         assert dummy_user.can(i, item) == False
@@ -153,25 +161,26 @@ def test_users_override(dummy_user, action, args):
 
 @pytest.mark.parametrize('action', ['edit', 'eliminate'])
 @pytest.mark.parametrize('args', [
-    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}, 'name':'users' },
-    {'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'name':'types' },
-    {'model':AccessRules, 'args': {'level': 1}, 'name':'accessrules' }
+    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}},
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
+    {'model':AccessRules, 'args': {'level': 1}}
 ])
 def test_users_override_stack(dummy_user, action, args):
     """
     Tests permissions when there are more rules for the same target.
     """
-    rule_dict = {'user': dummy_user, 'level':2, 'model':args['name']}
+    # set up
+    model = args['model']
+    model_name = getattr(model._meta, 'db_table')
+    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
     rule_dict[action] = 1
     rule = AccessRules(**rule_dict)
     rule.save()
-
-    new_dict = {'user': dummy_user, 'level':3, 'model':args['name']}
+    new_dict = {'user': dummy_user, 'level':3, 'model':model_name}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
-
-    model = args['model']
+    # test
     item = model(**args['args'])
     item.save()
     assert dummy_user.can(action, item) == False
