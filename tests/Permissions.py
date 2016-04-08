@@ -150,8 +150,29 @@ def test_users_override_stack_by_model(dummy_user, action, item):
     rule.delete_instance()
 
 
-def test_users_override_by_item():
-    raise NotImplementedError("Not implemented!")
+def test_users_override_by_item(dummy_user, action, item):
+    """
+    Verifies that an item rule can override a more generic model rule
+    """
+    # set up
+    model_name = getattr(item._meta, 'db_table')
+    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict[action] = 1
+    rule = AccessRules(**rule_dict)
+    rule.save()
+    second_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    second_dict[action] = 0
+    second_rule = AccessRules(**second_dict)
+    second_rule.save()
+    actions = ['read', 'edit', 'eliminate']
+    actions.remove(action)
+    # test
+    assert dummy_user.can(action, item) == True
+    for i in actions:
+        assert dummy_user.can(i, item) == False
+    # tear down
+    rule.delete_instance()
+    second_rule.delete_instance()
 
 
 def test_users_override_check_item():
