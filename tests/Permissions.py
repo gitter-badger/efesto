@@ -115,3 +115,33 @@ def test_users_override(dummy_user, action, args):
     # tear down
     item.delete_instance()
     rule.delete_instance()
+
+
+@pytest.mark.parametrize('action', ['edit', 'eliminate'])
+@pytest.mark.parametrize('args', [
+    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}, 'name':'users' },
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'name':'types' },
+    {'model':AccessRules, 'args': {'level': 1}, 'name':'accessrules' }
+])
+def test_users_override_stack(dummy_user, action, args):
+    """
+    Tests permissions when there are more rules for the same target.
+    """
+    rule_dict = {'user': dummy_user, 'level':2, 'model':args['name']}
+    rule_dict[action] = 1
+    rule = AccessRules(**rule_dict)
+    rule.save()
+
+    new_dict = {'user': dummy_user, 'level':3, 'model':args['name']}
+    new_dict[action] = 0
+    new_rule = AccessRules(**new_dict)
+    new_rule.save()
+
+    model = args['model']
+    item = model(**args['args'])
+    item.save()
+    assert dummy_user.can(action, item) == False
+    # tear down
+    item.delete_instance()
+    new_rule.delete_instance()
+    rule.delete_instance()
