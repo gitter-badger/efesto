@@ -9,6 +9,7 @@ import pytest
 
 from efesto.Models import (Users, Types, Fields, AccessRules, EternalTokens,
                             make_model)
+from efesto.Base import db
 
 
 @pytest.fixture(scope='module')
@@ -87,6 +88,39 @@ def test_users_read_override(dummy_user, args):
     assert dummy_user.can('eliminate', item) == False
     # tear down
     item.delete_instance()
+    rule.delete_instance()
+
+
+@pytest.mark.parametrize('args', [
+    {
+        'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
+        'name':'users', 'model2': Types, 'args2':{'name':'mytype', 'enabled':0}
+    },
+    {
+        'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'name':'types',
+        'model2':AccessRules, 'args2':{'level': 1}
+    },
+    {
+        'model':AccessRules, 'args': {'level': 1}, 'name':'accessrules',
+        'model2':Users, 'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
+    }
+])
+def test_users_read_override_check_model(dummy_user, args):
+    """
+    Verifies that permissions rules affect only the specified model.
+    """
+    rule = AccessRules(user=dummy_user, level=2, model=args['name'], read=1)
+    rule.save()
+    model = args['model']
+
+    item = args['model2'](**args['args2'])
+    item.save()
+    new_item = model(**args['args'])
+    assert dummy_user.can('read', new_item) == True
+    assert dummy_user.can('read', item) == False
+    # tear down
+    item.delete_instance()
+    new_item.delete_instance()
     rule.delete_instance()
 
 
