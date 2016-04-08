@@ -75,7 +75,7 @@ def test_admin_can(admin_user, action, args):
     {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
     {'model':AccessRules, 'args': {'level': 1} }
 ])
-def test_users_read_override(dummy_user, args):
+def test_users_read_override_by_model(dummy_user, args):
     """
     Tests overriding an user read permissions on models.
     """
@@ -135,7 +135,7 @@ def test_users_read_override_check_model(dummy_user, args):
     {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
     {'model':AccessRules, 'args': {'level': 1} }
 ])
-def test_users_override(dummy_user, action, args):
+def test_users_override_by_model(dummy_user, action, args):
     """
     Tests overriding an user edit and eliminate permissions on models.
     """
@@ -165,7 +165,7 @@ def test_users_override(dummy_user, action, args):
     {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
     {'model':AccessRules, 'args': {'level': 1}}
 ])
-def test_users_override_stack(dummy_user, action, args):
+def test_users_override_stack_by_model(dummy_user, action, args):
     """
     Tests permissions when there are more rules for the same target.
     """
