@@ -3,8 +3,11 @@
     The models used by Efesto.
 """
 import os
+"""
 from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
                     BooleanField, ForeignKeyField)
+                    """
+from peewee import *
 from playhouse.signals import Model, pre_save
 
 
@@ -34,9 +37,12 @@ class Users(Base):
         if self.rank == 10:
             return True
         else:
-            rules = AccessRules.select().where( AccessRules.user == self.id, getattr(AccessRules, action) != None )
-            if len(rules)>0:
-                return True
+            rules = AccessRules.select().where( AccessRules.user == self.id, getattr(AccessRules, action) != None ).order_by(AccessRules.level.desc()).limit(1)
+            if len(rules) > 0:
+                if getattr(rules[0], action) == 1:
+                    return True
+                else:
+                    return False
             return False
 
 
