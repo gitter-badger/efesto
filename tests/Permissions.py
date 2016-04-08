@@ -34,7 +34,11 @@ def admin_user(request):
     return admin
 
 
-@pytest.mark.parametrize('action', ['read', 'edit', 'eliminate'])
+@pytest.fixture(params=['read', 'edit', 'eliminate'])
+def action(request):
+    return request.param
+
+
 @pytest.mark.parametrize('args', [
     {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1} },
     {'model':Types, 'args': {'name':'mytype', 'enabled':0} },
@@ -52,7 +56,6 @@ def test_users_can(dummy_user, action, args):
     item.delete_instance()
 
 
-@pytest.mark.parametrize('action', ['read', 'edit', 'eliminate'])
 @pytest.mark.parametrize('args', [
     {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1} },
     {'model':Types, 'args': {'name':'mytype', 'enabled':0} },
@@ -70,7 +73,6 @@ def test_admin_can(admin_user, action, args):
     item.delete_instance()
 
 
-@pytest.mark.parametrize('action', ['read','edit', 'eliminate'])
 @pytest.mark.parametrize('args', [
     {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}},
     {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
@@ -100,7 +102,6 @@ def test_users_override_by_model(dummy_user, action, args):
     rule.delete_instance()
 
 
-@pytest.mark.parametrize('action', ['read','edit', 'eliminate'])
 @pytest.mark.parametrize('args', [
     {
         'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
@@ -142,7 +143,6 @@ def test_users_override_check_model(dummy_user, action, args):
     rule.delete_instance()
 
 
-@pytest.mark.parametrize('action', ['read','edit', 'eliminate'])
 @pytest.mark.parametrize('args', [
     {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}},
     {'model':Types, 'args': {'name':'mytype', 'enabled':0}},
