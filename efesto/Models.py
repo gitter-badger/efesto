@@ -33,7 +33,12 @@ class Users(Base):
     def can(self, action, item):
         if self.rank == 10:
             return True
-        return False
+        else:
+            rules = AccessRules.select().where( AccessRules.user == self.id, getattr(AccessRules, action) != None )
+            if len(rules)>0:
+                return True
+            return False
+
 
 
 @pre_save(sender=Users)
