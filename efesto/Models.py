@@ -37,7 +37,10 @@ class Users(Base):
         if self.rank == 10:
             return True
         else:
-            rules = AccessRules.select().where( AccessRules.user == self.id, getattr(AccessRules, action) != None ).order_by(AccessRules.level.desc()).limit(1)
+            model_name = getattr(item._meta, 'db_table')
+            rules = AccessRules.select()\
+            .where( AccessRules.user == self.id, AccessRules.model == model_name, getattr(AccessRules, action) != None )\
+            .order_by(AccessRules.level.desc()).limit(1)
             if len(rules) > 0:
                 if getattr(rules[0], action) == 1:
                     return True
