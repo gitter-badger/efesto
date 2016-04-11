@@ -40,7 +40,7 @@ class Users(Base):
             model_name = getattr(item._meta, 'db_table')
             rules = AccessRules.select()\
             .where(
-                AccessRules.user == self.id,
+                (AccessRules.user == self.id) | (AccessRules.rank == self.rank),
                 AccessRules.model == model_name,
                 (AccessRules.item == None) | (AccessRules.item == item.id),
                 getattr(AccessRules, action) != None
