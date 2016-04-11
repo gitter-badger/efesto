@@ -141,6 +141,33 @@ def test_make_collection_make_model_get_auth(client, app, auth_string,
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
 
+@pytest.mark.parametrize('args', [
+    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}, 'query':{'name':'u'}},
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'query':{'name':'mytype'} },
+    {'model': AccessRules, 'args': {'level': 1}, 'query':{'level':1} }
+])
+def test_make_collection_query(client, app, auth_string, args):
+    """
+    Tests whether make_collection supports GET requests with search parameters.
+    """
+    model = args['model']
+    item = model(**args['args'])
+    item.save()
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    query_string = ''
+    for key in args['query']:
+        query_string += '%s=%s&' % (key, args['query'][key])
+    query_string = query_string[:-1]
+    url = "/endpoint?%s" % (query_string)
+    response = client.get(url, headers={'authorization':auth_string})
+    response_items = json.loads(response.body)
+    for i in response_items:
+        for k in args['query']:
+            assert i[k] == args['query'][k]
+    item.delete_instance()
+    
+
 @pytest.mark.parametrize('test_args',
     [
         {'model': Users, 'data': {'name':'test', 'password':'passwd'} },
