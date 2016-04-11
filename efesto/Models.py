@@ -42,6 +42,7 @@ class Users(Base):
             .where(
                 AccessRules.user == self.id,
                 AccessRules.model == model_name,
+                (AccessRules.item == None) | (AccessRules.item == item.id),
                 getattr(AccessRules, action) != None
             )\
             .order_by(AccessRules.level.desc(), AccessRules.item.asc()).limit(1)
