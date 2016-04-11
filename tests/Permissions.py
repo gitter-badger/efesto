@@ -318,8 +318,30 @@ def test_rank_override_stack_by_model(dummy_user, action, item):
     rule.delete_instance()
 
 
-def test_rank_override_by_item():
-    raise NotImplementedError("Not implemented!")
+def test_rank_override_by_item(dummy_user, action, item):
+    """
+    Verifies that an item rule specified for a rank can override a more generic
+    model rule for a rank.
+    """
+    # set up
+    model_name = getattr(item._meta, 'db_table')
+    rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict[action] = 1
+    rule = AccessRules(**rule_dict)
+    rule.save()
+    second_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
+    second_dict[action] = 0
+    second_rule = AccessRules(**second_dict)
+    second_rule.save()
+    actions = ['read', 'edit', 'eliminate']
+    actions.remove(action)
+    # test
+    assert dummy_user.can(action, item) == True
+    for i in actions:
+        assert dummy_user.can(i, item) == False
+    # tear down
+    rule.delete_instance()
+    second_rule.delete_instance()
 
 
 def test_rank_override_check_item():
