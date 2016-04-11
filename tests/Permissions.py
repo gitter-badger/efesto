@@ -175,8 +175,43 @@ def test_users_override_by_item(dummy_user, action, item):
     second_rule.delete_instance()
 
 
-def test_users_override_check_item():
-    raise NotImplementedError("Not implemented!")
+@pytest.mark.parametrize('args', [
+    {
+        'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
+        'args2':{'name':'u2', 'email':'mail', 'password':'p', 'rank':1}
+    },
+    {
+        'model':Types, 'args': {'name':'mytype', 'enabled':0},
+        'args2':{'name':'mytype2', 'enabled':0}
+    },
+    {
+        'model':AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
+    }
+])
+def test_users_override_check_item(dummy_user, action, args):
+    """
+    Verifies that permissions rules set on an item affect only the specified
+    item.
+    """
+    model = args['model']
+    model_name = getattr(model._meta, 'db_table')
+    #
+    item = model(**args['args'])
+    item.save()
+    new_item = model(**args['args2'])
+    new_item.save()
+    #
+    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict[action] = 1
+    rule = AccessRules(**rule_dict)
+    rule.save()
+    # test
+    assert dummy_user.can(action, item) == True
+    assert dummy_user.can(action, new_item) == False
+    # teardown
+    item.delete_instance()
+    new_item.delete_instance()
+    rule.delete_instance()
 
 
 def test_users_override_stack_by_item():
