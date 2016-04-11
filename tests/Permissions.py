@@ -235,8 +235,24 @@ def test_users_override_stack_by_item(dummy_user, action, item):
     rule.delete_instance()
 
 
-def test_rank_override_by_model():
-    raise NotImplementedError("Not implemented!")
+def test_rank_override_by_model(dummy_user, action, item):
+    """
+    Tests overriding a rank permissions on models.
+    """
+    # set up
+    model_name = getattr(item._meta, 'db_table')
+    rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name}
+    rule_dict[action] = 1
+    rule = AccessRules(**rule_dict)
+    rule.save()
+    actions = ['read', 'edit', 'eliminate']
+    actions.remove(action)
+    # test
+    assert dummy_user.can(action, item) == True
+    for i in actions:
+        assert dummy_user.can(i, item) == False
+    # tear down
+    rule.delete_instance()
 
 
 def test_rank_override_check_model():
