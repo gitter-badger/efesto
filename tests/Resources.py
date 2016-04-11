@@ -189,6 +189,21 @@ def test_make_collection_query_ignored_args(client, app, auth_string, args):
     assert response.status == falcon.HTTP_OK
 
 
+def test_make_collection_query_pagination(client, app, auth_string):
+    """
+    Verifies that make_collection supports pagination arguments.
+    """
+    new_user = Users(** {'name':'test', 'password':'passwd', 'email':'mail', 'rank':1})
+    new_user.save()
+    resource = make_collection(Users)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint?page=2&items=1', headers={'authorization':auth_string})
+    items = json.loads(response.body)
+    assert len(items) == 1
+    assert items[0] == Users.select().paginate(2, 1).dicts()[0]
+    new_user.delete_instance()
+
+
 @pytest.mark.parametrize('test_args',
     [
         {'model': Users, 'data': {'name':'test', 'password':'passwd'} },
