@@ -166,7 +166,28 @@ def test_make_collection_query(client, app, auth_string, args):
         for k in args['query']:
             assert i[k] == args['query'][k]
     item.delete_instance()
-    
+
+
+@pytest.mark.parametrize('args', [
+    {'model':Users, 'query':{'abc':'rnd'}},
+    {'model':Types, 'query':{'43erg':1023} },
+    {'model': AccessRules, 'query':{'potato':'valid'} }
+])
+def test_make_collection_query_ignored_args(client, app, auth_string, args):
+    """
+    Verifies that non-supported query parameters are ignored.
+    """
+    model = args['model']
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    query_string = ''
+    for key in args['query']:
+        query_string += '%s=%s&' % (key, args['query'][key])
+    query_string = query_string[:-1]
+    url = "/endpoint?%s" % (query_string)
+    response = client.get(url, headers={'authorization':auth_string})
+    assert response.status == falcon.HTTP_OK
+
 
 @pytest.mark.parametrize('test_args',
     [
