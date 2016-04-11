@@ -6,6 +6,7 @@ sys.path.insert(0, "")
 import json
 import base64
 import pytest
+import re
 
 
 from peewee import FieldDescriptor, RelationDescriptor
@@ -15,6 +16,28 @@ from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make
 from efesto.Base import db
 from efesto.Resources import *
 from efesto.Auth import *
+
+
+def parse_header_links(value):
+    links = []
+    replace_chars = " '\""
+    for val in re.split(", *<", value):
+        try:
+            url, params = val.split(";", 1)
+        except ValueError:
+            url, params = val, ''
+
+        link = {}
+        link["url"] = url.strip("<> '\"")
+        for param in params.split(";"):
+            try:
+                key, value = param.split("=")
+            except ValueError:
+                break
+
+            link[key.strip(replace_chars)] = value.strip(replace_chars)
+        links.append(link)
+    return links
 
 
 @pytest.fixture
