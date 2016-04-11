@@ -32,12 +32,20 @@ def make_collection(model):
                     if i in request.params:
                         params[i] = request.params[i]
 
+        page = 1
+        if 'page' in request.params:
+            page = int(request.params['page'])
+
+        items = 20
+        if 'items' in request.params:
+            items = int(request.params['items'])
+
         query = self.model.select()
         for i in params:
             query = query.where(getattr(self.model, i) == params[i])
 
         body = []
-        for i in query.limit(20).dicts():
+        for i in query.paginate(page, items).dicts():
             body.append(i)
         response.body = json.dumps(body)
 
