@@ -25,9 +25,16 @@ def make_collection(model):
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
+        params = {}
+        for i in self.model.__dict__:
+            if isinstance(self.model.__dict__[i], FieldDescriptor):
+                if not isinstance(self.model.__dict__[i], RelationDescriptor):
+                    if i in request.params:
+                        params[i] = request.params[i]
+
         query = self.model.select()
-        for i in request.params:
-            query = query.where(getattr(self.model, i) == request.params[i])
+        for i in params:
+            query = query.where(getattr(self.model, i) == params[i])
 
         body = []
         for i in query.limit(20).dicts():
