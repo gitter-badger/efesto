@@ -259,8 +259,25 @@ def test_rank_override_check_model():
     raise NotImplementedError("Not implemented!")
 
 
-def test_rank_override_stack_by_model():
-    raise NotImplementedError("Not implemented!")
+def test_rank_override_stack_by_model(dummy_user, action, item):
+    """
+    Tests permissions when there are more rules for the same rank.
+    """
+    # set up
+    model_name = getattr(item._meta, 'db_table')
+    rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
+    rule_dict[action] = 1
+    rule = AccessRules(**rule_dict)
+    rule.save()
+    new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name}
+    new_dict[action] = 0
+    new_rule = AccessRules(**new_dict)
+    new_rule.save()
+    # test
+    assert dummy_user.can(action, item) == False
+    # tear down
+    new_rule.delete_instance()
+    rule.delete_instance()
 
 
 def test_rank_override_by_item():
