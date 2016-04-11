@@ -25,8 +25,12 @@ def make_collection(model):
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
+        query = self.model.select()
+        for i in request.params:
+            query = query.where(getattr(self.model, i) == request.params[i])
+
         body = []
-        for i in self.model.select().limit(20).dicts():
+        for i in query.limit(20).dicts():
             body.append(i)
         response.body = json.dumps(body)
 
