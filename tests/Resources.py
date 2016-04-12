@@ -205,6 +205,10 @@ def test_make_collection_query(client, app, auth_string, pagination_items, query
             elif value[0] == '!':
                 assert i[k.split('=')[0]] != value[1:]
             else:
+                try:
+                    value = int(value)
+                except:
+                    pass
                 assert i[k.split('=')[0]] == value
 
 
