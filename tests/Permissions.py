@@ -12,28 +12,6 @@ from efesto.Models import (Users, Types, Fields, AccessRules, EternalTokens,
 from efesto.Base import db
 
 
-@pytest.fixture(scope='module')
-def dummy_user(request):
-    dummy = Users(name='dummy', email='mail', password='sample', rank=1)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance(recursive=True, delete_nullable=True)
-    request.addfinalizer(teardown)
-    return dummy
-
-
-@pytest.fixture(scope='module')
-def admin_user(request):
-    admin = Users(name='dummyadmin', email='mail', password='sample', rank=10)
-    admin.save()
-
-    def teardown():
-        admin.delete_instance(recursive=True, delete_nullable=True)
-    request.addfinalizer(teardown)
-    return admin
-
-
 @pytest.fixture(params=['read', 'edit', 'eliminate'])
 def action(request):
     return request.param
@@ -61,11 +39,11 @@ def test_users_can(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
 
 
-def test_admin_can(admin_user, action, item):
+def test_admin_can(dummy_admin, action, item):
     """
     Verifies that Users.can can evaluate default permissions.
     """
-    assert admin_user.can(action, item) == True
+    assert dummy_admin.can(action, item) == True
 
 
 def test_users_override_by_model(dummy_user, action, item):
