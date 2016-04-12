@@ -99,9 +99,9 @@ def custom_field(request, dummy_type):
 
 
 @pytest.fixture(params=['client', 'server'])
-def auth_string(request, token):
+def auth_string(request, token, dummy_admin):
     if request.param == 'client':
-        token_string = "%s:" % (generate_token(decode=True, user='myuser'))
+        token_string = "%s:" % (generate_token(decode=True, user=dummy_admin.name))
     else:
         token_string = "%s:" % (generate_token(decode=True, token=token.token))
     string64 = base64.b64encode( token_string.encode("latin-1") ).decode("latin-1")
