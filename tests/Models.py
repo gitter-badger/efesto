@@ -41,18 +41,6 @@ def custom_fields(request, custom_type):
     return str_field, int_field, date_field
 
 
-@pytest.fixture(scope='module')
-def dummy_user(request):
-    db.connect()
-    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
-
-
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
@@ -287,7 +275,7 @@ def test_make_model_columns(custom_type, custom_fields):
 
         if column.nullable:
             assert getattr(field_object, 'nullable') == True
-            
+
 
 def test_make_model_ownership(custom_type, custom_fields):
     """
