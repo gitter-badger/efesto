@@ -45,7 +45,8 @@ class Users(Base):
                 (AccessRules.item == None) | (AccessRules.item == item.id),
                 getattr(AccessRules, action) != None
             )\
-            .order_by(AccessRules.level.desc(), AccessRules.item.asc()).limit(1)
+            .order_by(AccessRules.level.desc(), AccessRules.item.asc(), AccessRules.rank.desc())\
+            .limit(1)
             if len(rules) > 0:
                 if getattr(rules[0], action) == 1:
                     return True
