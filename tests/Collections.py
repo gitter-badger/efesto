@@ -45,6 +45,18 @@ def app():
 
 
 @pytest.fixture(scope='module')
+def dummy_admin(request):
+    db.connect()
+    dummy = Users(name='dummy', email='mail', password='sample', rank=10)
+    dummy.save()
+
+    def teardown():
+        dummy.delete_instance()
+    request.addfinalizer(teardown)
+    return dummy
+
+
+@pytest.fixture(scope='module')
 def dummy_user(request):
     db.connect()
     dummy = Users(name='dummy', email='mail', password='sample', rank=0)
