@@ -26,13 +26,19 @@ def custom_type(request):
 
 
 @pytest.fixture
-def custom_field(request, custom_type):
-    new_field = Fields(name='myfield', type=custom_type.id, field_type='string')
-    new_field.save()
+def custom_fields(request, custom_type):
+    str_field = Fields(name='strfield', type=custom_type.id, field_type='string')
+    str_field.save()
+    int_field = Fields(name='intfield', type=custom_type.id, field_type='int')
+    int_field.save()
+    date_field = Fields(name='datefield', type=custom_type.id, field_type='date')
+    date_field.save()
     def teardown():
-        new_field.delete_instance()
+        str_field.delete_instance()
+        int_field.delete_instance()
+        date_field.delete_instance()
     request.addfinalizer(teardown)
-    return new_field
+    return str_field, int_field, date_field
 
 
 @pytest.fixture(scope='module')
@@ -245,7 +251,7 @@ def test_eternal_tokens_io():
     user.delete_instance()
 
 
-def test_make_model_disabled(custom_type, custom_field):
+def test_make_model_disabled(custom_type, custom_fields):
     """
     Verifies that make_model raises an exception when trying to generate
     a disabled type's model.
@@ -254,7 +260,7 @@ def test_make_model_disabled(custom_type, custom_field):
         make_model(custom_type)
 
 
-def test_make_model_create_table(custom_type, custom_field):
+def test_make_model_create_table(custom_type, custom_fields):
     """
     Verifies that make_model generates the model's table.
     """
@@ -263,13 +269,13 @@ def test_make_model_create_table(custom_type, custom_field):
     assert custom_type.name in db.get_tables()
 
 
-def test_make_model_columns(custom_type, custom_field):
+def test_make_model_columns(custom_type, custom_fields):
     """
     Verifies that make_model can correctly generate a model.
     """
     custom_type.enabled = 1
     model = make_model(custom_type)
-    fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
+    fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField, 'date':DateTimeField }
     columns = Fields.select().where(Fields.type==custom_type.id)
     for column in columns:
         field = fields_dict[column.field_type]
@@ -281,9 +287,9 @@ def test_make_model_columns(custom_type, custom_field):
 
         if column.nullable:
             assert getattr(field_object, 'nullable') == True
+            
 
-
-def test_make_model_ownership(custom_type, custom_field):
+def test_make_model_ownership(custom_type, custom_fields):
     """
     Verifies that the make_model generated model has an owner attribute.
     """
