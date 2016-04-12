@@ -245,6 +245,30 @@ def test_make_collection_query_pagination(client, app, auth_string):
     new_user.delete_instance()
 
 
+@pytest.mark.parametrize('args', [
+    {'page':1, 'items': 1, 'rels':['next', 'last']},
+    {'page':2, 'items':1, 'rels':['prev','next','last']},
+    {'page':3, 'items':1, 'rels':['prev','last']},
+    {'page':4, 'items':1, 'rels':['prev']}
+])
+def test_make_collection_pagination_headers(client, app, pagination_items,
+        auth_string, args):
+    """
+    Verifies that Link headers are set correctly.
+    """
+    resource = make_collection(Users)()
+    app.add_route('/endpoint', resource)
+    url = "/endpoint?page=%s&items=%s" % (args['page'], args['items'])
+    response = client.get(url, headers={'authorization':auth_string})
+    assert 'Link' in response.headers
+    parsed_header = parse_header_links(response.headers['Link'])
+    rel_list = []
+    for i in parsed_header:
+        rel_list.append(i['rel'])
+    for k in args['rels']:
+        assert k in rel_list
+
+
 @pytest.mark.parametrize('test_args',
     [
         {'model': Users, 'data': {'name':'test', 'password':'passwd'} },
