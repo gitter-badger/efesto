@@ -410,15 +410,3 @@ def test_users_override_stack_by_item_on_model():
 
 def test_rank_override_stack_by_item_on_model():
     raise NotImplementedError("Not implemented!")
-
-
-def test_users_override_rank_stack_by_model():
-    raise NotImplementedError("Not implemented!")
-
-
-def test_users_override_rank_stack_by_item():
-    raise NotImplementedError("Not implemented!")
-
-
-def test_users_override_rank_stack_by_item_on_model():
-    raise NotImplementedError("Not implemented!")
