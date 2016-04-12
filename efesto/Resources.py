@@ -43,11 +43,31 @@ def make_collection(model):
         query = self.model.select()
         for i in params:
             query = query.where(getattr(self.model, i) == params[i])
+        count = query.count()
 
         body = []
         for i in query.paginate(page, items).dicts():
             body.append(i)
         response.body = json.dumps(body)
+
+        if count > items:
+            domain = "{}://{}?page=%s&items={}".format(request.protocol,
+                request.host, items)
+            last_page = int(count/items)
+
+            if page != 1:
+                prev_page = page - 1
+                url = domain % (prev_page)
+                response.add_link(url, rel='prev')
+
+            if page != last_page:
+                last_url = domain % (last_page)
+                response.add_link(last_url, rel='last')
+                next_page = page + 1
+                if next_page != last_page:
+                    next_url = domain % (next_page)
+                    response.add_link(next_url, rel='next')
+
 
     def on_post(self, request, response):
         user = None
