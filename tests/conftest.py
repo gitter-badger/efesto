@@ -46,3 +46,13 @@ def token(request, dummy_admin):
         new_token.delete_instance()
     request.addfinalizer(teardown)
     return new_token
+
+
+@pytest.fixture
+def user_token(request, dummy_user):
+    new_token = EternalTokens(name='mytoken', user=dummy_user.id, token='token')
+    new_token.save()
+    def teardown():
+        new_token.delete_instance()
+    request.addfinalizer(teardown)
+    return new_token
