@@ -19,34 +19,6 @@ from efesto.Auth import generate_token, read_token
 
 
 @pytest.fixture
-def app():
-    application = falcon.API()
-    return application
-
-
-@pytest.fixture(scope='module')
-def dummy_user(request):
-    db.connect()
-    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
-
-
-@pytest.fixture
-def token(request, dummy_user):
-    new_token = EternalTokens(name='mytoken', user=dummy_user.id, token='token')
-    new_token.save()
-    def teardown():
-        new_token.delete_instance()
-    request.addfinalizer(teardown)
-    return new_token
-
-
-@pytest.fixture
 def dummy_type(request):
     custom_type = Types(name='mycustomtype', enabled=1)
     custom_type.save()
@@ -295,12 +267,12 @@ def test_tokens_resource_eternal_not_found(client, app, dummy_user):
     assert response.status == falcon.HTTP_NOT_FOUND
 
 
-def test_tokens_resource_eternal(client, app, dummy_user, token):
+def test_tokens_resource_eternal(client, app, dummy_admin, token):
     """
     Verifies that a correct token request returns a valid token.
     """
     resource = TokensResource()
-    data = {'username':dummy_user.name, 'password':'sample', 'eternal':1, 'token_name': token.name}
+    data = {'username':dummy_admin.name, 'password':'sample', 'eternal':1, 'token_name': token.name}
     app.add_route('/token', resource)
     response = client.post('/token', data)
     response_token = read_token(json.loads(response.body)['token'])
