@@ -182,31 +182,30 @@ def test_make_collection_make_model_get_auth(client, app, auth_string,
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
 
-@pytest.mark.parametrize('args', [
-    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1}, 'query':{'name':'u'}},
-    {'model':Types, 'args': {'name':'mytype', 'enabled':0}, 'query':{'name':'mytype'} },
-    {'model': AccessRules, 'args': {'level': 1}, 'query':{'level':1} }
+@pytest.mark.parametrize('query', [
+    'name=u2','rank=2', 'name=<u3', 'rank=1&name=!u3'
 ])
-def test_make_collection_query(client, app, auth_string, args):
+def test_make_collection_query(client, app, auth_string, pagination_items, query):
     """
     Tests whether make_collection supports GET requests with search parameters.
     """
-    model = args['model']
-    item = model(**args['args'])
-    item.save()
-    resource = make_collection(model)()
+    resource = make_collection(Users)()
     app.add_route('/endpoint', resource)
-    query_string = ''
-    for key in args['query']:
-        query_string += '%s=%s&' % (key, args['query'][key])
-    query_string = query_string[:-1]
-    url = "/endpoint?%s" % (query_string)
+    url = "/endpoint?%s" % (query)
     response = client.get(url, headers={'authorization':auth_string})
     response_items = json.loads(response.body)
+    params = query.split('&')
     for i in response_items:
-        for k in args['query']:
-            assert i[k] == args['query'][k]
-    item.delete_instance()
+        for k in params:
+            value = k.split('=')[1]
+            if value[0] == '<':
+                assert i[k.split('=')[0]] <= value[1:]
+            elif value[0] == '>':
+                assert i[k.split('=')[0]] >= value[1:]
+            elif value[0] == '!':
+                assert i[k.split('=')[0]] != value[1:]
+            else:
+                assert i[k.split('=')[0]] == value
 
 
 @pytest.mark.parametrize('args', [
