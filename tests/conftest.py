@@ -18,7 +18,7 @@ def app():
 
 @pytest.fixture(scope='session')
 def dummy_admin(request):
-    dummy = Users(name='dummy', email='mail', password='sample', rank=10)
+    dummy = Users(name='dummyadmin', email='mail', password='sample', rank=10)
     dummy.save()
 
     def teardown():
@@ -29,8 +29,7 @@ def dummy_admin(request):
 
 @pytest.fixture(scope='module')
 def dummy_user(request):
-    db.connect()
-    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
+    dummy = Users(name='dummyuser', email='mail', password='sample', rank=0)
     dummy.save()
 
     def teardown():
