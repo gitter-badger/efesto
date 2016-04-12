@@ -98,6 +98,24 @@ def auth_string(request, token):
     return "Basic %s" % (string64)
 
 
+@pytest.fixture
+def pagination_items(request):
+    model = Users
+    items = 4
+    items_list = []
+    for i in range(1, items):
+        name = 'u%s' % (i)
+        item_dict = {'name':name, 'email':'mail', 'password':'p', 'rank':1}
+        item = model(**item_dict)
+        item.save()
+        items_list.append(item)
+
+    def teardown():
+        for i in items_list:
+            i.delete_instance()
+    request.addfinalizer(teardown)
+
+
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_post', 'model']
