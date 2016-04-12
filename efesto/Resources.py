@@ -41,8 +41,15 @@ def make_collection(model):
             items = int(request.params['items'])
 
         query = self.model.select()
-        for i in params:
-            query = query.where(getattr(self.model, i) == params[i])
+        for key, argument in params.items():
+            if argument[0] == '<':
+                query = query.where(getattr(self.model, key) <= argument[1:])
+            elif argument[0] == '>':
+                query = query.where(getattr(self.model, key) >= argument[1:])
+            elif argument[0] == '!':
+                query = query.where(getattr(self.model, key) != argument[1:])
+            else:
+                query = query.where(getattr(self.model, key) == argument)
         count = query.count()
 
         body = []
