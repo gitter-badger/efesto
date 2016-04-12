@@ -290,6 +290,8 @@ def test_make_collection_post_auth(client, app, auth_string, test_args):
 
 def test_make_collection_make_model_post(client, app, dummy_type, custom_field):
     """
+    Verifies make_collection's behaviour with a make_model generated model for
+    non-authenticated POST requests.
     """
     model = make_model(dummy_type)
     resource = make_collection(model)()
@@ -301,6 +303,8 @@ def test_make_collection_make_model_post(client, app, dummy_type, custom_field):
 def test_make_collection_make_model_post_auth(client, app, auth_string,
         dummy_type, custom_field):
     """
+    Verifies make_collection's behaviour with a make_model generated model for
+    authenticated POST requests.
     """
     model = make_model(dummy_type)
     resource = make_collection(model)()
