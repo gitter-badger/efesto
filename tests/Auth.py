@@ -24,28 +24,6 @@ def serializer():
     return Serializer(config.parser.get('security', 'secret'))
 
 
-@pytest.fixture(scope='module')
-def dummy_user(request):
-    db.connect()
-    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
-
-
-@pytest.fixture
-def token(request, dummy_user):
-    new_token = EternalTokens(name='mytoken', user=dummy_user.id, token='token')
-    new_token.save()
-    def teardown():
-        new_token.delete_instance()
-    request.addfinalizer(teardown)
-    return new_token
-
-
 def test_generate_token(serializer):
     """
     Tests the generation of a token
@@ -111,9 +89,9 @@ def test_token_authentication():
     assert result == 'user'
 
 
-def test_token_authentication_eternal(dummy_user, token):
+def test_token_authentication_eternal(dummy_admin, token):
     original_string = "%s:" % (generate_token(decode=True, token=token.token))
     string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
     auth_string = "Basic %s" % (string64)
     result = authenticate_by_token(auth_string)
-    assert result == dummy_user.name
+    assert result == dummy_admin.name
