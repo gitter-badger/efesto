@@ -134,7 +134,7 @@ def make_model(custom_type):
     if custom_type.enabled == True:
         attributes = {}
         attributes['owner'] = ForeignKeyField(Users)
-        fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField }
+        fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField, 'date': DateTimeField }
         columns = Fields.select().where( Fields.type==custom_type.id )
         for column in columns:
             attributes[column.name] = fields_dict[column.field_type]()
