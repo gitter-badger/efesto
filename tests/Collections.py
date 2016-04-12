@@ -39,46 +39,6 @@ def parse_header_links(value):
 
 
 @pytest.fixture
-def app():
-    application = falcon.API()
-    return application
-
-
-@pytest.fixture(scope='module')
-def dummy_admin(request):
-    db.connect()
-    dummy = Users(name='dummy', email='mail', password='sample', rank=10)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
-
-
-@pytest.fixture(scope='module')
-def dummy_user(request):
-    db.connect()
-    dummy = Users(name='dummy', email='mail', password='sample', rank=0)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
-
-
-@pytest.fixture
-def token(request, dummy_admin):
-    new_token = EternalTokens(name='mytoken', user=dummy_admin.id, token='token')
-    new_token.save()
-    def teardown():
-        new_token.delete_instance()
-    request.addfinalizer(teardown)
-    return new_token
-
-
-@pytest.fixture
 def dummy_type(request):
     custom_type = Types(name='mycustomtype', enabled=1)
     custom_type.save()
