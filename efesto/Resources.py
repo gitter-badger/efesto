@@ -148,14 +148,18 @@ def make_resource(model):
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        user = Users.get(Users.name == user)
 
         try:
             item = self.model.get( getattr(self.model, 'id') == id )
         except:
             raise falcon.HTTPNotFound()
 
-        item.delete_instance()
-        response.status = falcon.HTTP_NO_CONTENT
+        if user.can('eliminate', item):
+            item.delete_instance()
+            response.status = falcon.HTTP_NO_CONTENT
+        else:
+            raise falcon.HTTPForbidden("forbidden", "forbidden")
 
     def on_patch(self, request, response, id=0):
         user = None
