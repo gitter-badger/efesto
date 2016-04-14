@@ -95,11 +95,15 @@ def make_collection(model):
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        user = Users.get(Users.name == user)
 
         new_item = self.model(**request.params)
-        new_item.save()
-        response.status = falcon.HTTP_CREATED
-        response.body = json.dumps(new_item.__dict__['_data'])
+        if user.can('read', new_item):
+            new_item.save()
+            response.status = falcon.HTTP_CREATED
+            response.body = json.dumps(new_item.__dict__['_data'])
+        else:
+            raise falcon.HTTPForbidden("forbidden", "forbidden")
 
     attributes = {
         'model': model,
