@@ -121,20 +121,24 @@ def make_resource(model):
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        user = Users.get(Users.name == user)
 
         try:
             item = self.model.get( getattr(self.model, 'id') == id )
         except:
             raise falcon.HTTPNotFound()
 
-        item_dict = {}
-        for k in self.model.__dict__:
-            if (
-                isinstance(self.model.__dict__[k], FieldDescriptor) and
-                not isinstance(self.model.__dict__[k], RelationDescriptor)
-            ):
-                item_dict[k] = getattr(item, k)
-        response.body = json.dumps(item_dict)
+        if user.can('read', item):
+            item_dict = {}
+            for k in self.model.__dict__:
+                if (
+                    isinstance(self.model.__dict__[k], FieldDescriptor) and
+                    not isinstance(self.model.__dict__[k], RelationDescriptor)
+                ):
+                    item_dict[k] = getattr(item, k)
+            response.body = json.dumps(item_dict)
+        else:
+            raise falcon.HTTPForbidden("forbidden", "forbidden")
 
 
     def on_delete(self, request, response, id=0):
