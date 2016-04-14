@@ -101,7 +101,7 @@ def test_make_collection_get(client, app, model):
 
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
-def test_make_collection_get_auth(client, app, auth_string, model):
+def test_make_collection_get_auth(client, app, admin_auth, model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed.
@@ -109,7 +109,7 @@ def test_make_collection_get_auth(client, app, auth_string, model):
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
 
-    response = client.get('/endpoint', headers={'authorization':auth_string})
+    response = client.get('/endpoint', headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_OK
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
@@ -127,7 +127,7 @@ def test_make_collection_make_model(client, app, dummy_type, custom_field):
     assert response.__dict__['headers']['www-authenticate'] != None
 
 
-def test_make_collection_make_model_get_auth(client, app, auth_string,
+def test_make_collection_make_model_get_auth(client, app, admin_auth,
         dummy_type, custom_field):
     """
     Verifies that make_collection can use make_model's generated models and
@@ -136,7 +136,7 @@ def test_make_collection_make_model_get_auth(client, app, auth_string,
     model = make_model(dummy_type)
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
-    response = client.get('/endpoint', headers={'authorization':auth_string})
+    response = client.get('/endpoint', headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_OK
     assert len(json.loads(response.body)) == model.select().limit(20).count()
 
@@ -144,14 +144,14 @@ def test_make_collection_make_model_get_auth(client, app, auth_string,
 @pytest.mark.parametrize('query', [
     'name=u2','rank=2', 'name=<u3', 'rank=1&name=!u3'
 ])
-def test_make_collection_query(client, app, auth_string, pagination_items, query):
+def test_make_collection_query(client, app, admin_auth, pagination_items, query):
     """
     Tests whether make_collection supports GET requests with search parameters.
     """
     resource = make_collection(Users)()
     app.add_route('/endpoint', resource)
     url = "/endpoint?%s" % (query)
-    response = client.get(url, headers={'authorization':auth_string})
+    response = client.get(url, headers={'authorization':admin_auth})
     response_items = json.loads(response.body)
     params = query.split('&')
     for i in response_items:
@@ -176,7 +176,7 @@ def test_make_collection_query(client, app, auth_string, pagination_items, query
     {'model':Types, 'query':{'43erg':1023} },
     {'model': AccessRules, 'query':{'potato':'valid'} }
 ])
-def test_make_collection_query_ignored_args(client, app, auth_string, args):
+def test_make_collection_query_ignored_args(client, app, admin_auth, args):
     """
     Verifies that non-supported query parameters are ignored.
     """
@@ -188,11 +188,11 @@ def test_make_collection_query_ignored_args(client, app, auth_string, args):
         query_string += '%s=%s&' % (key, args['query'][key])
     query_string = query_string[:-1]
     url = "/endpoint?%s" % (query_string)
-    response = client.get(url, headers={'authorization':auth_string})
+    response = client.get(url, headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_OK
 
 
-def test_make_collection_query_pagination(client, app, auth_string):
+def test_make_collection_query_pagination(client, app, admin_auth):
     """
     Verifies that make_collection supports pagination arguments.
     """
@@ -200,7 +200,7 @@ def test_make_collection_query_pagination(client, app, auth_string):
     new_user.save()
     resource = make_collection(Users)()
     app.add_route('/endpoint', resource)
-    response = client.get('/endpoint?page=2&items=1', headers={'authorization':auth_string})
+    response = client.get('/endpoint?page=2&items=1', headers={'authorization':admin_auth})
     items = json.loads(response.body)
     assert len(items) == 1
     assert items[0] == Users.select().paginate(2, 1).dicts()[0]
@@ -214,14 +214,14 @@ def test_make_collection_query_pagination(client, app, auth_string):
     {'page':4, 'items':1, 'rels':['prev']}
 ])
 def test_make_collection_pagination_headers(client, app, pagination_items,
-        auth_string, args):
+        admin_auth, args):
     """
     Verifies that Link headers are set correctly.
     """
     resource = make_collection(Users)()
     app.add_route('/endpoint', resource)
     url = "/endpoint?page=%s&items=%s" % (args['page'], args['items'])
-    response = client.get(url, headers={'authorization':auth_string})
+    response = client.get(url, headers={'authorization':admin_auth})
     assert 'Link' in response.headers
     parsed_header = parse_header_links(response.headers['Link'])
     rel_list = []
@@ -256,7 +256,7 @@ def test_make_collection_post(client, app, test_args):
     {'model': Users, 'data': {'name':'test', 'password':'passwd', 'email':'mail', 'rank':1} },
     {'model': Types, 'data': {'name': 't_one', 'enabled':0} }
 ])
-def test_make_collection_post_auth(client, app, auth_string, test_args):
+def test_make_collection_post_auth(client, app, admin_auth, test_args):
     """
     Tests the behaviour of a generated resource when a POST request that includes
     a basic auth header is performed.
@@ -266,7 +266,7 @@ def test_make_collection_post_auth(client, app, auth_string, test_args):
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
 
-    response = client.post('/endpoint', data=data, headers={'authorization':auth_string})
+    response = client.post('/endpoint', data=data, headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_CREATED
     body = json.loads(response.body)
     assert 'id' in body
@@ -289,7 +289,7 @@ def test_make_collection_make_model_post(client, app, dummy_type, custom_field):
     assert response.status == falcon.HTTP_UNAUTHORIZED
 
 
-def test_make_collection_make_model_post_auth(client, app, auth_string,
+def test_make_collection_make_model_post_auth(client, app, admin_auth,
         dummy_type, custom_field):
     """
     Verifies make_collection's behaviour with a make_model generated model for

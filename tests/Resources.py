@@ -70,7 +70,7 @@ def test_make_resource_unathorized(client, app, model, method):
 
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method', ['get', 'patch', 'delete'])
-def test_make_resource_not_found(client, app, auth_string, model, method):
+def test_make_resource_not_found(client, app, admin_auth, model, method):
     """
     Tests the behaviour of a generated resource when a GET or DELETE request that
     includes a basic auth header is performed.
@@ -78,11 +78,11 @@ def test_make_resource_not_found(client, app, auth_string, model, method):
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
     if method == 'get':
-        response = client.get('/endpoint/1234', headers={'authorization':auth_string})
+        response = client.get('/endpoint/1234', headers={'authorization':admin_auth})
     elif method == 'delete':
-        response = client.delete('/endpoint/1234', headers={'authorization':auth_string})
+        response = client.delete('/endpoint/1234', headers={'authorization':admin_auth})
     elif method == 'patch':
-        response = client.patch('/endpoint/1234', headers={'authorization':auth_string}, body='')
+        response = client.patch('/endpoint/1234', headers={'authorization':admin_auth}, body='')
     assert response.status == falcon.HTTP_NOT_FOUND
 
 
@@ -91,7 +91,7 @@ def test_make_resource_not_found(client, app, auth_string, model, method):
     {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
     {'model': AccessRules, 'args': {'level': 1}}
 ])
-def test_make_resource_get_item(client, app, auth_string, item_dict):
+def test_make_resource_get_item(client, app, admin_auth, item_dict):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed and an item is retrieved.
@@ -104,7 +104,7 @@ def test_make_resource_get_item(client, app, auth_string, item_dict):
     item = model.get()
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
-    response = client.get('/endpoint/%s' % (item.id), headers={'authorization':auth_string})
+    response = client.get('/endpoint/%s' % (item.id), headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_OK
 
     model_fields = []
@@ -149,7 +149,7 @@ def test_make_resource_make_model(client, app, dummy_type, custom_field, method)
     {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
     {'model': AccessRules, 'args': {'level': 1}}
 ])
-def test_make_resource_delete_item(client, app, auth_string, item_dict):
+def test_make_resource_delete_item(client, app, admin_auth, item_dict):
     """
     Tests the behaviour of a generated resource when a DELETE request that
     includes a basic auth header is performed and an item is deleted.
@@ -162,7 +162,7 @@ def test_make_resource_delete_item(client, app, auth_string, item_dict):
     # test
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
-    response = client.delete('/endpoint/%s' % (item_id), headers={'authorization':auth_string})
+    response = client.delete('/endpoint/%s' % (item_id), headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_NO_CONTENT
     try:
         deleted = model.get( getattr(model, 'id') == item_id)
