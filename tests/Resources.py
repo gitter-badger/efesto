@@ -16,26 +16,6 @@ from efesto.Resources import make_resource, TokensResource
 from efesto.Auth import generate_token, read_token
 
 
-@pytest.fixture
-def dummy_type(request):
-    custom_type = Types(name='mycustomtype', enabled=1)
-    custom_type.save()
-    def teardown():
-        custom_type.delete_instance()
-    request.addfinalizer(teardown)
-    return custom_type
-
-
-@pytest.fixture
-def custom_field(request, dummy_type):
-    custom_field = Fields(name='f', type=dummy_type.id, field_type='string')
-    custom_field.save()
-    def teardown():
-        custom_field.delete_instance()
-    request.addfinalizer(teardown)
-    return custom_field
-
-
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_patch', 'on_delete', 'model']

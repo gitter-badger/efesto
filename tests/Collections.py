@@ -38,26 +38,6 @@ def parse_header_links(value):
 
 
 @pytest.fixture
-def dummy_type(request):
-    custom_type = Types(name='mycustomtype', enabled=1)
-    custom_type.save()
-    def teardown():
-        custom_type.delete_instance()
-    request.addfinalizer(teardown)
-    return custom_type
-
-
-@pytest.fixture
-def custom_field(request, dummy_type):
-    custom_field = Fields(name='f', type=dummy_type.id, field_type='string')
-    custom_field.save()
-    def teardown():
-        custom_field.delete_instance()
-    request.addfinalizer(teardown)
-    return custom_field
-
-
-@pytest.fixture
 def pagination_items(request):
     model = Users
     items = 4
