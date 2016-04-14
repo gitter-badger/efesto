@@ -100,12 +100,12 @@ def test_make_collection_get(client, app, model):
     assert response.__dict__['headers']['www-authenticate'] != None
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
-def test_make_collection_get_auth(client, app, admin_auth, model):
+def test_make_collection_get_auth(client, app, admin_auth, item_with_model):
     """
     Tests the behaviour of a generated resource when a GET request that includes
     a basic auth header is performed.
     """
+    model = item_with_model[1]
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
 
@@ -128,12 +128,14 @@ def test_make_collection_make_model(client, app, dummy_type, custom_field):
 
 
 def test_make_collection_make_model_get_auth(client, app, admin_auth,
-        dummy_type, custom_field):
+        dummy_type, dummy_admin, custom_field):
     """
     Verifies that make_collection can use make_model's generated models and
     return a 200 when auth is sent.
     """
     model = make_model(dummy_type)
+    item = model(owner=dummy_admin, f='someval')
+    item.save()
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint', headers={'authorization':admin_auth})
@@ -142,7 +144,7 @@ def test_make_collection_make_model_get_auth(client, app, admin_auth,
 
 
 @pytest.mark.parametrize('query', [
-    'name=u2','rank=2', 'name=<u3', 'rank=1&name=!u3'
+    'name=u2','rank=1', 'name=<u3', 'rank=1&name=!u3'
 ])
 def test_make_collection_query(client, app, admin_auth, pagination_items, query):
     """
@@ -171,21 +173,17 @@ def test_make_collection_query(client, app, admin_auth, pagination_items, query)
                 assert i[k.split('=')[0]] == value
 
 
-@pytest.mark.parametrize('args', [
-    {'model':Users, 'query':{'abc':'rnd'}},
-    {'model':Types, 'query':{'43erg':1023} },
-    {'model': AccessRules, 'query':{'potato':'valid'} }
-])
-def test_make_collection_query_ignored_args(client, app, admin_auth, args):
+@pytest.mark.parametrize('query_args', [{'abc':'rnd'}, {'43erg':1023}, {'one':'mix', 'me':10}])
+def test_make_collection_query_ignored_args(client, app, admin_auth, item_with_model, query_args):
     """
     Verifies that non-supported query parameters are ignored.
     """
-    model = args['model']
+    model = item_with_model[1]
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     query_string = ''
-    for key in args['query']:
-        query_string += '%s=%s&' % (key, args['query'][key])
+    for key in query_args:
+        query_string += '%s=%s&' % (key, query_args[key])
     query_string = query_string[:-1]
     url = "/endpoint?%s" % (query_string)
     response = client.get(url, headers={'authorization':admin_auth})
@@ -302,19 +300,12 @@ def test_make_collection_make_model_post_auth(client, app, admin_auth,
     assert response.status == falcon.HTTP_UNAUTHORIZED
 
 
-@pytest.mark.parametrize('args', [
-    {'method':'get'},
-    {'method': 'post', 'data': {'name':'anuser', 'password':'passwd', 'email':'somemail', 'rank':1}}
-])
-def test_make_collection_access_rules(client, app, user_auth, args):
+def test_make_collection_access_rules_get(client, app, user_auth, item_with_model):
     """
     Verifies that make_collection applies access rules.
     """
-    method = args['method']
-    resource = make_collection(Users)()
+    model = item_with_model[1]
+    resource = make_collection(model)()
     app.add_route('/endpoint', resource)
-    if method == 'get':
-        response = client.get('/endpoint', headers={'authorization':user_auth})
-    elif method == 'post':
-        response = client.post('/endpoint', data=args['data'], headers={'authorization':user_auth})
+    response = client.get('/endpoint', headers={'authorization':user_auth})
     assert response.status == falcon.HTTP_NOT_FOUND
