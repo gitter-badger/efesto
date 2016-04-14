@@ -12,7 +12,6 @@ from peewee import FieldDescriptor, RelationDescriptor
 
 
 from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
-from efesto.Base import db
 from efesto.Resources import make_resource, TokensResource
 from efesto.Auth import generate_token, read_token
 
