@@ -309,3 +309,23 @@ def test_make_collection_access_rules_get(client, app, user_auth, item_with_mode
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint', headers={'authorization':user_auth})
     assert response.status == falcon.HTTP_NOT_FOUND
+
+
+@pytest.mark.parametrize('test_args',
+    [
+        {'model': Users, 'data': {'name':'test', 'password':'passwd'} },
+        {'model': Types, 'data':{'name': 'sometype', 'enabled':0} },
+        {'model': Fields, 'data':{'name':'somefield', 'type':1}},
+        {'model': AccessRules, 'data':{'user':1, 'level':5}}
+    ]
+)
+def test_make_collection_access_rules_post(client, app, user_auth, test_args):
+    """
+    Verifies that make_collection correctly applies access rules to POST requests.
+    """
+    model = test_args['model']
+    data = test_args['data']
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.post('/endpoint', data=data, headers={'authorization':user_auth})
+    assert response.status == falcon.HTTP_FORBIDDEN
