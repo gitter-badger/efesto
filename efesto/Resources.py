@@ -24,13 +24,18 @@ def make_collection(model):
 
         if user == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+        user = Users.get(Users.name == user)
 
-        params = {}
+        columns = []
         for i in self.model.__dict__:
             if isinstance(self.model.__dict__[i], FieldDescriptor):
                 if not isinstance(self.model.__dict__[i], RelationDescriptor):
-                    if i in request.params:
-                        params[i] = request.params[i]
+                    columns.append(i)
+
+        params = {}
+        for i in columns:
+            if i in request.params:
+                params[i] = request.params[i]
 
         page = 1
         if 'page' in request.params:
@@ -53,8 +58,15 @@ def make_collection(model):
         count = query.count()
 
         body = []
-        for i in query.paginate(page, items).dicts():
-            body.append(i)
+        for i in query.paginate(page, items):
+            if user.can('read', i):
+                item = {}
+                for column in columns:
+                    item[column] = getattr(i, column)
+                body.append(item)
+
+        if len(body) == 0:
+            raise falcon.HTTPNotFound()
         response.body = json.dumps(body)
 
         if count > items:
