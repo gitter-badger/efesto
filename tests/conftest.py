@@ -8,7 +8,7 @@ import pytest
 import base64
 
 
-from efesto.Models import Users, EternalTokens
+from efesto.Models import Users, EternalTokens, Types, AccessRules, Fields
 from efesto.Auth import generate_token
 
 
@@ -78,3 +78,36 @@ def user_auth(request, user_token, dummy_user):
         token_string = "%s:" % (generate_token(decode=True, token=user_token.token))
     string64 = base64.b64encode( token_string.encode("latin-1") ).decode("latin-1")
     return "Basic %s" % (string64)
+
+
+@pytest.fixture(params=[
+    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1} },
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0} },
+    {'model':AccessRules, 'args': {'level': 1} },
+    {
+        'model':Fields, 'args': {'name':'f', 'field_type':'string'},
+        'parent':Types, 'parent_args':{'name':'t2', 'enabled':0},
+        'parent_field':'type'
+    },
+    {
+        'model':EternalTokens, 'args':{'name':'mytoken', 'token':''},
+        'parent': Users, 'parent_args':{'name':'u2', 'email':'mail',
+        'password':'p', 'rank':1}, 'parent_field':'user'
+    }
+])
+def item_with_model(request):
+    model = request.param['model']
+    item_dict = request.param['args']
+    if 'parent' in request.param:
+        parent_model = request.param['parent']
+        parent_item = parent_model(**request.param['parent_args'])
+        parent_item.save()
+        item_dict[ request.param['parent_field'] ] = parent_item.id
+    item = model(**item_dict)
+    item.save()
+    def teardown():
+        item.delete_instance()
+        if 'parent' in request.param:
+            parent_item.delete_instance()
+    request.addfinalizer(teardown)
+    return item, model
