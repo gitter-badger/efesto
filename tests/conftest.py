@@ -75,6 +75,6 @@ def user_auth(request, user_token, dummy_user):
     if request.param == 'client':
         token_string = "%s:" % (generate_token(decode=True, user=dummy_user.name))
     else:
-        token_string = "%s:" % (generate_token(decode=True, token=usertoken.token))
+        token_string = "%s:" % (generate_token(decode=True, token=user_token.token))
     string64 = base64.b64encode( token_string.encode("latin-1") ).decode("latin-1")
     return "Basic %s" % (string64)
