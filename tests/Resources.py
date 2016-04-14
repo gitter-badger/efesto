@@ -16,6 +16,39 @@ from efesto.Resources import make_resource, TokensResource
 from efesto.Auth import generate_token, read_token
 
 
+@pytest.fixture(params=[
+    {'model':Users, 'args':{'name':'ud', 'email':'mail', 'password':'p', 'rank':1} },
+    {'model':Types, 'args': {'name':'mytype', 'enabled':0} },
+    {'model':AccessRules, 'args': {'level': 1} },
+    {
+        'model':Fields, 'args': {'name':'f', 'field_type':'string'},
+        'parent':Types, 'parent_args':{'name':'d2', 'enabled':0},
+        'parent_field':'type'
+    },
+    {
+        'model':EternalTokens, 'args':{'name':'mytoken', 'token':''},
+        'parent': Users, 'parent_args':{'name':'ud2', 'email':'mail',
+        'password':'p', 'rank':1}, 'parent_field':'user'
+    }
+])
+def deletable_item(request):
+    model = request.param['model']
+    item_dict = request.param['args']
+    if 'parent' in request.param:
+        parent_model = request.param['parent']
+        parent_item = parent_model(**request.param['parent_args'])
+        parent_item.save()
+        item_dict[ request.param['parent_field'] ] = parent_item.id
+    item = model(**item_dict)
+    item.save()
+    def teardown():
+        item.delete_instance()
+        if 'parent' in request.param:
+            parent_item.delete_instance()
+    request.addfinalizer(teardown)
+    return item, model
+
+
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_patch', 'on_delete', 'model']
@@ -148,6 +181,20 @@ def test_make_resource_access_rules_get(client, app, user_auth, item_with_model)
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
     response = client.get('/endpoint/%s' % (item.id), headers={'authorization':user_auth})
+    assert response.status == falcon.HTTP_FORBIDDEN
+
+
+def test_make_resource_access_rules_delete(client, app, user_auth, deletable_item):
+    """
+    Verifies that make_resource correctly implements permissions on DELETE requests.
+    """
+    item = deletable_item[0]
+    model = deletable_item[1]
+    item_id = item.id
+    # test
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.delete('/endpoint/%s' % (item_id), headers={'authorization':user_auth})
     assert response.status == falcon.HTTP_FORBIDDEN
 
 
