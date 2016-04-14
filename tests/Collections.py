@@ -302,11 +302,19 @@ def test_make_collection_make_model_post_auth(client, app, admin_auth,
     assert response.status == falcon.HTTP_UNAUTHORIZED
 
 
-def test_make_collection_access_rules(client, app, user_auth):
+@pytest.mark.parametrize('args', [
+    {'method':'get'},
+    {'method': 'post', 'data': {'name':'anuser', 'password':'passwd', 'email':'somemail', 'rank':1}}
+])
+def test_make_collection_access_rules(client, app, user_auth, args):
     """
     Verifies that make_collection applies access rules.
     """
+    method = args['method']
     resource = make_collection(Users)()
     app.add_route('/endpoint', resource)
-    response = client.get('/endpoint', headers={'authorization':user_auth})
+    if method == 'get':
+        response = client.get('/endpoint', headers={'authorization':user_auth})
+    elif method == 'post':
+        response = client.post('/endpoint', data=args['data'], headers={'authorization':user_auth})
     assert response.status == falcon.HTTP_NOT_FOUND
