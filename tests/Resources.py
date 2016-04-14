@@ -159,6 +159,18 @@ def test_make_resource_delete_tokens():
     raise NotImplemented("Not implemented!")
 
 
+def test_make_resource_access_rules_get(client, app, user_auth, item_with_model):
+    """
+    Verifies that make_resource correctly implements permissions on GET requests.
+    """
+    item = item_with_model[0]
+    model = item_with_model[1]
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.get('/endpoint/%s' % (item.id), headers={'authorization':user_auth})
+    assert response.status == falcon.HTTP_FORBIDDEN
+
+
 @pytest.mark.parametrize('data', [
     {'username':'user'},
     {'password': 'passwd'},
