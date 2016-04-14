@@ -137,20 +137,14 @@ def test_make_resource_make_model(client, app, dummy_type, custom_field, method)
     assert hasattr(resource, method)
 
 
-@pytest.mark.parametrize('item_dict', [
-    {'model': Users, 'args': {'name':'dummy_user', 'email':'email', 'password':'passwd', 'rank':1}},
-    {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
-    {'model': AccessRules, 'args': {'level': 1}}
-])
-def test_make_resource_delete_item(client, app, admin_auth, item_dict):
+def test_make_resource_delete_item(client, app, admin_auth, deletable_item):
     """
     Tests the behaviour of a generated resource when a DELETE request that
     includes a basic auth header is performed and an item is deleted.
     """
     # setup
-    model = item_dict['model']
-    item = model(**item_dict['args'])
-    item.save()
+    model = deletable_item[1]
+    item = deletable_item[0]
     item_id = item.id
     # test
     resource = make_resource(model)()
@@ -162,14 +156,6 @@ def test_make_resource_delete_item(client, app, admin_auth, item_dict):
     except:
         deleted = True
     assert deleted == True
-
-
-def test_make_resource_delete_fields():
-    raise NotImplemented("Not implemented!")
-
-
-def test_make_resource_delete_tokens():
-    raise NotImplemented("Not implemented!")
 
 
 def test_make_resource_access_rules_get(client, app, user_auth, item_with_model):
