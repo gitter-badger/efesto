@@ -300,3 +300,13 @@ def test_make_collection_make_model_post_auth(client, app, admin_auth,
     app.add_route('/endpoint', resource)
     response = client.post('/endpoint', {'f':'text'})
     assert response.status == falcon.HTTP_UNAUTHORIZED
+
+
+def test_make_collection_access_rules(client, app, user_auth):
+    """
+    Verifies that make_collection applies access rules.
+    """
+    resource = make_collection(Users)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint', headers={'authorization':user_auth})
+    assert response.status == falcon.HTTP_NOT_FOUND
