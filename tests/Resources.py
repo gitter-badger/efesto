@@ -124,19 +124,6 @@ def test_make_resource_get_item(client, app, admin_auth, item_with_model):
         assert body[i] == getattr(item, i)
 
 
-@pytest.mark.parametrize('method',
-    ['on_get', 'on_patch', 'on_delete', 'model']
-)
-def test_make_resource_make_model(client, app, dummy_type, custom_field, method):
-    """
-    Tests whether make_resource can correctly generate a resource using
-    make_model.
-    """
-    model = make_model(dummy_type)
-    resource = make_resource(model)
-    assert hasattr(resource, method)
-
-
 def test_make_resource_delete_item(client, app, admin_auth, deletable_item):
     """
     Tests the behaviour of a generated resource when a DELETE request that
@@ -156,6 +143,19 @@ def test_make_resource_delete_item(client, app, admin_auth, deletable_item):
     except:
         deleted = True
     assert deleted == True
+
+
+@pytest.mark.parametrize('method',
+    ['on_get', 'on_patch', 'on_delete', 'model']
+)
+def test_make_resource_make_model(client, app, dummy_type, custom_field, method):
+    """
+    Tests whether make_resource can correctly generate a resource using
+    make_model.
+    """
+    model = make_model(dummy_type)
+    resource = make_resource(model)
+    assert hasattr(resource, method)
 
 
 def test_make_resource_access_rules_get(client, app, user_auth, item_with_model):
