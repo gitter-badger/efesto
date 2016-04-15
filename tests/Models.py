@@ -285,3 +285,17 @@ def test_make_model_ownership(custom_type, custom_fields):
     model = make_model(custom_type)
     assert hasattr(model, 'owner')
     assert isinstance( getattr(model, 'owner'), ForeignKeyField)
+
+
+def test_make_model_io(custom_type, custom_fields, dummy_admin):
+    """
+    Verifies that is possible to create and delete custom items.
+    """
+    custom_type.enabled = 1
+    custom_type.save()
+    model = make_model(custom_type)
+    item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01'}
+    item = model(**item_dict)
+    item.save()
+    assert getattr(item, 'id') != None
+    item.delete_instance()
