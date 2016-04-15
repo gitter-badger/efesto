@@ -124,6 +124,37 @@ def test_make_resource_get_item(client, app, admin_auth, item_with_model):
         assert body[i] == getattr(item, i)
 
 
+def test_make_resource_patch_item(client, app, admin_auth, item_with_model):
+    """
+    Tests the behaviour of a generated resource when a PATCH request that includes
+    a basic auth header is performed and an item is retrieved.
+    """
+    item = item_with_model[0]
+    model = item_with_model[1]
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    body = ''
+    if model == Users:
+        body = 'email=somrandommail&rank=2'
+    elif model == Types:
+        body = 'enabled=1'
+    elif model == AccessRules:
+        body = 'level=2&rank=3'
+    elif model == EternalTokens:
+        body = 'name=patched!'
+    elif model == Fields:
+        body = 'name=megafield'
+    response = client.patch('/endpoint/%s' % (item.id), body=body,headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_OK
+    check = {}
+    for i in body.split('&'):
+        arg = i.split('=')
+        check[arg[0]] = arg[1]
+    response_body = json.loads(response.body)
+    for k in check:
+        assert check[k] == response_body[k]
+
+
 def test_make_resource_delete_item(client, app, admin_auth, deletable_item):
     """
     Tests the behaviour of a generated resource when a DELETE request that
