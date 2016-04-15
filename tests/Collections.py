@@ -267,8 +267,8 @@ def test_make_collection_make_model_post(client, app, dummy_type, custom_field):
     assert response.status == falcon.HTTP_UNAUTHORIZED
 
 
-def test_make_collection_make_model_post_auth(client, app, admin_auth,
-        dummy_type, custom_field):
+def test_make_collection_make_model_post_auth(client, app, dummy_admin,
+    admin_auth, dummy_type, custom_field):
     """
     Verifies make_collection's behaviour with a make_model generated model for
     authenticated POST requests.
@@ -276,8 +276,17 @@ def test_make_collection_make_model_post_auth(client, app, admin_auth,
     model = make_model(dummy_type)
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
-    response = client.post('/endpoint', {'f':'text'})
-    assert response.status == falcon.HTTP_UNAUTHORIZED
+    data = {'owner':dummy_admin.id}
+    data[custom_field.name] = 'someval'
+    response = client.post('/endpoint', data=data, headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_CREATED
+    body = json.loads(response.body)
+    assert 'id' in body
+    for key in data:
+        assert key in body
+    # teardown
+    item = model.get( getattr(model, 'id') == int(body['id']))
+    item.delete_instance()
 
 
 def test_make_collection_access_rules_get(client, app, user_auth, item_with_model):
