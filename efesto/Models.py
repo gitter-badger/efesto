@@ -5,7 +5,7 @@
 import os
 from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
                     BooleanField, ForeignKeyField)
-from playhouse.signals import Model, pre_save
+from playhouse.signals import Model, pre_save, post_delete
 
 
 from .Base import db
@@ -71,6 +71,15 @@ class Types(Base):
     id = PrimaryKeyField(primary_key=True)
     name = CharField(unique=True)
     enabled = BooleanField()
+
+
+@post_delete(sender=Types)
+def on_type_delete(model_class, instance):
+    """
+    Drops a type table when the type is deleted.
+    """
+    model = make_model(instance)
+    model.drop_table()
 
 
 class Fields(Base):
