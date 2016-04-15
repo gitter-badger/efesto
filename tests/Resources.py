@@ -201,6 +201,30 @@ def test_make_resource_access_rules_get(client, app, user_auth, item_with_model)
     assert response.status == falcon.HTTP_FORBIDDEN
 
 
+def test_make_resource_access_rules_patch(client, app, user_auth, item_with_model):
+    """
+    Verifies that make_resource correctly implements permissions on PATCH
+    requests.
+    """
+    item = item_with_model[0]
+    model = item_with_model[1]
+    resource = make_resource(model)()
+    body = ''
+    if model == Users:
+        body = 'email=somrandommail&rank=2'
+    elif model == Types:
+        body = 'enabled=1'
+    elif model == AccessRules:
+        body = 'level=2&rank=3'
+    elif model == EternalTokens:
+        body = 'name=patched!'
+    elif model == Fields:
+        body = 'name=megafield'
+    app.add_route('/endpoint/{id}', resource)
+    response = client.patch('/endpoint/%s' % (item.id), body=body,headers={'authorization':user_auth})
+    assert response.status == falcon.HTTP_FORBIDDEN
+
+
 def test_make_resource_access_rules_delete(client, app, user_auth, deletable_item):
     """
     Verifies that make_resource correctly implements permissions on DELETE requests.
