@@ -189,6 +189,70 @@ def test_make_resource_make_model(client, app, dummy_type, custom_field, method)
     assert hasattr(resource, method)
 
 
+def test_make_resource_make_model_get(client, app, admin_auth,
+        dummy_type, dummy_admin, custom_field):
+    """
+    Verifies that make_resource can use make_model's generated models and
+    return a 200 when auth is sent.
+    """
+    model = make_model(dummy_type)
+    item = model(owner=dummy_admin, f='someval')
+    item.save()
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.get('/endpoint/%s' % (item.id), headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_OK
+
+    model_fields = []
+    attrs = model.__dict__
+    for k in attrs:
+        if (
+            isinstance(attrs[k], FieldDescriptor) and
+            not isinstance(attrs[k], RelationDescriptor)
+        ):
+            model_fields.append(k)
+
+    body = json.loads(response.body)
+    for i in model_fields:
+        assert body[i] == getattr(item, i)
+
+
+def test_make_resource_make_model_patch(client, app, admin_auth, custom_field,
+        dummy_type, dummy_admin):
+    model = make_model(dummy_type)
+    item = model(owner=dummy_admin, f='someval')
+    item.save()
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    body = '%s=myval' % (custom_field.name)
+    check = {}
+    check[custom_field.name] = 'myval'
+    response = client.patch('/endpoint/%s' % (item.id), body=body,headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_OK
+    response_body = json.loads(response.body)
+    for k in check:
+        assert check[k] == response_body[k]
+
+
+def test_make_resource_make_model_delete(client, app, admin_auth, custom_field,
+        dummy_type, dummy_admin):
+    # setup
+    model = make_model(dummy_type)
+    item = model(owner=dummy_admin, f='someval')
+    item.save()
+    item_id = item.id
+    # test
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.delete('/endpoint/%s' % (item_id), headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_NO_CONTENT
+    try:
+        deleted = model.get( getattr(model, 'id') == item_id)
+    except:
+        deleted = True
+    assert deleted == True
+
+
 def test_make_resource_access_rules_get(client, app, user_auth, item_with_model):
     """
     Verifies that make_resource correctly implements permissions on GET requests.
