@@ -174,6 +174,23 @@ def make_resource(model):
         except:
             raise falcon.HTTPNotFound()
 
+        patch_dict = {}
+        stream = request.stream.read().decode('UTF-8')
+        if len(stream) > 0:
+            for i in stream.split('&'):
+                arg = i.split('=')
+                setattr(item, arg[0], arg[1])
+            item.save()
+
+        item_dict = {}
+        for k in self.model.__dict__:
+            if (
+                isinstance(self.model.__dict__[k], FieldDescriptor) and
+                not isinstance(self.model.__dict__[k], RelationDescriptor)
+            ):
+                item_dict[k] = getattr(item, k)
+        response.body = json.dumps(item_dict)
+
 
     attributes = {
         'model': model,
