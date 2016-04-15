@@ -3,11 +3,8 @@
     The models used by Efesto.
 """
 import os
-"""
 from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
                     BooleanField, ForeignKeyField)
-                    """
-from peewee import *
 from playhouse.signals import Model, pre_save
 
 
