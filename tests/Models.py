@@ -112,6 +112,17 @@ def test_types_model(column_dict):
             assert getattr(field_object, constraint) == constraints[constraint]
 
 
+def test_types_signal(dummy_user):
+    """
+    Tests the types post_delete signal.
+    """
+    new_type = Types(name='somerandtype', enabled=1)
+    new_type.save()
+    model = make_model(new_type)
+    new_type.delete_instance()
+    assert 'somerandtype' not in db.get_tables()
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
