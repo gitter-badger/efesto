@@ -112,7 +112,7 @@ def test_types_model(column_dict):
             assert getattr(field_object, constraint) == constraints[constraint]
 
 
-def test_types_signal(dummy_user):
+def test_types_post_delete(dummy_user):
     """
     Tests the types post_delete signal.
     """
