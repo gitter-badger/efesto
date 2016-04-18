@@ -215,6 +215,8 @@ def test_make_resource_make_model_get(client, app, admin_auth,
     body = json.loads(response.body)
     for i in model_fields:
         assert body[i] == getattr(item, i)
+    # teardown
+    item.delete_instance()
 
 
 def test_make_resource_make_model_patch(client, app, admin_auth, custom_field,
@@ -232,6 +234,8 @@ def test_make_resource_make_model_patch(client, app, admin_auth, custom_field,
     response_body = json.loads(response.body)
     for k in check:
         assert check[k] == response_body[k]
+    # teardown
+    item.delete_instance()
 
 
 def test_make_resource_make_model_delete(client, app, admin_auth, custom_field,

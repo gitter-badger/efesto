@@ -121,6 +121,8 @@ def test_make_collection_make_model_get_auth(client, app, admin_auth,
     response = client.get('/endpoint', headers={'authorization':admin_auth})
     assert response.status == falcon.HTTP_OK
     assert len(json.loads(response.body)) == model.select().limit(20).count()
+    # teardown
+    item.delete_instance()
 
 
 @pytest.mark.parametrize('query', [
