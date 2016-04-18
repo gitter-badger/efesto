@@ -123,6 +123,19 @@ def test_types_post_delete(dummy_user):
     assert 'somerandtype' not in db.get_tables()
 
 
+def test_types_pre_delete(dummy_user):
+    new_type = Types(name='somerandtype2', enabled=1)
+    new_type.save()
+    model = make_model(new_type)
+    new_item = model(owner=dummy_user.id)
+    new_item.save()
+    with pytest.raises(ValueError) as e_info:
+        new_type.delete_instance()
+    # teardown
+    new_item.delete_instance()
+    new_type.delete_instance()
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
