@@ -45,6 +45,10 @@ def make_collection(model):
         if 'items' in request.params:
             items = int(request.params['items'])
 
+        order = None
+        if 'order_by' in request.params:
+            order = request.params['order_by']
+
         query = self.model.select()
         for key, argument in params.items():
             if argument[0] == '<':
@@ -55,6 +59,15 @@ def make_collection(model):
                 query = query.where(getattr(self.model, key) != argument[1:])
             else:
                 query = query.where(getattr(self.model, key) == argument)
+
+        if order != None:
+            if order[0] == '<':
+                query = query.order_by( getattr(self.model, order[1:]).desc() )
+            elif order[0] == '>':
+                query = query.order_by( getattr(self.model, order[1:]).asc() )
+            else:
+                query = query.order_by( getattr(self.model, order).asc() )
+
         count = query.count()
 
         body = []
