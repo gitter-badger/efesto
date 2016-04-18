@@ -5,7 +5,7 @@
 import os
 from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
                     BooleanField, ForeignKeyField)
-from playhouse.signals import Model, pre_save, post_delete
+from playhouse.signals import Model, pre_save, post_delete, pre_delete
 
 
 from .Base import db
@@ -80,6 +80,18 @@ def on_type_delete(model_class, instance):
     """
     model = make_model(instance)
     model.drop_table()
+
+
+@pre_delete(sender=Types)
+def on_type_pre_delete(model_class, instance):
+    """
+    Checks whether a type has existing instances.
+    """
+    instance.enabled = 1
+    instance.save()
+    model = make_model(instance)
+    if model.select().count() > 0:
+        raise ValueError("This type has still existing instances")
 
 
 class Fields(Base):
