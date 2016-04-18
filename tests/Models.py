@@ -357,3 +357,19 @@ def test_make_model_io(custom_type, custom_fields, dummy_admin):
     item.save()
     assert getattr(item, 'id') != None
     item.delete_instance()
+
+
+def test_make_model_foreign_column_io(custom_type, custom_type_two, dummy_admin):
+    custom_type_two.enabled = 1
+    custom_type_two.save()
+    custom_type.enabled = 1
+    custom_type.save()
+    parent_model = make_model(custom_type)
+    model = make_model(custom_type_two)
+    parent_item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01'}
+    parent_item = parent_model(**parent_item_dict)
+    item = model(owner=dummy_admin.id, forfield=parent_item.id)
+    item.save()
+    assert getattr(item, 'id') != None
+    item.delete_instance()
+    parent_item.delete_instance()
