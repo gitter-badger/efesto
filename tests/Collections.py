@@ -43,7 +43,7 @@ def pagination_items(request):
     items = 4
     items_list = []
     for i in range(1, items):
-        name = 'u%s' % (i)
+        name = 'u%s' % (10-i)
         item_dict = {'name':name, 'email':'mail', 'password':'p', 'rank':1}
         item = model(**item_dict)
         item.save()
@@ -126,7 +126,7 @@ def test_make_collection_make_model_get_auth(client, app, admin_auth,
 
 
 @pytest.mark.parametrize('query', [
-    'name=u2','rank=1', 'name=<u3', 'rank=1&name=!u3'
+    'name=u7','rank=1', 'name=<u8', 'rank=1&name=!u3'
 ])
 def test_make_collection_query(client, app, admin_auth, pagination_items, query):
     """
