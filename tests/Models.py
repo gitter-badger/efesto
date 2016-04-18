@@ -41,6 +41,26 @@ def custom_fields(request, custom_type):
     return str_field, int_field, date_field
 
 
+@pytest.fixture
+def custom_type_two(request):
+    new_type = Types(name='mytype2', enabled=0)
+    new_type.save()
+    def teardown():
+        new_type.delete_instance()
+    request.addfinalizer(teardown)
+    return new_type
+
+
+@pytest.fixture
+def foreign_field(request, custom_type_two, custom_type):
+    foreign_field = Fields(name='forfield', type=custom_type_two.id, field_type='mytype')
+    foreign_field.save()
+    def teardown():
+        foreign_field.delete_instance()
+    request.addfinalizer(teardown)
+    return foreign_field
+
+
 @pytest.mark.parametrize('column_dict',
     [
         { 'column': 'id', 'field': PrimaryKeyField },
@@ -299,6 +319,20 @@ def test_make_model_columns(custom_type, custom_fields):
 
         if column.nullable:
             assert getattr(field_object, 'nullable') == True
+
+
+def test_make_model_foreign_column(custom_type, custom_type_two, foreign_field):
+    """
+    Tests whether make_model can generate models with foreign key fields.
+    """
+    custom_type.enabled = 1
+    custom_type.save()
+    custom_type_two.enabled = 1
+    model = make_model(custom_type_two)
+    columns = Fields.select().where(Fields.type==custom_type_two.id, Fields.field_type==custom_type.name)
+    for column in columns:
+        field_object = getattr(model, column.name)
+        assert isinstance(field_object, ForeignKeyField)
 
 
 def test_make_model_ownership(custom_type, custom_fields):
