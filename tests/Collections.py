@@ -172,6 +172,33 @@ def test_make_collection_query_ignored_args(client, app, admin_auth, item_with_m
     assert response.status == falcon.HTTP_OK
 
 
+@pytest.mark.parametrize('query', ['order_by=name', 'order_by=>name'])
+def test_make_collection_order_arg_asc(client, app, admin_auth, pagination_items, query):
+    resource = make_collection(Users)()
+    app.add_route('/endpoint', resource)
+    url = "/endpoint?%s" % (query)
+    response = client.get(url, headers={'authorization':admin_auth})
+    response_items = json.loads(response.body)
+    previous = None
+    for i in response_items:
+        if previous != None:
+            assert i['name'] > previous
+        previous = i['name']
+
+
+def test_make_collection_order_arg_desc(client, app, admin_auth, pagination_items):
+    resource = make_collection(Users)()
+    app.add_route('/endpoint', resource)
+    url = "/endpoint?%s" % ('order_by=<name')
+    response = client.get(url, headers={'authorization':admin_auth})
+    response_items = json.loads(response.body)
+    previous = None
+    for i in response_items:
+        if previous != None:
+            assert i['name'] < previous
+        previous = i['name']
+
+
 def test_make_collection_query_pagination(client, app, admin_auth):
     """
     Verifies that make_collection supports pagination arguments.
