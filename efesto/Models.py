@@ -156,7 +156,12 @@ def make_model(custom_type):
         fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField, 'date': DateTimeField }
         columns = Fields.select().where( Fields.type==custom_type.id )
         for column in columns:
-            attributes[column.name] = fields_dict[column.field_type]()
+            if column.field_type in fields_dict:
+                attributes[column.name] = fields_dict[column.field_type]()
+            else:
+                parent_type = Types.get(Types.name==column.field_type)
+                parent_model = make_model(parent_type)
+                attributes[column.name] = ForeignKeyField(parent_model)
         model = type("%s" % (custom_type.name), (Base, ), attributes)
         db.create_tables([model], safe=True)
         return model
