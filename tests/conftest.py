@@ -24,7 +24,7 @@ def dummy_admin(request):
     dummy.save()
 
     def teardown():
-        dummy.delete_instance(recursive=True)
+        dummy.delete_instance()
     request.addfinalizer(teardown)
     return dummy
 
