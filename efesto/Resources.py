@@ -230,7 +230,7 @@ class TokensResource:
         if authentication == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
 
-        if 'eternal' in request.params and request.params['eternal'] == '1':
+        if 'token_name' in request.params:
             try:
                 t = EternalTokens.get( EternalTokens.name == request.params['token_name'], EternalTokens.user == authentication.id  ).token
             except:
