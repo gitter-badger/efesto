@@ -11,11 +11,9 @@ from .Base import config
 from .Crypto import compare_hash
 
 
-def generate_token(expiration=600, decode=False, **kwargs):
+def generate_token(expiration=600, **kwargs):
     s = Serializer(config.parser.get('security', 'secret'), expires_in=expiration)
-    if decode == True:
-        return s.dumps(kwargs).decode('UTF-8')
-    return s.dumps(kwargs)
+    return s.dumps(kwargs).decode('UTF-8')
 
 
 def read_token(token):

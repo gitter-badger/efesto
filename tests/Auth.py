@@ -47,7 +47,7 @@ def test_jsonify_token(serializer):
     """
     Tests whether generate_token can make a jsonificable token.
     """
-    token = generate_token(decode=True, user='someuser')
+    token = generate_token(user='someuser')
     jsonified_token = json.dumps({'token': token})
     assert type(jsonified_token) == str
 
@@ -90,7 +90,7 @@ def test_token_authentication():
 
 
 def test_token_authentication_eternal(dummy_admin, token):
-    original_string = "%s:" % (generate_token(decode=True, token=token.token))
+    original_string = "%s:" % (generate_token(token=token.token))
     string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
     auth_string = "Basic %s" % (string64)
     result = authenticate_by_token(auth_string)

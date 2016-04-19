@@ -235,8 +235,8 @@ class TokensResource:
                 t = EternalTokens.get( EternalTokens.name == request.params['token_name'], EternalTokens.user == authentication.id  ).token
             except:
                 raise falcon.HTTPNotFound()
-            token = generate_token(decode=True, token=t)
+            token = generate_token(token=t)
         else:
-            token = generate_token(decode=True, user=request.params['username'])
+            token = generate_token(user=request.params['username'])
         response.status = falcon.HTTP_OK
         response.body = json.dumps({'token': token})
