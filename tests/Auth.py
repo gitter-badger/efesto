@@ -10,14 +10,19 @@ import base64
 import pytest
 
 
-from itsdangerous import (TimedJSONWebSignatureSerializer as TimedSerializer,
-                           SignatureExpired)
+from itsdangerous import (JSONWebSignatureSerializer as Serializer,
+    TimedJSONWebSignatureSerializer as TimedSerializer, SignatureExpired)
 
 
 from efesto.Auth import (generate_token, read_token, authenticate_by_password,
     parse_auth_header, authenticate_by_token)
 from efesto.Base import config
 from efesto.Models import Users, EternalTokens
+
+
+@pytest.fixture
+def serializer():
+    return Serializer(config.parser.get('security', 'secret'))
 
 
 @pytest.fixture
