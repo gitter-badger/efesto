@@ -1,4 +1,12 @@
-# Version 0.2 (2016-04-18)
+# Version 0.2
+
+## Version 0.2.1 (2016-04-19)
+
+* Improved TokensResource
+* Auth.generate_token always returns decoded tokens
+* Auth.read_token reads timed and non-timed tokens
+
+## Version 0.2.0 (2016-04-18)
 
 * Added order by queries to collections
 * Added foreign keys support to make_model
