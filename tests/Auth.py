@@ -67,6 +67,19 @@ def test_read_token(timed_serializer):
     assert token_dict == {'user':'random'}
 
 
+def test_read_token_expired():
+    token = generate_token(expiration=0, user='random')
+    time.sleep(1)
+    with pytest.raises(SignatureExpired) as e_info:
+        token_dict = read_token(token)
+
+
+def test_read_token_eternal():
+    token = generate_token(expiration=-1, token='somestring')
+    token_dict = read_token(token)
+    assert token_dict == {'token':'somestring'}
+
+
 def test_password_authentication_failure():
     assert authenticate_by_password('myuser', 'mypasswd') == None
 
