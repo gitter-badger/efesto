@@ -377,7 +377,7 @@ def test_tokens_resource_eternal_not_found(client, app, dummy_user):
     Verfies that when a requested token is not found a 404 error is returned.
     """
     resource = TokensResource()
-    data = {'username':dummy_user.name, 'password':'sample', 'eternal':1, 'token_name': 'blah'}
+    data = {'username':dummy_user.name, 'password':'sample', 'token_name': 'blah'}
     app.add_route('/token', resource)
     response = client.post('/token', data)
     assert response.status == falcon.HTTP_NOT_FOUND
@@ -388,7 +388,7 @@ def test_tokens_resource_eternal(client, app, dummy_admin, token):
     Verifies that a correct token request returns a valid token.
     """
     resource = TokensResource()
-    data = {'username':dummy_admin.name, 'password':'sample', 'eternal':1, 'token_name': token.name}
+    data = {'username':dummy_admin.name, 'password':'sample','token_name': token.name}
     app.add_route('/token', resource)
     response = client.post('/token', data)
     response_token = read_token(json.loads(response.body)['token'])
