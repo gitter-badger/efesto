@@ -3,7 +3,8 @@
     The Efesto authentication module.
 """
 import base64
-from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer
+from itsdangerous import (JSONWebSignatureSerializer as Serializer,
+    TimedJSONWebSignatureSerializer as TimedSerializer)
 
 
 from .Models import Users, EternalTokens
