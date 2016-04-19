@@ -226,9 +226,6 @@ class TokensResource:
         if not 'password' in request.params or not 'username' in request.params:
             raise falcon.HTTPBadRequest('', '')
 
-        if 'eternal' in request.params and not 'token_name' in request.params:
-            raise falcon.HTTPBadRequest('', '')
-
         authentication = authenticate_by_password(request.params['username'], request.params['password'])
         if authentication == None:
             raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
