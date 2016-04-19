@@ -310,8 +310,7 @@ def test_make_resource_access_rules_delete(client, app, user_auth, deletable_ite
 @pytest.mark.parametrize('data', [
     {'username':'user'},
     {'password': 'passwd'},
-    {'somevar':'var'},
-    {'username':'user', 'password':'passwd', 'eternal': 1}
+    {'somevar':'var'}
 ])
 def test_tokens_resource_bad_request(client, app, data):
     """
