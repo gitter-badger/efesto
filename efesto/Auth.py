@@ -18,8 +18,17 @@ def generate_token(expiration=600, **kwargs):
 
 
 def read_token(token):
-    s = TimedSerializer(config.parser.get('security', 'secret'))
-    return s.loads(token)
+    """
+    Reads a token. If the token contains a user parameter, the token is read
+    with TimedSerializer.
+    """
+    s = Serializer(config.parser.get('security', 'secret'))
+    result = s.loads(token)
+    if 'user' in result:
+        t = TimedSerializer(config.parser.get('security', 'secret'))
+        return t.loads(token)
+    else:
+        return result
 
 
 def authenticate_by_password(username, password):
