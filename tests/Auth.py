@@ -10,7 +10,7 @@ import base64
 import pytest
 
 
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
+from itsdangerous import (TimedJSONWebSignatureSerializer as TimedSerializer,
                            SignatureExpired)
 
 
@@ -21,30 +21,30 @@ from efesto.Models import Users, EternalTokens
 
 
 @pytest.fixture
-def serializer():
-    return Serializer(config.parser.get('security', 'secret'))
+def timed_serializer():
+    return TimedSerializer(config.parser.get('security', 'secret'))
 
 
-def test_generate_token(serializer):
+def test_generate_token(timed_serializer):
     """
     Tests the generation of a token
     """
     token = generate_token(user='myuser')
-    r = serializer.loads(token)
+    r = timed_serializer.loads(token)
     assert r == {'user':'myuser'}
 
 
-def test_generate_token_expiration(serializer):
+def test_generate_token_expiration(timed_serializer):
     """
     Tests the generation of an expired token
     """
     token = generate_token(expiration=0, user='myuser')
     time.sleep(1)
     with pytest.raises(SignatureExpired) as e_info:
-        serializer.loads(token)
+        timed_serializer.loads(token)
 
 
-def test_jsonify_token(serializer):
+def test_jsonify_token(timed_serializer):
     """
     Tests whether generate_token can make a jsonificable token.
     """
@@ -53,7 +53,7 @@ def test_jsonify_token(serializer):
     assert type(jsonified_token) == str
 
 
-def test_read_token(serializer):
+def test_read_token(timed_serializer):
     """
     Tests read_token
     """
