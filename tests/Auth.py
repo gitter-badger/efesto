@@ -14,8 +14,9 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                            SignatureExpired)
 
 
-from efesto.Auth import *
-from efesto.Base import db, config
+from efesto.Auth import (generate_token, read_token, authenticate_by_password,
+    parse_auth_header, authenticate_by_token)
+from efesto.Base import config
 from efesto.Models import Users, EternalTokens
 
 
