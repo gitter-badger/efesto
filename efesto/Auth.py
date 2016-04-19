@@ -3,7 +3,7 @@
     The Efesto authentication module.
 """
 import base64
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer
 
 
 from .Models import Users, EternalTokens
@@ -12,12 +12,12 @@ from .Crypto import compare_hash
 
 
 def generate_token(expiration=600, **kwargs):
-    s = Serializer(config.parser.get('security', 'secret'), expires_in=expiration)
+    s = TimedSerializer(config.parser.get('security', 'secret'), expires_in=expiration)
     return s.dumps(kwargs).decode('UTF-8')
 
 
 def read_token(token):
-    s = Serializer(config.parser.get('security', 'secret'))
+    s = TimedSerializer(config.parser.get('security', 'secret'))
     return s.loads(token)
 
 
