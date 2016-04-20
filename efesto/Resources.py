@@ -9,8 +9,8 @@ import json
 from peewee import FieldDescriptor, RelationDescriptor
 
 
-from .Models import EternalTokens
-from .Auth import *
+from .Models import EternalTokens, Users
+from .Auth import generate_token, authenticate_by_token, authenticate_by_password
 
 
 def make_collection(model):
