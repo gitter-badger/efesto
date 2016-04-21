@@ -320,6 +320,14 @@ def test_make_resource_access_rules_delete(client, app, user_auth, deletable_ite
     assert response.status == falcon.HTTP_FORBIDDEN
 
 
+def test_make_resource_serialization_get(client, app, admin_auth, complex_type, complex_item):
+    model = make_model(complex_type)
+    resource = make_resource(model)()
+    app.add_route('/endpoint/{id}', resource)
+    response = client.get('/endpoint/%s' % (complex_item.id), headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_OK
+
+
 @pytest.mark.parametrize('data', [
     {'username':'user'},
     {'password': 'passwd'},
