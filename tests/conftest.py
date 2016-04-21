@@ -78,12 +78,15 @@ def complex_fields(request, complex_type):
     int_field.save()
     date_field = Fields(name='datefield', type=complex_type.id, field_type='date')
     date_field.save()
+    nfield = Fields(name='nfield', type=complex_type.id, field_type='string', nullable=True)
+    nfield.save()
     def teardown():
         str_field.delete_instance()
         int_field.delete_instance()
         date_field.delete_instance()
+        nfield.delete_instance()
     request.addfinalizer(teardown)
-    return str_field, int_field, date_field
+    return str_field, int_field, date_field, nfield
 
 
 @pytest.fixture
