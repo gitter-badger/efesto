@@ -293,8 +293,8 @@ def test_make_model_columns(complex_type, complex_fields):
             assert getattr(field_object, 'unique') == True
 
         if column.nullable:
-            assert getattr(field_object, 'nullable') == True
-
+            assert getattr(field_object, 'null') == True
+            
 
 def test_make_model_foreign_column(complex_type, custom_type_two, foreign_field):
     """
