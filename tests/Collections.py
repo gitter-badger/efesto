@@ -347,3 +347,14 @@ def test_make_collection_access_rules_post(client, app, user_auth, test_args):
     app.add_route('/endpoint', resource)
     response = client.post('/endpoint', data=data, headers={'authorization':user_auth})
     assert response.status == falcon.HTTP_FORBIDDEN
+
+
+def test_make_collection_serialization_get(client, app, admin_auth, complex_type,
+        complex_fields, complex_item):
+    complex_type.enabled = 1
+    complex_type.save()
+    model = make_model(complex_type)
+    collection = make_collection(model)()
+    app.add_route('/endpoint', collection)
+    response = client.get('/endpoint', headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_OK
