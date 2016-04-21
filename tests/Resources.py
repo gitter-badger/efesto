@@ -49,6 +49,19 @@ def deletable_item(request):
     return item, model
 
 
+@pytest.fixture
+def complex_item(request, complex_type, complex_fields, dummy_admin):
+    complex_type.enabled = 1
+    complex_type.save()
+    item = make_model(complex_type)(strfield='test', intfield=10,
+        datefield='2016-04-20', owner=dummy_admin.id)
+    item.save()
+    def teardown():
+        item.delete_instance()
+    request.addfinalizer(teardown)
+    return item
+
+
 @pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
     ['on_get', 'on_patch', 'on_delete', 'model']
