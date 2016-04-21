@@ -328,6 +328,15 @@ def test_make_resource_serialization_get(client, app, admin_auth, complex_type, 
     assert response.status == falcon.HTTP_OK
 
 
+def test_make_resource_serialization_patch(client, app, admin_auth, complex_type, complex_item):
+    model = make_model(complex_type)
+    resource = make_resource(model)()
+    body = 'datefield=2016-12-30&intfield=5'
+    app.add_route('/endpoint/{id}', resource)
+    response = client.patch('/endpoint/%s' % (complex_item.id), body=body, headers={'authorization':admin_auth})
+    assert response.status == falcon.HTTP_OK
+
+
 @pytest.mark.parametrize('data', [
     {'username':'user'},
     {'password': 'passwd'},
