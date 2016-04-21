@@ -81,7 +81,11 @@ def make_collection(model):
 
         if len(body) == 0:
             raise falcon.HTTPNotFound()
-        response.body = json.dumps(body)
+        def json_serial(obj):
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            raise TypeError ("Type not serializable")
+        response.body = json.dumps(body, default=json_serial)
 
         if count > items:
             domain = "{}://{}?page=%s&items={}".format(request.protocol,
