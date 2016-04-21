@@ -15,31 +15,6 @@ from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make
 from efesto.Crypto import compare_hash
 
 
-@pytest.fixture
-def custom_type(request):
-    new_type = Types(name='mytype', enabled=0)
-    new_type.save()
-    def teardown():
-        new_type.delete_instance()
-    request.addfinalizer(teardown)
-    return new_type
-
-
-@pytest.fixture
-def custom_fields(request, custom_type):
-    str_field = Fields(name='strfield', type=custom_type.id, field_type='string')
-    str_field.save()
-    int_field = Fields(name='intfield', type=custom_type.id, field_type='int')
-    int_field.save()
-    date_field = Fields(name='datefield', type=custom_type.id, field_type='date')
-    date_field.save()
-    def teardown():
-        str_field.delete_instance()
-        int_field.delete_instance()
-        date_field.delete_instance()
-    request.addfinalizer(teardown)
-    return str_field, int_field, date_field
-
 
 @pytest.fixture
 def custom_type_two(request):
@@ -52,7 +27,7 @@ def custom_type_two(request):
 
 
 @pytest.fixture
-def foreign_field(request, custom_type_two, custom_type):
+def foreign_field(request, custom_type_two, complex_type):
     foreign_field = Fields(name='forfield', type=custom_type_two.id, field_type='mytype')
     foreign_field.save()
     def teardown():
@@ -283,32 +258,32 @@ def test_eternal_tokens_io():
     user.delete_instance()
 
 
-def test_make_model_disabled(custom_type, custom_fields):
+def test_make_model_disabled(complex_type, complex_fields):
     """
     Verifies that make_model raises an exception when trying to generate
     a disabled type's model.
     """
     with pytest.raises(ValueError) as e_info:
-        make_model(custom_type)
+        make_model(complex_type)
 
 
-def test_make_model_create_table(custom_type, custom_fields):
+def test_make_model_create_table(complex_type, complex_fields):
     """
     Verifies that make_model generates the model's table.
     """
-    custom_type.enabled = 1
-    model = make_model(custom_type)
-    assert custom_type.name in db.get_tables()
+    complex_type.enabled = 1
+    model = make_model(complex_type)
+    assert complex_type.name in db.get_tables()
 
 
-def test_make_model_columns(custom_type, custom_fields):
+def test_make_model_columns(complex_type, complex_fields):
     """
     Verifies that make_model can correctly generate a model.
     """
-    custom_type.enabled = 1
-    model = make_model(custom_type)
+    complex_type.enabled = 1
+    model = make_model(complex_type)
     fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField, 'date':DateTimeField }
-    columns = Fields.select().where(Fields.type==custom_type.id)
+    columns = Fields.select().where(Fields.type==complex_type.id)
     for column in columns:
         field = fields_dict[column.field_type]
         field_object = getattr(model, column.name)
@@ -321,37 +296,37 @@ def test_make_model_columns(custom_type, custom_fields):
             assert getattr(field_object, 'nullable') == True
 
 
-def test_make_model_foreign_column(custom_type, custom_type_two, foreign_field):
+def test_make_model_foreign_column(complex_type, custom_type_two, foreign_field):
     """
     Tests whether make_model can generate models with foreign key fields.
     """
-    custom_type.enabled = 1
-    custom_type.save()
+    complex_type.enabled = 1
+    complex_type.save()
     custom_type_two.enabled = 1
     model = make_model(custom_type_two)
-    columns = Fields.select().where(Fields.type==custom_type_two.id, Fields.field_type==custom_type.name)
+    columns = Fields.select().where(Fields.type==custom_type_two.id, Fields.field_type==complex_type.name)
     for column in columns:
         field_object = getattr(model, column.name)
         assert isinstance(field_object, ForeignKeyField)
 
 
-def test_make_model_ownership(custom_type, custom_fields):
+def test_make_model_ownership(complex_type, complex_fields):
     """
     Verifies that the make_model generated model has an owner attribute.
     """
-    custom_type.enabled = 1
-    model = make_model(custom_type)
+    complex_type.enabled = 1
+    model = make_model(complex_type)
     assert hasattr(model, 'owner')
     assert isinstance( getattr(model, 'owner'), ForeignKeyField)
 
 
-def test_make_model_io(custom_type, custom_fields, dummy_admin):
+def test_make_model_io(complex_type, complex_fields, dummy_admin):
     """
     Verifies that is possible to create and delete custom items.
     """
-    custom_type.enabled = 1
-    custom_type.save()
-    model = make_model(custom_type)
+    complex_type.enabled = 1
+    complex_type.save()
+    model = make_model(complex_type)
     item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01'}
     item = model(**item_dict)
     item.save()
@@ -359,12 +334,12 @@ def test_make_model_io(custom_type, custom_fields, dummy_admin):
     item.delete_instance()
 
 
-def test_make_model_foreign_column_io(custom_type, custom_type_two, dummy_admin):
+def test_make_model_foreign_column_io(complex_type, custom_type_two, dummy_admin):
     custom_type_two.enabled = 1
     custom_type_two.save()
-    custom_type.enabled = 1
-    custom_type.save()
-    parent_model = make_model(custom_type)
+    complex_type.enabled = 1
+    complex_type.save()
+    parent_model = make_model(complex_type)
     model = make_model(custom_type_two)
     parent_item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01'}
     parent_item = parent_model(**parent_item_dict)

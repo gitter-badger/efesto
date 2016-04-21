@@ -61,6 +61,32 @@ def custom_field(request, dummy_type):
 
 
 @pytest.fixture
+def complex_type(request):
+    new_type = Types(name='mytype', enabled=0)
+    new_type.save()
+    def teardown():
+        new_type.delete_instance()
+    request.addfinalizer(teardown)
+    return new_type
+
+
+@pytest.fixture
+def complex_fields(request, complex_type):
+    str_field = Fields(name='strfield', type=complex_type.id, field_type='string')
+    str_field.save()
+    int_field = Fields(name='intfield', type=complex_type.id, field_type='int')
+    int_field.save()
+    date_field = Fields(name='datefield', type=complex_type.id, field_type='date')
+    date_field.save()
+    def teardown():
+        str_field.delete_instance()
+        int_field.delete_instance()
+        date_field.delete_instance()
+    request.addfinalizer(teardown)
+    return str_field, int_field, date_field
+
+
+@pytest.fixture
 def token(request, dummy_admin):
     new_token = EternalTokens(name='mytoken', user=dummy_admin.id, token='token')
     new_token.save()
