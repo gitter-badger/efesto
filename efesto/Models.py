@@ -157,7 +157,10 @@ def make_model(custom_type):
         columns = Fields.select().where( Fields.type==custom_type.id )
         for column in columns:
             if column.field_type in fields_dict:
-                attributes[column.name] = fields_dict[column.field_type]()
+                args_dict = {}
+                if column.nullable == True:
+                    args_dict['null'] = True
+                attributes[column.name] = fields_dict[column.field_type](**args_dict)
             else:
                 parent_type = Types.get(Types.name==column.field_type)
                 parent_model = make_model(parent_type)
