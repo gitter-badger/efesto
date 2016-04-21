@@ -4,6 +4,7 @@
 """
 import falcon
 import json
+from datetime import datetime
 
 
 from peewee import FieldDescriptor, RelationDescriptor
@@ -149,7 +150,12 @@ def make_resource(model):
                     not isinstance(self.model.__dict__[k], RelationDescriptor)
                 ):
                     item_dict[k] = getattr(item, k)
-            response.body = json.dumps(item_dict)
+
+            def json_serial(obj):
+                if isinstance(obj, datetime):
+                    return obj.isoformat()
+                raise TypeError ("Type not serializable")
+            response.body = json.dumps(item_dict, default=json_serial)
         else:
             raise falcon.HTTPForbidden("forbidden", "forbidden")
 
