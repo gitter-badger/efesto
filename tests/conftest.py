@@ -8,7 +8,7 @@ import pytest
 import base64
 
 
-from efesto.Models import Users, EternalTokens, Types, AccessRules, Fields
+from efesto.Models import Users, EternalTokens, Types, AccessRules, Fields, make_model
 from efesto.Auth import generate_token
 
 
@@ -84,6 +84,19 @@ def complex_fields(request, complex_type):
         date_field.delete_instance()
     request.addfinalizer(teardown)
     return str_field, int_field, date_field
+
+
+@pytest.fixture
+def complex_item(request, complex_type, complex_fields, dummy_admin):
+    complex_type.enabled = 1
+    complex_type.save()
+    item = make_model(complex_type)(strfield='test', intfield=10,
+        datefield='2016-04-20', owner=dummy_admin.id)
+    item.save()
+    def teardown():
+        item.delete_instance()
+    request.addfinalizer(teardown)
+    return item
 
 
 @pytest.fixture
