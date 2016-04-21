@@ -1,5 +1,10 @@
 # Version 0.2
 
+## Version 0.2.2 (2016-04-20)
+
+* Fixed a bug in datetime serialization
+* Improved installation output
+
 ## Version 0.2.1 (2016-04-19)
 
 * Improved TokensResource
