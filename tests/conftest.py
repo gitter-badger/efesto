@@ -80,13 +80,16 @@ def complex_fields(request, complex_type):
     date_field.save()
     nfield = Fields(name='nfield', type=complex_type.id, field_type='string', nullable=True)
     nfield.save()
+    ufield = Fields(name='ufield', type=complex_type.id, field_type='string', unique=True)
+    ufield.save()
     def teardown():
         str_field.delete_instance()
         int_field.delete_instance()
         date_field.delete_instance()
         nfield.delete_instance()
+        ufield.delete_instance()
     request.addfinalizer(teardown)
-    return str_field, int_field, date_field, nfield
+    return str_field, int_field, date_field, nfield, ufield
 
 
 @pytest.fixture
@@ -94,7 +97,7 @@ def complex_item(request, complex_type, complex_fields, dummy_admin):
     complex_type.enabled = 1
     complex_type.save()
     item = make_model(complex_type)(strfield='test', intfield=10,
-        datefield='2016-04-20', owner=dummy_admin.id)
+        datefield='2016-04-20', ufield='val', owner=dummy_admin.id)
     item.save()
     def teardown():
         item.delete_instance()

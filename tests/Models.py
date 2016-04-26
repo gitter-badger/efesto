@@ -328,7 +328,7 @@ def test_make_model_io(complex_type, complex_fields, dummy_admin):
     complex_type.enabled = 1
     complex_type.save()
     model = make_model(complex_type)
-    item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01'}
+    item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01', 'ufield':'u'}
     item = model(**item_dict)
     item.save()
     assert getattr(item, 'id') != None
@@ -342,7 +342,7 @@ def test_make_model_foreign_column_io(complex_type, custom_type_two, dummy_admin
     complex_type.save()
     parent_model = make_model(complex_type)
     model = make_model(custom_type_two)
-    parent_item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01'}
+    parent_item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01', 'ufield':'u'}
     parent_item = parent_model(**parent_item_dict)
     item = model(owner=dummy_admin.id, forfield=parent_item.id)
     item.save()
