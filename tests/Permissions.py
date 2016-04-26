@@ -32,6 +32,23 @@ def item(request):
     return item
 
 
+@pytest.fixture(scope='function')
+def rule(request):
+    rule = AccessRules(level=0)
+    rule.save()
+    def teardown():
+        rule.delete_instance()
+    request.addfinalizer(teardown)
+
+    def update(update_dict, action, value):
+        for key in update_dict:
+            setattr(rule, key, update_dict[key])
+        setattr(rule, action, value)
+        rule.save()
+    setattr(rule, 'update_from_test', update)
+    return rule
+
+
 def test_users_can(dummy_user, action, item):
     """
     Verifies that Users.can can evaluate default permissions.
@@ -46,24 +63,20 @@ def test_admin_can(dummy_admin, action, item):
     assert dummy_admin.can(action, item) == True
 
 
-def test_users_override_by_model(dummy_user, action, item):
+def test_users_override_by_model(dummy_user, action, item, rule):
     """
     Tests overriding an user permissions on models.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     actions = ['read', 'edit', 'eliminate']
     actions.remove(action)
     # test
     assert dummy_user.can(action, item) == True
     for i in actions:
         assert dummy_user.can(i, item) == False
-    # tear down
-    rule.delete_instance()
 
 
 @pytest.mark.parametrize('args', [
@@ -80,7 +93,7 @@ def test_users_override_by_model(dummy_user, action, item):
         'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
     }
 ])
-def test_users_override_check_model(dummy_user, action, args):
+def test_users_override_check_model(dummy_user, action, args, rule):
     """
     Verifies that permissions rules affect only the specified model.
     """
@@ -88,9 +101,7 @@ def test_users_override_check_model(dummy_user, action, args):
     model = args['model']
     model_name = getattr(model._meta, 'db_table')
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     item = args['model2'](**args['args2'])
     item.save()
     actions = ['read', 'edit', 'eliminate']
@@ -104,19 +115,16 @@ def test_users_override_check_model(dummy_user, action, args):
     # tear down
     item.delete_instance()
     new_item.delete_instance()
-    rule.delete_instance()
 
 
-def test_users_override_stack_by_model(dummy_user, action, item):
+def test_users_override_stack_by_model(dummy_user, action, item, rule):
     """
     Tests permissions when there are more rules for the same target.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'user': dummy_user, 'level':3, 'model':model_name}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -125,19 +133,16 @@ def test_users_override_stack_by_model(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
 
 
-def test_users_override_by_item(dummy_user, action, item):
+def test_users_override_by_item(dummy_user, action, item, rule):
     """
     Verifies that an item rule can override a more generic model rule
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     second_dict = {'user': dummy_user, 'level':2, 'model':model_name}
     second_dict[action] = 0
     second_rule = AccessRules(**second_dict)
@@ -149,7 +154,6 @@ def test_users_override_by_item(dummy_user, action, item):
     for i in actions:
         assert dummy_user.can(i, item) == False
     # tear down
-    rule.delete_instance()
     second_rule.delete_instance()
 
 
@@ -166,7 +170,7 @@ def test_users_override_by_item(dummy_user, action, item):
         'model':AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
     }
 ])
-def test_users_override_check_item(dummy_user, action, args):
+def test_users_override_check_item(dummy_user, action, args, rule):
     """
     Verifies that permissions rules set on an item affect only the specified
     item.
@@ -180,28 +184,23 @@ def test_users_override_check_item(dummy_user, action, args):
     new_item.save()
     #
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     # test
     assert dummy_user.can(action, item) == True
     assert dummy_user.can(action, new_item) == False
     # teardown
     item.delete_instance()
     new_item.delete_instance()
-    rule.delete_instance()
 
 
-def test_users_override_stack_by_item(dummy_user, action, item):
+def test_users_override_stack_by_item(dummy_user, action, item, rule):
     """
     Tests permissions when there are more rules for the same target id.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'user': dummy_user, 'level':3, 'model':model_name, 'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -210,27 +209,22 @@ def test_users_override_stack_by_item(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
 
 
-def test_rank_override_by_model(dummy_user, action, item):
+def test_rank_override_by_model(dummy_user, action, item, rule):
     """
     Tests overriding a rank permissions on models.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     actions = ['read', 'edit', 'eliminate']
     actions.remove(action)
     # test
     assert dummy_user.can(action, item) == True
     for i in actions:
         assert dummy_user.can(i, item) == False
-    # tear down
-    rule.delete_instance()
 
 
 @pytest.mark.parametrize('args', [
@@ -247,7 +241,7 @@ def test_rank_override_by_model(dummy_user, action, item):
         'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
     }
 ])
-def test_rank_override_check_model(dummy_user, action, args):
+def test_rank_override_check_model(dummy_user, action, args, rule):
     """
     Verifies that permissions rules set for a rank affect only the specified
     model.
@@ -256,9 +250,7 @@ def test_rank_override_check_model(dummy_user, action, args):
     model = args['model']
     model_name = getattr(model._meta, 'db_table')
     rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     item = args['model2'](**args['args2'])
     item.save()
     actions = ['read', 'edit', 'eliminate']
@@ -272,19 +264,16 @@ def test_rank_override_check_model(dummy_user, action, args):
     # tear down
     item.delete_instance()
     new_item.delete_instance()
-    rule.delete_instance()
 
 
-def test_rank_override_stack_by_model(dummy_user, action, item):
+def test_rank_override_stack_by_model(dummy_user, action, item, rule):
     """
     Tests permissions when there are more rules for the same rank.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -293,10 +282,9 @@ def test_rank_override_stack_by_model(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
 
 
-def test_rank_override_by_item(dummy_user, action, item):
+def test_rank_override_by_item(dummy_user, action, item, rule):
     """
     Verifies that an item rule specified for a rank can override a more generic
     model rule for a rank.
@@ -304,9 +292,7 @@ def test_rank_override_by_item(dummy_user, action, item):
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     second_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
     second_dict[action] = 0
     second_rule = AccessRules(**second_dict)
@@ -318,7 +304,6 @@ def test_rank_override_by_item(dummy_user, action, item):
     for i in actions:
         assert dummy_user.can(i, item) == False
     # tear down
-    rule.delete_instance()
     second_rule.delete_instance()
 
 
@@ -335,7 +320,7 @@ def test_rank_override_by_item(dummy_user, action, item):
         'model':AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
     }
 ])
-def test_rank_override_check_item(dummy_user, action, args):
+def test_rank_override_check_item(dummy_user, action, args, rule):
     """
     Verifies that permissions rules set on an item by rank affect only the
     specified item.
@@ -349,28 +334,23 @@ def test_rank_override_check_item(dummy_user, action, args):
     new_item.save()
     #
     rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     # test
     assert dummy_user.can(action, item) == True
     assert dummy_user.can(action, new_item) == False
     # teardown
     item.delete_instance()
     new_item.delete_instance()
-    rule.delete_instance()
 
 
-def test_rank_override_stack_by_item(dummy_user, action, item):
+def test_rank_override_stack_by_item(dummy_user, action, item, rule):
     """
     Tests permissions when there are more rules for the same target id.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name, 'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -379,10 +359,9 @@ def test_rank_override_stack_by_item(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
 
 
-def test_users_override_stack_by_item_on_model(dummy_user, action, item):
+def test_users_override_stack_by_item_on_model(dummy_user, action, item, rule):
     """
     Tests permissions when there is a rule on the model and an higher rule on
     the item targeting the same user.
@@ -390,9 +369,7 @@ def test_users_override_stack_by_item_on_model(dummy_user, action, item):
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'user': dummy_user, 'level':3, 'model':model_name, 'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -401,10 +378,9 @@ def test_users_override_stack_by_item_on_model(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
 
 
-def test_rank_override_stack_by_item_on_model(dummy_user, action, item):
+def test_rank_override_stack_by_item_on_model(dummy_user, action, item, rule):
     """
     Tests permissions when there is a rule on the model and an higher rule on
     the item targeting the same rank.
@@ -412,9 +388,7 @@ def test_rank_override_stack_by_item_on_model(dummy_user, action, item):
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name, 'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -423,19 +397,16 @@ def test_rank_override_stack_by_item_on_model(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
 
 
-def test_users_override_mixed_stack_by_item(dummy_user, action, item):
+def test_users_override_mixed_stack_by_item(dummy_user, action, item, rule):
     """
     Verifies that a generic rank rule is overriden by a specific user rule.
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
     rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
-    rule_dict[action] = 1
-    rule = AccessRules(**rule_dict)
-    rule.save()
+    rule.update_from_test(rule_dict, action, 1)
     new_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
@@ -444,4 +415,3 @@ def test_users_override_mixed_stack_by_item(dummy_user, action, item):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
-    rule.delete_instance()
