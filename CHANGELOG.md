@@ -1,3 +1,8 @@
+# Version 0.3 (2016-04-26)
+
+* make_model supports unique columns
+* Users.can allows 'create' argument
+
 # Version 0.2
 
 ## Version 0.2.2 (2016-04-20)
