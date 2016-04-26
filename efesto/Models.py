@@ -170,6 +170,9 @@ def make_model(custom_type):
                 args_dict = {}
                 if column.nullable == True:
                     args_dict['null'] = True
+
+                if column.unique == True:
+                    args_dict['unique'] = True
                 attributes[column.name] = fields_dict[column.field_type](**args_dict)
             else:
                 parent_type = Types.get(Types.name==column.field_type)
