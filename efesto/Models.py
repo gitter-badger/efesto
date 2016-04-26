@@ -30,10 +30,14 @@ class Users(Base):
     rank = IntegerField()
     last_login = DateTimeField(null=True)
 
-    def can(self, action, item):
+    def can(self, requested_action, item):
         if self.rank == 10:
             return True
         else:
+            if requested_action == 'create':
+                action = 'read'
+            else:
+                 action = requested_action
             model_name = getattr(item._meta, 'db_table')
             rules = AccessRules.select()\
             .where(
@@ -45,10 +49,16 @@ class Users(Base):
             .order_by(AccessRules.level.desc(), AccessRules.item.asc(), AccessRules.rank.desc())\
             .limit(1)
             if len(rules) > 0:
-                if getattr(rules[0], action) == 1:
-                    return True
+                if requested_action == 'create':
+                    if getattr(rules[0], action) >= 5:
+                        return True
+                    else:
+                        return False
                 else:
-                    return False
+                    if getattr(rules[0], action) >= 1:
+                        return True
+                    else:
+                        return False
             return False
 
 
