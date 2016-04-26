@@ -3,8 +3,8 @@
     The models used by Efesto.
 """
 import os
-from peewee import (PrimaryKeyField, CharField, IntegerField, DateTimeField,
-                    BooleanField, ForeignKeyField)
+from peewee import (PrimaryKeyField, CharField, TextField, IntegerField,
+                    DateTimeField, BooleanField, ForeignKeyField)
 from playhouse.signals import Model, pre_save, post_delete, pre_delete
 
 
@@ -163,7 +163,7 @@ def make_model(custom_type):
     if custom_type.enabled == True:
         attributes = {}
         attributes['owner'] = ForeignKeyField(Users)
-        fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField, 'date': DateTimeField }
+        fields_dict = {'string': TextField, 'int': IntegerField, 'bool':BooleanField, 'date': DateTimeField }
         columns = Fields.select().where( Fields.type==custom_type.id )
         for column in columns:
             if column.field_type in fields_dict:

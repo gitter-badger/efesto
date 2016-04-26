@@ -7,7 +7,8 @@
 import sys
 sys.path.insert(0, "")
 import pytest
-from peewee import IntegerField, CharField, DateTimeField, BooleanField, ForeignKeyField, PrimaryKeyField
+from peewee import (IntegerField, CharField, TextField, DateTimeField,
+                    BooleanField, ForeignKeyField, PrimaryKeyField)
 
 
 from efesto.Base import db
@@ -282,7 +283,7 @@ def test_make_model_columns(complex_type, complex_fields):
     """
     complex_type.enabled = 1
     model = make_model(complex_type)
-    fields_dict = {'string': CharField, 'int': IntegerField, 'bool':BooleanField, 'date':DateTimeField }
+    fields_dict = {'string': TextField, 'int': IntegerField, 'bool':BooleanField, 'date':DateTimeField }
     columns = Fields.select().where(Fields.type==complex_type.id)
     for column in columns:
         field = fields_dict[column.field_type]
@@ -294,7 +295,7 @@ def test_make_model_columns(complex_type, complex_fields):
 
         if column.nullable:
             assert getattr(field_object, 'null') == True
-            
+
 
 def test_make_model_foreign_column(complex_type, custom_type_two, foreign_field):
     """
