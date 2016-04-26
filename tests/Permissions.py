@@ -153,6 +153,7 @@ def test_users_override_by_item(dummy_user, action, item, rule):
     assert dummy_user.can(action, item) == True
     for i in actions:
         assert dummy_user.can(i, item) == False
+        assert dummy_user.can('create', item) == False
     # tear down
     second_rule.delete_instance()
 
@@ -415,3 +416,19 @@ def test_users_override_mixed_stack_by_item(dummy_user, action, item, rule):
     assert dummy_user.can(action, item) == False
     # tear down
     new_rule.delete_instance()
+
+
+def test_users_override_by_model_create(dummy_user, item, rule):
+    """
+    Tests overriding an user create permissions on models.
+    """
+    # set up
+    model_name = getattr(item._meta, 'db_table')
+    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    rule.update_from_test(rule_dict, 'read', 5)
+    actions = ['edit', 'eliminate']
+    # test
+    assert dummy_user.can('create', item) == True
+    assert dummy_user.can('read', item) == True
+    for i in actions:
+        assert dummy_user.can(i, item) == False
