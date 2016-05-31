@@ -15,6 +15,7 @@ setup(
     setup_requires = ['pytest-runner'],
     install_requires = [
         'falcon==0.3.0',
+        'psycopg2>=2.6.1',
         'peewee>=2.8.0',
         'itsdangerous>=0.24',
         'colorama>=0.3.3'
