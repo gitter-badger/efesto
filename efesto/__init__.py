@@ -19,7 +19,7 @@
 """
 import falcon
 
-
+from .Version import __version__
 from .Resources import make_collection, make_resource, TokensResource
 from .Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
 
