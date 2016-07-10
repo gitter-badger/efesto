@@ -55,7 +55,7 @@ def test_config_has_parser(config):
 
 
 @pytest.mark.parametrize('options', [
-    ['main', 'version', 'installed'],
+    ['main', 'installed'],
     ['db', 'name', 'user', 'password', 'host'],
     ['security', 'secret', 'token_expiration', 'salt_length', 'iterations', 'key_length']
 ])
