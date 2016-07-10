@@ -39,7 +39,7 @@ def make_collection(model):
             user = authenticate_by_token(request.auth)
 
         if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         columns = []
@@ -127,7 +127,8 @@ def make_collection(model):
             user = authenticate_by_token(request.auth)
 
         if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+
         user = Users.get(Users.name == user)
 
         new_item = self.model(**request.params)
@@ -153,7 +154,7 @@ def make_resource(model):
             user = authenticate_by_token(request.auth)
 
         if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         try:
@@ -185,7 +186,7 @@ def make_resource(model):
             user = authenticate_by_token(request.auth)
 
         if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         try:
@@ -205,7 +206,7 @@ def make_resource(model):
             user = authenticate_by_token(request.auth)
 
         if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         try:
@@ -253,7 +254,7 @@ class TokensResource:
 
         authentication = authenticate_by_password(request.params['username'], request.params['password'])
         if authentication == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', scheme='Basic realm="Login Required"')
+            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
 
         if 'token_name' in request.params:
             try:
