@@ -250,6 +250,7 @@ class TokensResource:
     The TokensResource resource handles tokens requests.
     """
     def on_post(self, request, response):
+        request._parse_form_urlencoded()
         if not 'password' in request.params or not 'username' in request.params:
             raise falcon.HTTPBadRequest('', '')
 
