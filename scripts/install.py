@@ -14,6 +14,7 @@ from colorama import Fore, Style
 from peewee import ProgrammingError, OperationalError
 
 
+import efesto
 from efesto.Base import db, config
 from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens
 
@@ -69,7 +70,9 @@ def create_admin():
 def install():
     installed = config.parser.getboolean('main', 'installed')
     if installed != True:
-        message('Installing...', 'blue')
+        message('This script will guide you through Efesto installation', 'blue')
+        version_message = 'Version being installed: %s' % (efesto.__version__)
+        message(version_message, 'blue')
         create_tables()
         create_config()
         create_admin()
