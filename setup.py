@@ -14,7 +14,7 @@ setup(
     tests_require = ['pytest', 'pytest-falcon'],
     setup_requires = ['pytest-runner'],
     install_requires = [
-        'falcon==0.3.0',
+        'falcon==1.0.0',
         'psycopg2>=2.6.1',
         'peewee>=2.8.0',
         'itsdangerous>=0.24',
