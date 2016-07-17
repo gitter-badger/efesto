@@ -122,6 +122,7 @@ def make_collection(model):
 
 
     def on_post(self, request, response):
+        request._parse_form_urlencoded()
         user = None
         if request.auth:
             user = authenticate_by_token(request.auth)
