@@ -1,5 +1,11 @@
 # Version 0.3 (2016-04-26)
 
+## Version 0.3.1 (2016-06-01)
+Adds essential files for the distribution and configuration of Efesto.
+* Add setup.py
+* Add LICENSE and copyright notices
+
+## Version 0.3.0 (2016-04-26)
 * make_model supports unique columns
 * Users.can allows 'create' argument
 
