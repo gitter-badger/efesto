@@ -46,7 +46,16 @@ def create_tables():
 
 
 def create_config():
+    print('Please enter the configuration settings')
+    db_host = input('Database host: ')
+    db_name = input('Database name: ')
+    db_user = input('Database username: ')
+    db_passwd = getpass.getpass('Database password: ')
     secret_key = str(hexlify(os.urandom(24)), encoding="utf8")
+    config.parser.set('db', 'host', db_host)
+    config.parser.set('db', 'name', db_name)
+    config.parser.set('db', 'user', db_user)
+    config.parser.set('db', 'password', db_passwd)
     config.parser.set('main', 'installed', 'True')
     config.parser.set('security', 'secret', secret_key)
     with open(config.path, 'w') as configfile:
