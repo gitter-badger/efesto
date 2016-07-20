@@ -83,3 +83,6 @@ ENV/
 
 # Spyder project settings
 .spyderproject
+
+# Custom settings
+.DS_Store
