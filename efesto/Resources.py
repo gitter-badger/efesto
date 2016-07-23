@@ -268,3 +268,14 @@ class TokensResource:
             token = generate_token(user=request.params['username'])
         response.status = falcon.HTTP_OK
         response.body = json.dumps({'token': token})
+
+
+class RootResource:
+    """
+    The RootResource resource handles requests made to the root endpoint.
+    """
+    def __init__(self, data):
+        self.data = data
+
+    def on_get(self, request, response):
+        response.body = json.dumps(self.data)
