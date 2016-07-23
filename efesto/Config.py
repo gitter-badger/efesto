@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
     The Efesto configuration module
-    
+
     Copyright (C) 2016 Jacopo Cascioli
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -29,7 +29,11 @@ class Config(object):
         self.parser.read(self.path)
 
     def find_path(self, path):
-        fullpath = os.path.join(os.getcwd(), path)
-        if os.path.isfile(fullpath) == True:
-            return fullpath
+        possible_paths = [
+            os.path.join(os.getcwd(), path),
+            os.path.join(os.getcwd(), '..', path)
+        ]
+        for fullpath in possible_paths:
+            if os.path.isfile(fullpath) == True:
+                return fullpath
         raise ValueError('The configuration file was not found at %s' % (path))
