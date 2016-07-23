@@ -29,6 +29,12 @@ class Config(object):
         self.parser.read(self.path)
 
     def find_path(self, path):
+        """
+        Finds the absolute path of the configuration file, looking in the
+        current working directory (default) and its parent folder.
+
+        The parent folder support is necessary for Sphinx.
+        """
         possible_paths = [
             os.path.join(os.getcwd(), path),
             os.path.join(os.getcwd(), '..', path)
