@@ -12,7 +12,7 @@ from peewee import FieldDescriptor, RelationDescriptor
 
 
 from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
-from efesto.Resources import make_resource, TokensResource
+from efesto.Resources import make_resource, TokensResource, RootResource
 from efesto.Auth import generate_token, read_token
 
 
@@ -410,3 +410,16 @@ def test_tokens_resource_eternal(client, app, dummy_admin, token):
     response = client.post('/token', data)
     response_token = read_token(json.loads(response.body)['token'])
     assert response_token['token'] == token.token
+
+
+def test_root_resource(client, app):
+    """
+    Tests the root resource.
+    """
+    data = {'urls': ['/myendpoint', '/sample']}
+    resource = RootResource(data)
+    app.add_route('/', resource)
+    response = client.get('/')
+    response_body = json.loads(response.body)
+    assert response.status == falcon.HTTP_OK
+    assert response_body == data
