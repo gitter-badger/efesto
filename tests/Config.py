@@ -28,6 +28,19 @@ def test_find_path(config):
     assert fullpath == os.path.abspath(path)
 
 
+def test_find_path_parent_folder(config):
+    """
+    Verifies that find_path is able to find the configuration file if it's
+    in the working directory's parent folder.
+    """
+    path = '../test.cfg'
+    f = open(path, 'w')
+    f.close()
+    fullpath = config.find_path('test.cfg')
+    os.remove(path)
+    assert os.path.abspath(fullpath) == os.path.abspath(path)
+
+
 def test_find_path_exception(config):
     """
     Tests the find_path method behaviour when called with a non-existing path.
