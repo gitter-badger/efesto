@@ -9,7 +9,7 @@ setup(
     author = 'Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
     license='GPL3',
-    version = '0.3.1',
+    version = '0.4.0',
     packages = find_packages(),
     tests_require = ['pytest', 'pytest-falcon'],
     setup_requires = ['pytest-runner'],
