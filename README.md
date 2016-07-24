@@ -24,17 +24,14 @@ for an example.
 At the very minimum you will need to edit the db details (host, db, user,
 password).
 
-Then run the install.py script found in scripts/install.py (you will need to
-copy this from the repo).
+Then use efesto-quickstart:
 
 ```
-touch efesto.cfg
-# edit to your needs
-nano efesto.cfg
-python3 scripts/install.py
+vim efesto.cfg # edit the configuration to your needs
+efesto-quickstart
 ```
 
-Efesto is installed; if you use gunicorn you can run it with:
+Efesto is installed and set up; if you use gunicorn you can run it with:
 
 ```
 gunicorn efesto:app
