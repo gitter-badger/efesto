@@ -28,5 +28,9 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-    ]
+    ],
+    entry_points='''
+        [console_scripts]
+        efesto-quickstart=efesto.scripts.quickstart:quickstart
+    '''
 )
