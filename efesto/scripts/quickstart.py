@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-    Efesto installation script.
+    Efesto quickstart script.
 
-    This script install Efesto, creating the tables, the secret and the
+    This script will set up Efesto, creating the tables, the secret and the
     administrator account.
 """
 import sys
@@ -76,19 +76,19 @@ def create_admin():
     print(Fore.GREEN + 'Admin created!')
 
 
-def install():
+def quickstart():
     installed = config.parser.getboolean('main', 'installed')
     if installed != True:
-        message('This script will guide you through Efesto installation', 'blue')
-        version_message = 'Version being installed: %s' % (efesto.__version__)
+        message('This script will help zou setup Efesto', 'blue')
+        version_message = 'Efesto version: %s' % (efesto.__version__)
         message(version_message, 'blue')
         create_tables()
         create_config()
         create_admin()
-        message('Installation successful.', 'green')
+        message('Set up successful.', 'green')
     else:
-        message('It seems Efesto is already installed!', 'red')
+        message('It seems Efesto has been already set up!', 'red')
 
 
 if __name__ == '__main__':
-    install()
+    quickstart()
