@@ -1,3 +1,12 @@
+# Version 0.4 (2016-07-24)
+
+* Added efesto-quickstart
+* The root endpoint returns a response
+* Improvements to the installation process
+* Added contribution guide
+* Updated falcon version in use to 1.0
+* The version number is kept as internal value
+
 # Version 0.3 (2016-04-26)
 
 ## Version 0.3.1 (2016-06-01)
