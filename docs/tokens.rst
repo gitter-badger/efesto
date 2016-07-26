@@ -7,12 +7,16 @@ that do not expire but can be revoked.
 
 Standard tokens
 ###############
+Standard tokens are the default token type and unless you need something peculiar,
+you should use these tokens.
+
 Standard tokens are emitted when a client authenticates successfully. Efesto
-does not store them, rather is the client that stores the token and sends it
+does not store them: it's the client that should store the token and send it
 when making a request.
 
 After a certain amount of time, a standard token will expire and it won't be
-accepted by Efesto.
+accepted by Efesto. This is necessary for security reasons, as there is no other
+way to invalidate or revoke standard tokens.
 
 .. note::
 
