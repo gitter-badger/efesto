@@ -1,14 +1,18 @@
 Tokens
 ======
 
-In Efesto there two types of tokens: standard and eternal. When a client
-authenticates, it uses either one.
+Efesto uses tokens to authenticate clients. There are two types of tokens:
+standard tokens, that expire after a certain amount of time, and eternal tokens,
+that do not expire but can be revoked.
 
 Standard tokens
 ###############
-Standard tokens are time-bound tokens stored on clients. Efesto does not force
-a way to store these tokens on the client, rather is the client responsibility
-whether and how to store them.
+Standard tokens are emitted when a client authenticates successfully. Efesto
+does not store them, rather is the client that stores the token and sends it
+when making a request.
+
+After a certain amount of time, a standard token will expire and it won't be
+accepted by Efesto.
 
 .. note::
 
