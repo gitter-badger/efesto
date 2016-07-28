@@ -11,6 +11,7 @@ Contents:
    :maxdepth: 2
 
    authentication
+   permissions
    configuration
    tokens
    api
