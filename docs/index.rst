@@ -15,3 +15,4 @@ Contents:
    configuration
    tokens
    api
+   troubleshooting
