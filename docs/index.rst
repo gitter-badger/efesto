@@ -16,3 +16,4 @@ Contents:
    tokens
    api
    troubleshooting
+   cookbook
