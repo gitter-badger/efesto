@@ -240,9 +240,10 @@ def test_make_collection_order_arg_asc(client, app, admin_auth, pagination_items
     response_items = json.loads(response.body)
     previous = None
     for i in response_items:
+        item = Users.get(Users.id == i['id'])
         if previous != None:
-            assert i['name'] > previous
-        previous = i['name']
+            assert item.name > previous
+        previous = item.name
 
 
 def test_make_collection_order_arg_desc(client, app, admin_auth, pagination_items):
@@ -253,9 +254,10 @@ def test_make_collection_order_arg_desc(client, app, admin_auth, pagination_item
     response_items = json.loads(response.body)
     previous = None
     for i in response_items:
+        item = Users.get(Users.id == i['id'])
         if previous != None:
-            assert i['name'] < previous
-        previous = i['name']
+            assert item.name < previous
+        previous = item.name
 
 
 def test_make_collection_query_pagination(client, app, admin_auth):
