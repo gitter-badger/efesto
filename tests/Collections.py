@@ -124,6 +124,20 @@ def test_make_collection_make_model_get_auth(client, app, admin_auth,
     # teardown
     item.delete_instance()
 
+def test_make_collection_response_fields(client, app, admin_auth, item_with_model):
+    """
+    Verifies that make_collection generated endpoints return only the item id
+    on GET requests.
+    """
+    model = item_with_model[1]
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint', headers={'authorization':admin_auth})
+    body = json.loads(response.body)
+    for item in body:
+        assert 'id' in item
+        assert len(item.keys()) == 1
+
 
 @pytest.mark.parametrize('query', [
     'name=u7','rank=1', 'name=<u8', 'rank=1&name=!u3'
