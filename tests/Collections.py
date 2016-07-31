@@ -271,7 +271,7 @@ def test_make_collection_query_pagination(client, app, admin_auth):
     response = client.get('/endpoint?page=2&items=1', headers={'authorization':admin_auth})
     items = json.loads(response.body)
     assert len(items) == 1
-    assert items[0] == Users.select().paginate(2, 1).dicts()[0]
+    assert items[0]['id'] == Users.select().paginate(2, 1)[0].id
     new_user.delete_instance()
 
 
