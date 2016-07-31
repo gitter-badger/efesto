@@ -8,6 +8,8 @@ import json
 import falcon
 import pytest
 
+from peewee import FieldDescriptor, RelationDescriptor
+
 
 from efesto.Base import db
 from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
@@ -137,6 +139,48 @@ def test_make_collection_response_fields(client, app, admin_auth, item_with_mode
     for item in body:
         assert 'id' in item
         assert len(item.keys()) == 1
+
+
+def test_make_collection_fields_argument(client, app, admin_auth, item_with_model):
+    """
+    Verifies that make_collection generated endpoints support the _fields
+    argument to select returned fields.
+    """
+    model = item_with_model[1]
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    columns = []
+    for i in model.__dict__:
+        if isinstance(model.__dict__[i], FieldDescriptor):
+            if not isinstance(model.__dict__[i], RelationDescriptor):
+                columns.append(i)
+    columns.remove('id')
+    query = "_fields=%s" % (columns[0])
+    url = '/endpoint?%s' % (query)
+    response = client.get(url, headers={'authorization':admin_auth})
+    body = json.loads(response.body)
+    for item in body:
+        assert columns[0] in item
+
+
+def test_make_collection_fields_argument_all(client, app, admin_auth, item_with_model):
+    """
+    Verifies that the _fields argument support an 'all' value, returning all
+    fields.
+    """
+    model = item_with_model[1]
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    response = client.get('/endpoint?_fields=all', headers={'authorization':admin_auth})
+    columns = []
+    for i in model.__dict__:
+        if isinstance(model.__dict__[i], FieldDescriptor):
+            if not isinstance(model.__dict__[i], RelationDescriptor):
+                columns.append(i)
+    body = json.loads(response.body)
+    for item in body:
+        for column in columns:
+            assert column in item
 
 
 @pytest.mark.parametrize('query', [
