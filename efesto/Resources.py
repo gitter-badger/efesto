@@ -65,6 +65,14 @@ def make_collection(model):
         if 'order_by' in request.params:
             order = request.params['order_by']
 
+        fields = ['id']
+        if '_fields' in request.params:
+            if request.params['_fields'] != 'all':
+                fields = request.params['_fields'].split(',')
+                fields.append('id')
+            else:
+                fields = 'all'
+
         query = self.model.select()
         for key, argument in params.items():
             if argument[0] == '<':
@@ -91,7 +99,8 @@ def make_collection(model):
             if user.can('read', i):
                 item = {}
                 for column in columns:
-                    item[column] = getattr(i, column)
+                    if column in fields or fields == 'all':
+                        item[column] = getattr(i, column)
                 body.append(item)
 
         if len(body) == 0:
