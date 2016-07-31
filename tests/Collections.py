@@ -197,20 +197,21 @@ def test_make_collection_query(client, app, admin_auth, pagination_items, query)
     response_items = json.loads(response.body)
     params = query.split('&')
     for i in response_items:
+        item = Users.get(Users.id == i['id'])
         for k in params:
             value = k.split('=')[1]
             if value[0] == '<':
-                assert i[k.split('=')[0]] <= value[1:]
+                assert getattr(item, k.split('=')[0]) <= value[1:]
             elif value[0] == '>':
-                assert i[k.split('=')[0]] >= value[1:]
+                assert getattr(item, k.split('=')[0]) >= value[1:]
             elif value[0] == '!':
-                assert i[k.split('=')[0]] != value[1:]
+                assert getattr(item, k.split('=')[0]) != value[1:]
             else:
                 try:
                     value = int(value)
                 except:
                     pass
-                assert i[k.split('=')[0]] == value
+                assert getattr(item, k.split('=')[0]) == value
 
 
 @pytest.mark.parametrize('query_args', [{'abc':'rnd'}, {'43erg':1023}, {'one':'mix', 'me':10}])
