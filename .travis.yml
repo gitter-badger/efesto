@@ -1,13 +1,16 @@
 language: python
-python:
-    - "3.5"
 sudo: false
 install:
     - python3 setup.py install
     - pip3 install tox
-env:
-    - TOX_ENV=py35
-    - TOX_ENV=pep8
+
+matrix:
+    include:
+        - python: 3.5
+          env: TOXENV=py35
+        - python: 3.5
+          env: TOXENV=pep8
+
 services:
     - postgresql
 
