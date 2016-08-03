@@ -1,0 +1,6 @@
+language: python
+sudo: false
+
+env:
+    - TOX_ENV=py35
+    - TOX_ENV=pep8
