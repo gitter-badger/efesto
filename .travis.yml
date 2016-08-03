@@ -6,3 +6,10 @@ install: python3 setup.py install
 env:
     - TOX_ENV=py35
     - TOX_ENV=pep8
+services:
+    - postgresql
+
+before_script:
+  - psql -c 'create database test;' -U postgres
+
+script: py.test
