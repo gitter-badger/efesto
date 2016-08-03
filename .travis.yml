@@ -2,7 +2,9 @@ language: python
 python:
     - "3.5"
 sudo: false
-install: python3 setup.py install
+install:
+    - python3 setup.py install
+    - pip3 install tox
 env:
     - TOX_ENV=py35
     - TOX_ENV=pep8
