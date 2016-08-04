@@ -1,4 +1,7 @@
 # Efesto
+[![Code Climate](https://codeclimate.com/github/Vesuvium/efesto/badges/gpa.svg)](https://codeclimate.com/github/Vesuvium/efesto)
+[![Build Status](https://travis-ci.org/Vesuvium/efesto.svg?branch=master)](https://travis-ci.org/Vesuvium/efesto)
+
 Efesto is a RESTful API generator based on the Falcon framework. It allows you
 to build and deploy awesome relational APIs in minutes.
 
