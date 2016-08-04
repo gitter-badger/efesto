@@ -16,5 +16,6 @@ services:
 
 before_script:
   - psql -c 'create database test;' -U postgres
+  - python3 scripts/travis.py
 
 script: tox
