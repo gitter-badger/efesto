@@ -20,5 +20,5 @@ to ecommerce.
    configuration
    tokens
    api
-   troubleshooting
    cookbook
+   troubleshooting
