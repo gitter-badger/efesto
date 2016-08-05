@@ -15,6 +15,7 @@ to ecommerce.
    :maxdepth: 2
 
    authentication
+   security
    permissions
    configuration
    tokens
