@@ -40,6 +40,6 @@ class Config(object):
             os.path.join(os.getcwd(), '..', path)
         ]
         for fullpath in possible_paths:
-            if os.path.isfile(fullpath) == True:
+            if os.path.isfile(fullpath):
                 return fullpath
         raise ValueError('The configuration file was not found at %s' % (path))
