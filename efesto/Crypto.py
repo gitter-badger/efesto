@@ -12,14 +12,13 @@
     :copyright: (c) Copyright 2011 by Armin Ronacher.
     :license: BSD
 """
-from binascii import hexlify
-import hmac
 import hashlib
+import hmac
 import os
-import sys
-from struct import Struct
-from operator import xor
+from binascii import hexlify
 from itertools import starmap
+from operator import xor
+from struct import Struct
 
 
 from .Base import config
@@ -35,7 +34,7 @@ def bytes_(s, encoding='utf8', errors='strict'):
 
 
 def hexlify_(s):
-    return str(hexlify(s), encoding="utf8")
+    return str(hexlify(s), encoding='utf8')
 
 
 def range_(*args):
@@ -85,19 +84,21 @@ def generate_hash(string_to_hash):
 
     E.g. 'PBKDF2$iterations$salt$hashed_string'
     """
-    salt_length = config.parser.getint('security','salt_length')
-    iterations = config.parser.getint('security','iterations')
-    key_length = config.parser.getint('security','key_length')
+    salt_length = config.parser.getint('security', 'salt_length')
+    iterations = config.parser.getint('security', 'iterations')
+    key_length = config.parser.getint('security', 'key_length')
     salt = hexlify_(os.urandom(salt_length))
-    hashed_string = pbkdf2_hex(string_to_hash, salt, iterations=iterations, keylen=key_length)
-    return '$'.join( ['PBKDF2-256', str(iterations), salt, hashed_string] )
+    hashed_string = pbkdf2_hex(string_to_hash, salt, iterations=iterations,
+                               keylen=key_length)
+    return '$'.join(['PBKDF2-256', str(iterations), salt, hashed_string])
 
 
 def compare_hash(plain_string, old_hash):
     """ Compares an hash generated with plain_string to an exisiting hash."""
-    key_length = config.parser.getint('security','key_length')
+    key_length = config.parser.getint('security', 'key_length')
     splitted = old_hash.split('$')
     iterations = int(splitted[1])
     salt = splitted[2]
-    new_hash = pbkdf2_hex(plain_string, salt, iterations=iterations, keylen=key_length)
+    new_hash = pbkdf2_hex(plain_string, salt, iterations=iterations,
+                          keylen=key_length)
     return safe_str_cmp(new_hash, splitted[3])
