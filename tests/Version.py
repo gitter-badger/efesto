@@ -3,9 +3,10 @@
     The Version test case.
 """
 import sys
-sys.path.insert(0, "")
-
 import efesto
+
+
+sys.path.insert(0, '')
 
 
 def test_version():
