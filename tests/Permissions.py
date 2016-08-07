@@ -3,13 +3,13 @@
     Tests permissions
 """
 import sys
-sys.path.insert(0, "")
+
+from efesto.Models import AccessRules, Types, Users
+
 import pytest
 
 
-from efesto.Models import (Users, Types, Fields, AccessRules, EternalTokens,
-                            make_model)
-from efesto.Base import db
+sys.path.insert(0, '')
 
 
 @pytest.fixture(params=['read', 'edit', 'eliminate'])
@@ -18,14 +18,16 @@ def action(request):
 
 
 @pytest.fixture(params=[
-    {'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1} },
-    {'model':Types, 'args': {'name':'mytype', 'enabled':0} },
-    {'model': AccessRules, 'args': {'level': 1} }
+    {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                              'rank': 1}},
+    {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
+    {'model': AccessRules, 'args': {'level': 1}}
 ])
 def item(request):
     model = request.param['model']
     item = model(**request.param['args'])
     item.save()
+
     def teardown():
         item.delete_instance()
     request.addfinalizer(teardown)
@@ -36,6 +38,7 @@ def item(request):
 def rule(request):
     rule = AccessRules(level=0)
     rule.save()
+
     def teardown():
         rule.delete_instance()
     request.addfinalizer(teardown)
@@ -69,7 +72,7 @@ def test_users_override_by_model(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
     actions = ['read', 'edit', 'eliminate']
     actions.remove(action)
@@ -81,16 +84,17 @@ def test_users_override_by_model(dummy_user, action, item, rule):
 
 @pytest.mark.parametrize('args', [
     {
-        'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
-        'model2': Types, 'args2':{'name':'mytype', 'enabled':0}
+        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                                 'rank': 1},
+        'model2': Types, 'args2': {'name': 'mytype', 'enabled': 0}
     },
     {
-        'model':Types, 'args': {'name':'mytype', 'enabled':0},
-        'model2':AccessRules, 'args2':{'level': 1}
+        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
+        'model2': AccessRules, 'args2': {'level': 1}
     },
     {
-        'model':AccessRules, 'args': {'level': 1}, 'model2':Users,
-        'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
+        'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
+        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1}
     }
 ])
 def test_users_override_check_model(dummy_user, action, args, rule):
@@ -100,7 +104,7 @@ def test_users_override_check_model(dummy_user, action, args, rule):
     # set up
     model = args['model']
     model_name = getattr(model._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
     item = args['model2'](**args['args2'])
     item.save()
@@ -123,9 +127,9 @@ def test_users_override_stack_by_model(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'user': dummy_user, 'level':3, 'model':model_name}
+    new_dict = {'user': dummy_user, 'level': 3, 'model': model_name}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -141,9 +145,10 @@ def test_users_override_by_item(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
-    second_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    second_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     second_dict[action] = 0
     second_rule = AccessRules(**second_dict)
     second_rule.save()
@@ -160,15 +165,16 @@ def test_users_override_by_item(dummy_user, action, item, rule):
 
 @pytest.mark.parametrize('args', [
     {
-        'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
-        'args2':{'name':'u2', 'email':'mail', 'password':'p', 'rank':1}
+        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                                 'rank': 1},
+        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1}
     },
     {
-        'model':Types, 'args': {'name':'mytype', 'enabled':0},
-        'args2':{'name':'mytype2', 'enabled':0}
+        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
+        'args2': {'name': 'mytype2', 'enabled': 0}
     },
     {
-        'model':AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
+        'model': AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
     }
 ])
 def test_users_override_check_item(dummy_user, action, args, rule):
@@ -184,7 +190,8 @@ def test_users_override_check_item(dummy_user, action, args, rule):
     new_item = model(**args['args2'])
     new_item.save()
     #
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
     # test
     assert dummy_user.can(action, item) == True
@@ -200,9 +207,11 @@ def test_users_override_stack_by_item(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'user': dummy_user, 'level':3, 'model':model_name, 'item': item.id}
+    new_dict = {'user': dummy_user, 'level': 3, 'model': model_name,
+                'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -218,7 +227,7 @@ def test_rank_override_by_model(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
     actions = ['read', 'edit', 'eliminate']
     actions.remove(action)
@@ -230,16 +239,17 @@ def test_rank_override_by_model(dummy_user, action, item, rule):
 
 @pytest.mark.parametrize('args', [
     {
-        'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
-        'model2': Types, 'args2':{'name':'mytype', 'enabled':0}
+        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                                 'rank': 1},
+        'model2': Types, 'args2': {'name': 'mytype', 'enabled': 0}
     },
     {
-        'model':Types, 'args': {'name':'mytype', 'enabled':0},
-        'model2':AccessRules, 'args2':{'level': 1}
+        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
+        'model2': AccessRules, 'args2': {'level': 1}
     },
     {
-        'model':AccessRules, 'args': {'level': 1}, 'model2':Users,
-        'args2': {'name':'u', 'email':'mail', 'password':'p', 'rank':1}
+        'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
+        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1}
     }
 ])
 def test_rank_override_check_model(dummy_user, action, args, rule):
@@ -250,7 +260,7 @@ def test_rank_override_check_model(dummy_user, action, args, rule):
     # set up
     model = args['model']
     model_name = getattr(model._meta, 'db_table')
-    rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
     item = args['model2'](**args['args2'])
     item.save()
@@ -273,9 +283,9 @@ def test_rank_override_stack_by_model(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name}
+    new_dict = {'rank': dummy_user.rank, 'level': 3, 'model': model_name}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -292,9 +302,10 @@ def test_rank_override_by_item(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'rank':dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
-    second_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
+    second_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name}
     second_dict[action] = 0
     second_rule = AccessRules(**second_dict)
     second_rule.save()
@@ -310,15 +321,16 @@ def test_rank_override_by_item(dummy_user, action, item, rule):
 
 @pytest.mark.parametrize('args', [
     {
-        'model':Users, 'args':{'name':'u', 'email':'mail', 'password':'p', 'rank':1},
-        'args2':{'name':'u2', 'email':'mail', 'password':'p', 'rank':1}
+        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                                 'rank': 1},
+        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1}
     },
     {
-        'model':Types, 'args': {'name':'mytype', 'enabled':0},
-        'args2':{'name':'mytype2', 'enabled':0}
+        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
+        'args2': {'name': 'mytype2', 'enabled': 0}
     },
     {
-        'model':AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
+        'model': AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
     }
 ])
 def test_rank_override_check_item(dummy_user, action, args, rule):
@@ -334,7 +346,8 @@ def test_rank_override_check_item(dummy_user, action, args, rule):
     new_item = model(**args['args2'])
     new_item.save()
     #
-    rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
     # test
     assert dummy_user.can(action, item) == True
@@ -350,9 +363,11 @@ def test_rank_override_stack_by_item(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name, 'item': item.id}
+    new_dict = {'rank': dummy_user.rank, 'level': 3, 'model': model_name,
+                'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -369,9 +384,10 @@ def test_users_override_stack_by_item_on_model(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'user': dummy_user, 'level':3, 'model':model_name, 'item': item.id}
+    new_dict = {'user': dummy_user, 'level': 3, 'model': model_name,
+                'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -388,9 +404,10 @@ def test_rank_override_stack_by_item_on_model(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'rank': dummy_user.rank, 'level':3, 'model':model_name, 'item': item.id}
+    new_dict = {'rank': dummy_user.rank, 'level': 3, 'model': model_name,
+                'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -406,9 +423,11 @@ def test_users_override_mixed_stack_by_item(dummy_user, action, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'rank': dummy_user.rank, 'level':2, 'model':model_name, 'item':item.id}
+    rule_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name,
+                 'item': item.id}
     rule.update_from_test(rule_dict, action, 1)
-    new_dict = {'user': dummy_user, 'level':2, 'model':model_name, 'item': item.id}
+    new_dict = {'user': dummy_user, 'level': 2, 'model': model_name,
+                'item': item.id}
     new_dict[action] = 0
     new_rule = AccessRules(**new_dict)
     new_rule.save()
@@ -424,7 +443,7 @@ def test_users_override_by_model_create(dummy_user, item, rule):
     """
     # set up
     model_name = getattr(item._meta, 'db_table')
-    rule_dict = {'user': dummy_user, 'level':2, 'model':model_name}
+    rule_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     rule.update_from_test(rule_dict, 'read', 5)
     actions = ['edit', 'eliminate']
     # test
