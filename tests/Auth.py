@@ -2,22 +2,20 @@
 """
     The Auth test case.
 """
-import sys
-sys.path.insert(0, "")
-import time
-import json
 import base64
+import json
+import sys
+import time
+
+from efesto.Auth import (authenticate_by_password, authenticate_by_token,
+                         generate_token, parse_auth_header, read_token)
+from efesto.Base import config
+from itsdangerous import (JSONWebSignatureSerializer as Serializer,
+                          SignatureExpired,
+                          TimedJSONWebSignatureSerializer as TimedSerializer)
 import pytest
 
-
-from itsdangerous import (JSONWebSignatureSerializer as Serializer,
-    TimedJSONWebSignatureSerializer as TimedSerializer, SignatureExpired)
-
-
-from efesto.Auth import (generate_token, read_token, authenticate_by_password,
-    parse_auth_header, authenticate_by_token)
-from efesto.Base import config
-from efesto.Models import Users, EternalTokens
+sys.path.insert(0, '')
 
 
 @pytest.fixture
@@ -36,7 +34,7 @@ def test_generate_token(timed_serializer):
     """
     token = generate_token(user='myuser')
     r = timed_serializer.loads(token)
-    assert r == {'user':'myuser'}
+    assert r == {'user': 'myuser'}
 
 
 def test_generate_token_expiration(timed_serializer):
@@ -45,7 +43,7 @@ def test_generate_token_expiration(timed_serializer):
     """
     token = generate_token(expiration=0, user='myuser')
     time.sleep(1)
-    with pytest.raises(SignatureExpired) as e_info:
+    with pytest.raises(SignatureExpired):
         timed_serializer.loads(token)
 
 
@@ -64,20 +62,20 @@ def test_read_token(timed_serializer):
     """
     token = generate_token(user='random')
     token_dict = read_token(token)
-    assert token_dict == {'user':'random'}
+    assert token_dict == {'user': 'random'}
 
 
 def test_read_token_expired():
     token = generate_token(expiration=0, user='random')
     time.sleep(1)
-    with pytest.raises(SignatureExpired) as e_info:
-        token_dict = read_token(token)
+    with pytest.raises(SignatureExpired):
+        read_token(token)
 
 
 def test_read_token_eternal():
     token = generate_token(expiration=-1, token='somestring')
     token_dict = read_token(token)
-    assert token_dict == {'token':'somestring'}
+    assert token_dict == {'token': 'somestring'}
 
 
 def test_password_authentication_failure():
@@ -89,9 +87,10 @@ def test_password_authentication_failureauthentication(dummy_user):
 
 
 def test_parse_auth_header():
-    original_string = "myuser:mypasswd"
-    string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
-    auth_string = "Basic %s" % (string64)
+    original_string = 'myuser:mypasswd'
+    encoded_string = original_string.encode('latin-1')
+    string64 = base64.b64encode(encoded_string).decode('latin-1')
+    auth_string = 'Basic %s' % (string64)
     result = parse_auth_header(auth_string)
     assert result == original_string
 
@@ -101,16 +100,18 @@ def test_token_authentication_failure():
 
 
 def test_token_authentication():
-    original_string = "%s:" % (generate_token(decode=True, user='user'))
-    string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
-    auth_string = "Basic %s" % (string64)
+    original_string = '%s:' % (generate_token(decode=True, user='user'))
+    encoded_string = original_string.encode('latin-1')
+    string64 = base64.b64encode(encoded_string).decode('latin-1')
+    auth_string = 'Basic %s' % (string64)
     result = authenticate_by_token(auth_string)
     assert result == 'user'
 
 
 def test_token_authentication_eternal(dummy_admin, token):
-    original_string = "%s:" % (generate_token(token=token.token))
-    string64 = base64.b64encode( original_string.encode("latin-1") ).decode("latin-1")
-    auth_string = "Basic %s" % (string64)
+    original_string = '%s:' % (generate_token(token=token.token))
+    encoded_string = original_string.encode('latin-1')
+    string64 = base64.b64encode(encoded_string).decode('latin-1')
+    auth_string = 'Basic %s' % (string64)
     result = authenticate_by_token(auth_string)
     assert result == dummy_admin.name
