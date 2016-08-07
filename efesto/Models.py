@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
     The models used by Efesto.
-    
+
     Copyright (C) 2016 Jacopo Cascioli
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -18,9 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
-from peewee import (PrimaryKeyField, CharField, TextField, IntegerField,
-                    DateTimeField, BooleanField, ForeignKeyField)
-from playhouse.signals import Model, pre_save, post_delete, pre_delete
+from peewee import (BooleanField, CharField, DateTimeField, ForeignKeyField,
+                    IntegerField, PrimaryKeyField, TextField)
+from playhouse.signals import Model, post_delete, pre_delete, pre_save
 
 
 from .Base import db
@@ -52,17 +52,18 @@ class Users(Base):
             if requested_action == 'create':
                 action = 'read'
             else:
-                 action = requested_action
+                action = requested_action
             model_name = getattr(item._meta, 'db_table')
             rules = AccessRules.select()\
-            .where(
-                (AccessRules.user == self.id) | (AccessRules.rank == self.rank),
-                AccessRules.model == model_name,
-                (AccessRules.item == None) | (AccessRules.item == item.id),
-                getattr(AccessRules, action) != None
-            )\
-            .order_by(AccessRules.level.desc(), AccessRules.item.asc(), AccessRules.rank.desc())\
-            .limit(1)
+                .where(
+                    (AccessRules.user == self.id) | (AccessRules.rank == self.rank),
+                    AccessRules.model == model_name,
+                    (AccessRules.item == None) | (AccessRules.item == item.id),
+                    getattr(AccessRules, action) != None
+                )\
+                .order_by(AccessRules.level.desc(), AccessRules.item.asc(),
+                          AccessRules.rank.desc())\
+                .limit(1)
             if len(rules) > 0:
                 if requested_action == 'create':
                     if getattr(rules[0], action) >= 5:
@@ -75,7 +76,6 @@ class Users(Base):
                     else:
                         return False
             return False
-
 
 
 @pre_save(sender=Users)
@@ -116,7 +116,7 @@ def on_type_pre_delete(model_class, instance):
     instance.save()
     model = make_model(instance)
     if model.select().count() > 0:
-        raise ValueError("This type has still existing instances")
+        raise ValueError('This type has still existing instances')
 
 
 class Fields(Base):
@@ -175,26 +175,28 @@ def make_model(custom_type):
     Generates a model based on a Type entry, using the columns specified in
     Fields.
     """
-    if custom_type.enabled == True:
+    if custom_type.enabled:
         attributes = {}
         attributes['owner'] = ForeignKeyField(Users)
-        fields_dict = {'string': TextField, 'int': IntegerField, 'bool':BooleanField, 'date': DateTimeField }
-        columns = Fields.select().where( Fields.type==custom_type.id )
+        fields_dict = {'string': TextField, 'int': IntegerField,
+                       'bool': BooleanField, 'date': DateTimeField}
+        columns = Fields.select().where(Fields.type == custom_type.id)
         for column in columns:
             if column.field_type in fields_dict:
                 args_dict = {}
-                if column.nullable == True:
+                if column.nullable:
                     args_dict['null'] = True
 
-                if column.unique == True:
+                if column.unique:
                     args_dict['unique'] = True
-                attributes[column.name] = fields_dict[column.field_type](**args_dict)
+                field_instance = fields_dict[column.field_type]
+                attributes[column.name] = field_instance(**args_dict)
             else:
-                parent_type = Types.get(Types.name==column.field_type)
+                parent_type = Types.get(Types.name == column.field_type)
                 parent_model = make_model(parent_type)
                 attributes[column.name] = ForeignKeyField(parent_model)
-        model = type("%s" % (custom_type.name), (Base, ), attributes)
+        model = type('%s' % (custom_type.name), (Base, ), attributes)
         db.create_tables([model], safe=True)
         return model
     else:
-        raise ValueError("Cannot generate a model for a disabled type")
+        raise ValueError('Cannot generate a model for a disabled type')
