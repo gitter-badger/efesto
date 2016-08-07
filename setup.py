@@ -1,19 +1,19 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 setup(
-    name = 'efesto',
-    description='Efesto is a RESTful API generator based on the Falcon framework. ',
+    name='efesto',
+    description='Efesto is a RESTful API generator based on the Falcon.',
     url='https://github.com/vesuvium/efesto',
-    author = 'Jacopo Cascioli',
+    author='Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
     license='GPL3',
-    version = '0.4.0',
-    packages = find_packages(),
-    tests_require = ['pytest', 'pytest-falcon'],
-    setup_requires = ['pytest-runner'],
-    install_requires = [
+    version='0.4.0',
+    packages=find_packages(),
+    tests_require=['pytest', 'pytest-falcon'],
+    setup_requires=['pytest-runner'],
+    install_requires=[
         'falcon==1.0.0',
         'psycopg2>=2.6.1',
         'peewee>=2.8.0',
