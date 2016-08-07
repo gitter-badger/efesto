@@ -5,22 +5,24 @@
     Tests the efesto.Models package.
 """
 import sys
-sys.path.insert(0, "")
-import pytest
-from peewee import (IntegerField, CharField, TextField, DateTimeField,
-                    BooleanField, ForeignKeyField, PrimaryKeyField)
-
 
 from efesto.Base import db
-from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens, make_model
 from efesto.Crypto import compare_hash
+from efesto.Models import (AccessRules, EternalTokens, Fields, Types, Users,
+                           make_model)
+from peewee import (BooleanField, CharField, DateTimeField, ForeignKeyField,
+                    IntegerField, PrimaryKeyField, TextField)
+import pytest
 
+
+sys.path.insert(0, '')
 
 
 @pytest.fixture
 def custom_type_two(request):
     new_type = Types(name='mytype2', enabled=0)
     new_type.save()
+
     def teardown():
         new_type.delete_instance()
     request.addfinalizer(teardown)
@@ -29,24 +31,25 @@ def custom_type_two(request):
 
 @pytest.fixture
 def foreign_field(request, custom_type_two, complex_type):
-    foreign_field = Fields(name='forfield', type=custom_type_two.id, field_type='mytype')
+    foreign_field = Fields(name='forfield', type=custom_type_two.id,
+                           field_type='mytype')
     foreign_field.save()
+
     def teardown():
         foreign_field.delete_instance()
     request.addfinalizer(teardown)
     return foreign_field
 
 
-@pytest.mark.parametrize('column_dict',
-    [
-        { 'column': 'id', 'field': PrimaryKeyField },
-        { 'column': 'name', 'field': CharField, 'constraints':{'unique': True} },
-        { 'column': 'email', 'field': CharField },
-        { 'column': 'password', 'field': CharField},
-        { 'column': 'rank', 'field': IntegerField },
-        { 'column': 'last_login', 'field': DateTimeField, 'constraints':{'null': True} }
-    ]
-)
+@pytest.mark.parametrize('column_dict', [
+    {'column': 'id', 'field': PrimaryKeyField},
+    {'column': 'name', 'field': CharField, 'constraints': {'unique': True}},
+    {'column': 'email', 'field': CharField},
+    {'column': 'password', 'field': CharField},
+    {'column': 'rank', 'field': IntegerField},
+    {'column': 'last_login', 'field': DateTimeField,
+     'constraints': {'null': True}}
+])
 def test_users_model(column_dict):
     """
     Tests the Users model.
@@ -87,13 +90,11 @@ def test_users_signal_on_update():
     assert compare_hash('sample', dummy.password)
 
 
-@pytest.mark.parametrize('column_dict',
-    [
-        { 'column': 'id', 'field': PrimaryKeyField },
-        { 'column': 'name', 'field': CharField, 'constraints': {'unique': True} },
-        { 'column': 'enabled', 'field': BooleanField }
-    ]
-)
+@pytest.mark.parametrize('column_dict', [
+    {'column': 'id', 'field': PrimaryKeyField},
+    {'column': 'name', 'field': CharField, 'constraints': {'unique': True}},
+    {'column': 'enabled', 'field': BooleanField}
+])
 def test_types_model(column_dict):
     """
     Tests the Types model.
@@ -114,7 +115,7 @@ def test_types_post_delete(dummy_user):
     """
     new_type = Types(name='somerandtype', enabled=1)
     new_type.save()
-    model = make_model(new_type)
+    make_model(new_type)
     new_type.delete_instance()
     assert 'somerandtype' not in db.get_tables()
 
@@ -125,25 +126,27 @@ def test_types_pre_delete(dummy_user):
     model = make_model(new_type)
     new_item = model(owner=dummy_user.id)
     new_item.save()
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         new_type.delete_instance()
     # teardown
     new_item.delete_instance()
     new_type.delete_instance()
 
 
-@pytest.mark.parametrize('column_dict',
-    [
-        { 'column': 'id', 'field': PrimaryKeyField },
-        { 'column': 'name', 'field': CharField },
-        { 'column': 'type', 'field': ForeignKeyField },
-        { 'column': 'field_type', 'field': CharField },
-        { 'column': 'unique', 'field': BooleanField, 'constraints': {'null':True} },
-        { 'column': 'nullable', 'field': BooleanField, 'constraints': {'null':True} },
-        { 'column': 'description', 'field': CharField, 'constraints': {'null':True} },
-        { 'column': 'label', 'field': CharField, 'constraints': {'null':True} }
-    ]
-)
+@pytest.mark.parametrize('column_dict', [
+    {'column': 'id', 'field': PrimaryKeyField},
+    {'column': 'name', 'field': CharField},
+    {'column': 'type', 'field': ForeignKeyField},
+    {'column': 'field_type', 'field': CharField},
+    {'column': 'unique', 'field': BooleanField,
+     'constraints': {'null': True}},
+    {'column': 'nullable', 'field': BooleanField,
+     'constraints': {'null': True}},
+    {'column': 'description', 'field': CharField,
+     'constraints': {'null': True}},
+    {'column': 'label', 'field': CharField,
+     'constraints': {'null': True}}
+])
 def test_fields_model(column_dict):
     """
     Tests the Fields model.
@@ -158,19 +161,19 @@ def test_fields_model(column_dict):
             assert getattr(field_object, constraint) == constraints[constraint]
 
 
-@pytest.mark.parametrize('column_dict',
-    [
-        { 'column': 'id', 'field': PrimaryKeyField },
-        { 'column': 'user', 'field': ForeignKeyField, 'constraints':{'null': True} },
-        { 'column': 'rank', 'field': IntegerField, 'constraints':{'null': True} },
-        { 'column': 'item', 'field': IntegerField, 'constraints':{'null': True} },
-        { 'column': 'model', 'field': CharField, 'constraints':{'null': True} },
-        { 'column': 'level', 'field': IntegerField },
-        { 'column': 'read', 'field': IntegerField, 'constraints': {'null': True} },
-        { 'column': 'edit', 'field': IntegerField, 'constraints': {'null': True} },
-        { 'column': 'eliminate', 'field': IntegerField, 'constraints':{'null': True} }
-    ]
-)
+@pytest.mark.parametrize('column_dict', [
+    {'column': 'id', 'field': PrimaryKeyField},
+    {'column': 'user', 'field': ForeignKeyField,
+     'constraints': {'null': True}},
+    {'column': 'rank', 'field': IntegerField, 'constraints': {'null': True}},
+    {'column': 'item', 'field': IntegerField, 'constraints': {'null': True}},
+    {'column': 'model', 'field': CharField, 'constraints': {'null': True}},
+    {'column': 'level', 'field': IntegerField},
+    {'column': 'read', 'field': IntegerField, 'constraints': {'null': True}},
+    {'column': 'edit', 'field': IntegerField, 'constraints': {'null': True}},
+    {'column': 'eliminate', 'field': IntegerField,
+     'constraints': {'null': True}}
+])
 def test_access_rules_model(column_dict):
     """
     Tests the AccessRules model.
@@ -186,10 +189,10 @@ def test_access_rules_model(column_dict):
 
 
 @pytest.mark.parametrize('column_dict', [
-    { 'column': 'id', 'field': PrimaryKeyField },
-    { 'column': 'name', 'field': CharField },
-    { 'column': 'user', 'field': ForeignKeyField },
-    { 'column': 'token', 'field': CharField }
+    {'column': 'id', 'field': PrimaryKeyField},
+    {'column': 'name', 'field': CharField},
+    {'column': 'user', 'field': ForeignKeyField},
+    {'column': 'token', 'field': CharField}
 ])
 def test_eternal_tokens(column_dict):
     """
@@ -217,8 +220,9 @@ def test_eternal_tokens_signal(dummy_user):
 
 
 @pytest.mark.parametrize('item_dict', [
-    {'model': Users, 'args': {'name':'dummy_user', 'email':'email', 'password':'passwd', 'rank':1}},
-    {'model': Types, 'args': {'name':'mytype', 'enabled':0}},
+    {'model': Users, 'args': {'name': 'dummy_user', 'email': 'email',
+                              'password': 'passwd', 'rank': 1}},
+    {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
     {'model': AccessRules, 'args': {'level': 1}}
 ])
 def test_items_io(item_dict):
@@ -264,7 +268,7 @@ def test_make_model_disabled(complex_type, complex_fields):
     Verifies that make_model raises an exception when trying to generate
     a disabled type's model.
     """
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         make_model(complex_type)
 
 
@@ -273,7 +277,7 @@ def test_make_model_create_table(complex_type, complex_fields):
     Verifies that make_model generates the model's table.
     """
     complex_type.enabled = 1
-    model = make_model(complex_type)
+    make_model(complex_type)
     assert complex_type.name in db.get_tables()
 
 
@@ -283,8 +287,9 @@ def test_make_model_columns(complex_type, complex_fields):
     """
     complex_type.enabled = 1
     model = make_model(complex_type)
-    fields_dict = {'string': TextField, 'int': IntegerField, 'bool':BooleanField, 'date':DateTimeField }
-    columns = Fields.select().where(Fields.type==complex_type.id)
+    fields_dict = {'string': TextField, 'int': IntegerField,
+                   'bool': BooleanField, 'date': DateTimeField}
+    columns = Fields.select().where(Fields.type == complex_type.id)
     for column in columns:
         field = fields_dict[column.field_type]
         field_object = getattr(model, column.name)
@@ -297,7 +302,8 @@ def test_make_model_columns(complex_type, complex_fields):
             assert getattr(field_object, 'null') == True
 
 
-def test_make_model_foreign_column(complex_type, custom_type_two, foreign_field):
+def test_make_model_foreign_column(complex_type, custom_type_two,
+                                   foreign_field):
     """
     Tests whether make_model can generate models with foreign key fields.
     """
@@ -305,7 +311,8 @@ def test_make_model_foreign_column(complex_type, custom_type_two, foreign_field)
     complex_type.save()
     custom_type_two.enabled = 1
     model = make_model(custom_type_two)
-    columns = Fields.select().where(Fields.type==custom_type_two.id, Fields.field_type==complex_type.name)
+    columns = Fields.select().where(Fields.type == custom_type_two.id,
+                                    Fields.field_type == complex_type.name)
     for column in columns:
         field_object = getattr(model, column.name)
         assert isinstance(field_object, ForeignKeyField)
@@ -318,7 +325,7 @@ def test_make_model_ownership(complex_type, complex_fields):
     complex_type.enabled = 1
     model = make_model(complex_type)
     assert hasattr(model, 'owner')
-    assert isinstance( getattr(model, 'owner'), ForeignKeyField)
+    assert isinstance(getattr(model, 'owner'), ForeignKeyField)
 
 
 def test_make_model_io(complex_type, complex_fields, dummy_admin):
@@ -328,21 +335,25 @@ def test_make_model_io(complex_type, complex_fields, dummy_admin):
     complex_type.enabled = 1
     complex_type.save()
     model = make_model(complex_type)
-    item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01', 'ufield':'u'}
+    item_dict = {'owner': dummy_admin.id, 'intfield': 10, 'strfield': 'blah',
+                 'datefield': '2016-01-01', 'ufield': 'u'}
     item = model(**item_dict)
     item.save()
     assert getattr(item, 'id') != None
     item.delete_instance()
 
 
-def test_make_model_foreign_column_io(complex_type, custom_type_two, dummy_admin):
+def test_make_model_foreign_column_io(complex_type, custom_type_two,
+                                      dummy_admin):
     custom_type_two.enabled = 1
     custom_type_two.save()
     complex_type.enabled = 1
     complex_type.save()
     parent_model = make_model(complex_type)
     model = make_model(custom_type_two)
-    parent_item_dict = {'owner':dummy_admin.id, 'intfield':10, 'strfield':'blah', 'datefield':'2016-01-01', 'ufield':'u'}
+    parent_item_dict = {'owner': dummy_admin.id, 'intfield': 10,
+                        'strfield': 'blah', 'datefield': '2016-01-01',
+                        'ufield': 'u'}
     parent_item = parent_model(**parent_item_dict)
     item = model(owner=dummy_admin.id, forfield=parent_item.id)
     item.save()
