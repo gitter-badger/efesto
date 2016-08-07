@@ -4,14 +4,15 @@
 
     Tests the Config module.
 """
-import sys
-sys.path.insert(0, "")
-import os
 import configparser
+import os
+import sys
+
+from efesto.Config import Config
 import pytest
 
 
-from efesto.Config import Config
+sys.path.insert(0, '')
 
 
 @pytest.fixture
@@ -45,7 +46,7 @@ def test_find_path_exception(config):
     """
     Tests the find_path method behaviour when called with a non-existing path.
     """
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         config.find_path('somerandomname')
 
 
@@ -64,13 +65,14 @@ def test_config_has_parser(config):
     """
     assert hasattr(config, 'parser')
     if hasattr(config, 'parser'):
-        assert isinstance( getattr(config, 'parser'), configparser.ConfigParser)
+        assert isinstance(getattr(config, 'parser'), configparser.ConfigParser)
 
 
 @pytest.mark.parametrize('options', [
     ['main', 'installed'],
     ['db', 'name', 'user', 'password', 'host'],
-    ['security', 'secret', 'token_expiration', 'salt_length', 'iterations', 'key_length']
+    ['security', 'secret', 'token_expiration', 'salt_length', 'iterations',
+     'key_length']
 ])
 def test_default_config(config, options):
     """
