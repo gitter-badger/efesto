@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
    The Eefesto Resources module.
 
@@ -17,16 +17,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import falcon
 import json
 from datetime import datetime
+import falcon
 
 
 from peewee import FieldDescriptor, RelationDescriptor
-
-
+from .Auth import (authenticate_by_password, authenticate_by_token,
+                   generate_token)
 from .Models import EternalTokens, Users
-from .Auth import generate_token, authenticate_by_token, authenticate_by_password
 
 
 def make_collection(model):
@@ -38,8 +37,9 @@ def make_collection(model):
         if request.auth:
             user = authenticate_by_token(request.auth)
 
-        if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+        if user is None:
+            raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                          ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         columns = []
@@ -84,13 +84,13 @@ def make_collection(model):
             else:
                 query = query.where(getattr(self.model, key) == argument)
 
-        if order != None:
+        if order is not None:
             if order[0] == '<':
-                query = query.order_by( getattr(self.model, order[1:]).desc() )
+                query = query.order_by(getattr(self.model, order[1:]).desc())
             elif order[0] == '>':
-                query = query.order_by( getattr(self.model, order[1:]).asc() )
+                query = query.order_by(getattr(self.model, order[1:]).asc())
             else:
-                query = query.order_by( getattr(self.model, order).asc() )
+                query = query.order_by(getattr(self.model, order).asc())
 
         count = query.count()
 
@@ -105,16 +105,17 @@ def make_collection(model):
 
         if len(body) == 0:
             raise falcon.HTTPNotFound()
+
         def json_serial(obj):
             if isinstance(obj, datetime):
                 return obj.isoformat()
-            raise TypeError ("Type not serializable")
+            raise TypeError('Type not serializable')
         response.body = json.dumps(body, default=json_serial)
 
         if count > items:
-            domain = "{}://{}?page=%s&items={}".format(request.protocol,
-                request.host, items)
-            last_page = int(count/items)
+            domain = '{}://{}?page=%s&items={}'.format(request.protocol,
+                                                       request.host, items)
+            last_page = int(count / items)
 
             if page != 1:
                 prev_page = page - 1
@@ -129,15 +130,15 @@ def make_collection(model):
                     next_url = domain % (next_page)
                     response.add_link(next_url, rel='next')
 
-
     def on_post(self, request, response):
         request._parse_form_urlencoded()
         user = None
         if request.auth:
             user = authenticate_by_token(request.auth)
 
-        if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+        if user is None:
+            raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                          ['Basic realm="Login Required"'])
 
         user = Users.get(Users.name == user)
 
@@ -147,7 +148,7 @@ def make_collection(model):
             response.status = falcon.HTTP_CREATED
             response.body = json.dumps(new_item.__dict__['_data'])
         else:
-            raise falcon.HTTPForbidden("forbidden", "forbidden")
+            raise falcon.HTTPForbidden('forbidden', 'forbidden')
 
     attributes = {
         'model': model,
@@ -163,12 +164,13 @@ def make_resource(model):
         if request.auth:
             user = authenticate_by_token(request.auth)
 
-        if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+        if user is None:
+            raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                          ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         try:
-            item = self.model.get( getattr(self.model, 'id') == id )
+            item = self.model.get(getattr(self.model, 'id') == id)
         except:
             raise falcon.HTTPNotFound()
 
@@ -184,23 +186,23 @@ def make_resource(model):
             def json_serial(obj):
                 if isinstance(obj, datetime):
                     return obj.isoformat()
-                raise TypeError ("Type not serializable")
+                raise TypeError('Type not serializable')
             response.body = json.dumps(item_dict, default=json_serial)
         else:
-            raise falcon.HTTPForbidden("forbidden", "forbidden")
-
+            raise falcon.HTTPForbidden('forbidden', 'forbidden')
 
     def on_delete(self, request, response, id=0):
         user = None
         if request.auth:
             user = authenticate_by_token(request.auth)
 
-        if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+        if user is None:
+            raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                          ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         try:
-            item = self.model.get( getattr(self.model, 'id') == id )
+            item = self.model.get(getattr(self.model, 'id') == id)
         except:
             raise falcon.HTTPNotFound()
 
@@ -208,24 +210,24 @@ def make_resource(model):
             item.delete_instance()
             response.status = falcon.HTTP_NO_CONTENT
         else:
-            raise falcon.HTTPForbidden("forbidden", "forbidden")
+            raise falcon.HTTPForbidden('forbidden', 'forbidden')
 
     def on_patch(self, request, response, id=0):
         user = None
         if request.auth:
             user = authenticate_by_token(request.auth)
 
-        if user == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+        if user is None:
+            raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                          ['Basic realm="Login Required"'])
         user = Users.get(Users.name == user)
 
         try:
-            item = self.model.get( getattr(self.model, 'id') == id )
+            item = self.model.get(getattr(self.model, 'id') == id)
         except:
             raise falcon.HTTPNotFound()
 
         if user.can('edit', item):
-            patch_dict = {}
             stream = request.stream.read().decode('UTF-8')
             if len(stream) > 0:
                 for i in stream.split('&'):
@@ -242,8 +244,7 @@ def make_resource(model):
                     item_dict[k] = getattr(item, k)
             response.body = json.dumps(item_dict)
         else:
-            raise falcon.HTTPForbidden("forbidden", "forbidden")
-
+            raise falcon.HTTPForbidden('forbidden', 'forbidden')
 
     attributes = {
         'model': model,
@@ -260,16 +261,21 @@ class TokensResource:
     """
     def on_post(self, request, response):
         request._parse_form_urlencoded()
-        if not 'password' in request.params or not 'username' in request.params:
+        if 'password' not in request.params or 'username' not in request.params:
             raise falcon.HTTPBadRequest('', '')
 
-        authentication = authenticate_by_password(request.params['username'], request.params['password'])
-        if authentication == None:
-            raise falcon.HTTPUnauthorized('Login required', 'You need to login', ['Basic realm="Login Required"'])
+        authentication = authenticate_by_password(request.params['username'],
+                                                  request.params['password'])
+        if authentication is None:
+            raise falcon.HTTPUnauthorized('Login required', 'Pleas login',
+                                          ['Basic realm="Login Required"'])
 
         if 'token_name' in request.params:
             try:
-                t = EternalTokens.get( EternalTokens.name == request.params['token_name'], EternalTokens.user == authentication.id  ).token
+                t = EternalTokens.get(
+                    EternalTokens.name == request.params['token_name'],
+                    EternalTokens.user == authentication.id
+                ).token
             except:
                 raise falcon.HTTPNotFound()
             token = generate_token(token=t)
