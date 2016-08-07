@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 """
     Test case for efesto's cryptographic module.
-    
 """
-import sys
-sys.path.insert(0, "")
-import pytest
 import random
 import string
+import sys
 
 
 from efesto.Base import config
-from efesto.Crypto import generate_hash, compare_hash
+from efesto.Crypto import compare_hash, generate_hash
+
+
+sys.path.insert(0, '')
 
 
 def random_string(length):
-    return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
+    lowercases = string.ascii_lowercase
+    return ''.join(random.choice(lowercases) for i in range(length))
 
 
 def test_hash_generation():
@@ -24,11 +25,13 @@ def test_hash_generation():
     """
     h = generate_hash('mystring')
     shards = h.split('$')
+    salt_length = config.parser.getint('security', 'salt_length')
+    key_length = config.parser.getint('security', 'key_length')
     assert len(shards) == 4
     assert shards[0] == 'PBKDF2-256'
     assert shards[1] == config.parser.get('security', 'iterations')
-    assert len(shards[2]) == config.parser.getint('security', 'salt_length')*2
-    assert len(shards[3]) == config.parser.getint('security', 'key_length')*2
+    assert len(shards[2]) == salt_length * 2
+    assert len(shards[3]) == key_length * 2
 
 
 def test_hash_generation_randomness():
