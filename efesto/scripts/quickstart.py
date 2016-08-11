@@ -5,25 +5,26 @@
     This script will set up Efesto, creating the tables, the secret and the
     administrator account.
 """
-import sys
-sys.path.insert(0, "")
-import os
-from binascii import hexlify
 import getpass
+import os
+import sys
+from binascii import hexlify
+
 from colorama import Fore, Style
-from peewee import ProgrammingError, OperationalError
-
-
 import efesto
-from efesto.Base import db, config
-from efesto.Models import Users, Types, Fields, AccessRules, EternalTokens
+from efesto.Base import config, db
+from efesto.Models import AccessRules, EternalTokens, Fields, Types, Users
+from peewee import OperationalError, ProgrammingError
+
+
+sys.path.insert(0, '')
 
 
 def message(message, colour):
     """
     Prints a coloured message using colorama.
     """
-    text_colours = {'green': Fore.GREEN,  'red': Fore.RED, 'blue': Fore.BLUE}
+    text_colours = {'green': Fore.GREEN, 'red': Fore.RED, 'blue': Fore.BLUE}
     print(text_colours[colour] + message + Style.RESET_ALL)
 
 
@@ -35,10 +36,12 @@ def create_tables():
         db.create_tables([Users, Types, Fields, AccessRules, EternalTokens])
         message('Tables created!', 'green')
     except OperationalError:
-        message('An error occured during tables creation. Please check your database credentials.', 'red')
+        message(('An error occured during tables creation. '
+                 'Please check your database credentials.'), 'red')
         exit()
     except ProgrammingError:
-        message('An error occurred during tables creation. Please check your database.', 'red')
+        message(('An error occurred during tables creation. '
+                 'Please check your database.'), 'red')
         exit()
     except:
         message('An unknown error occurred during tables creation', 'red')
@@ -46,7 +49,7 @@ def create_tables():
 
 
 def create_config():
-    secret_key = str(hexlify(os.urandom(24)), encoding="utf8")
+    secret_key = str(hexlify(os.urandom(24)), encoding='utf8')
     config.parser.set('main', 'installed', 'True')
     config.parser.set('security', 'secret', secret_key)
     with open(config.path, 'w') as configfile:
@@ -62,7 +65,8 @@ def create_admin():
     admin_name = input('Administrator name: ')
     admin_email = input('Administrator email: ')
     admin_password = getpass.getpass('Administrator password: ')
-    admin = Users(name=admin_name, email=admin_email, rank=10, password=admin_password)
+    admin = Users(name=admin_name, email=admin_email, rank=10,
+                  password=admin_password)
     admin.save()
     print(Fore.GREEN + 'Admin created!')
 
