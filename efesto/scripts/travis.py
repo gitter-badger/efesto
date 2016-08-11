@@ -4,10 +4,8 @@
 
     This script sets up Efesto for travis, creating tables and settings.
 """
-import os
 import sys
 
-import efesto
 from efesto.Base import config
 
 
@@ -19,6 +17,3 @@ config.parser.set('db', 'user', 'postgres')
 config.parser.set('db', 'password', '')
 with open(config.path, 'w') as configfile:
     config.parser.write(configfile)
-
-
-
