@@ -79,7 +79,7 @@ def quickstart():
     args = parser.parse_args()
     installed = config.parser.getboolean('main', 'installed')
     if installed != True:
-        message('This script will help zou setup Efesto', 'blue')
+        message('This script will help you setup Efesto', 'blue')
         version_message = 'Efesto version: %s' % (efesto.__version__)
         message(version_message, 'blue')
         create_tables()
