@@ -5,6 +5,7 @@
     This script will set up Efesto, creating the tables, the secret and the
     administrator account.
 """
+import argparse
 import getpass
 import os
 import sys
@@ -72,6 +73,10 @@ def create_admin():
 
 
 def quickstart():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no-admin', dest='admin', action='store_false')
+    parser.set_defaults(admin=True)
+    args = parser.parse_args()
     installed = config.parser.getboolean('main', 'installed')
     if installed != True:
         message('This script will help zou setup Efesto', 'blue')
@@ -79,7 +84,8 @@ def quickstart():
         message(version_message, 'blue')
         create_tables()
         create_config()
-        create_admin()
+        if args.admin:
+            create_admin()
         message('Set up successful.', 'green')
     else:
         message('It seems Efesto has been already set up!', 'red')
