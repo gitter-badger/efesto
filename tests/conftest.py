@@ -166,7 +166,7 @@ def user_auth(request, user_token, dummy_user):
     return 'Basic %s' % (string64)
 
 
-@pytest.fixture(params=[
+@pytest.fixture(scope='function',params=[
     {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
                               'rank': 1}},
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
