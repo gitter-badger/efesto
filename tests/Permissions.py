@@ -49,12 +49,7 @@ def action(request):
     return request.param
 
 
-@pytest.fixture(params=[
-    {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                              'rank': 1}},
-    {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
-    {'model': AccessRules, 'args': {'level': 1}}
-])
+@pytest.fixture(params=pytest.simple_items)
 def item(request):
     model = request.param['model']
     item = model(**request.param['args'])
