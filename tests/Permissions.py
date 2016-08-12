@@ -12,6 +12,23 @@ import pytest
 sys.path.insert(0, '')
 
 
+override_check_model_params = [
+    {
+        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                                 'rank': 1},
+        'model2': Types, 'args2': {'name': 'mytype', 'enabled': 0}
+    },
+    {
+        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
+        'model2': AccessRules, 'args2': {'level': 1}
+    },
+    {
+        'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
+        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1}
+    }
+]
+
+
 @pytest.fixture(params=['read', 'edit', 'eliminate'])
 def action(request):
     return request.param
@@ -82,21 +99,7 @@ def test_users_override_by_model(dummy_user, action, item, rule):
         assert dummy_user.can(i, item) == False
 
 
-@pytest.mark.parametrize('args', [
-    {
-        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                                 'rank': 1},
-        'model2': Types, 'args2': {'name': 'mytype', 'enabled': 0}
-    },
-    {
-        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
-        'model2': AccessRules, 'args2': {'level': 1}
-    },
-    {
-        'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
-        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1}
-    }
-])
+@pytest.mark.parametrize('args', override_check_model_params)
 def test_users_override_check_model(dummy_user, action, args, rule):
     """
     Verifies that permissions rules affect only the specified model.
@@ -237,21 +240,7 @@ def test_rank_override_by_model(dummy_user, action, item, rule):
         assert dummy_user.can(i, item) == False
 
 
-@pytest.mark.parametrize('args', [
-    {
-        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                                 'rank': 1},
-        'model2': Types, 'args2': {'name': 'mytype', 'enabled': 0}
-    },
-    {
-        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
-        'model2': AccessRules, 'args2': {'level': 1}
-    },
-    {
-        'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
-        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1}
-    }
-])
+@pytest.mark.parametrize('args', override_check_model_params)
 def test_rank_override_check_model(dummy_user, action, args, rule):
     """
     Verifies that permissions rules set for a rank affect only the specified
