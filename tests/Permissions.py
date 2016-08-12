@@ -28,6 +28,21 @@ override_check_model_params = [
     }
 ]
 
+override_check_item_params = [
+    {
+        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                                 'rank': 1},
+        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1}
+    },
+    {
+        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
+        'args2': {'name': 'mytype2', 'enabled': 0}
+    },
+    {
+        'model': AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
+    }
+]
+
 
 @pytest.fixture(params=['read', 'edit', 'eliminate'])
 def action(request):
@@ -166,20 +181,7 @@ def test_users_override_by_item(dummy_user, action, item, rule):
     second_rule.delete_instance()
 
 
-@pytest.mark.parametrize('args', [
-    {
-        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                                 'rank': 1},
-        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1}
-    },
-    {
-        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
-        'args2': {'name': 'mytype2', 'enabled': 0}
-    },
-    {
-        'model': AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
-    }
-])
+@pytest.mark.parametrize('args', override_check_item_params)
 def test_users_override_check_item(dummy_user, action, args, rule):
     """
     Verifies that permissions rules set on an item affect only the specified
@@ -308,20 +310,7 @@ def test_rank_override_by_item(dummy_user, action, item, rule):
     second_rule.delete_instance()
 
 
-@pytest.mark.parametrize('args', [
-    {
-        'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                                 'rank': 1},
-        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1}
-    },
-    {
-        'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
-        'args2': {'name': 'mytype2', 'enabled': 0}
-    },
-    {
-        'model': AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
-    }
-])
+@pytest.mark.parametrize('args', override_check_item_params)
 def test_rank_override_check_item(dummy_user, action, args, rule):
     """
     Verifies that permissions rules set on an item by rank affect only the
