@@ -39,6 +39,17 @@ def build_user(request, name, rank):
         user.delete_instance()
     request.addfinalizer(teardown)
     return user
+    
+    
+def build_token(request, user):
+    new_token = EternalTokens(name='mytoken', user=user.id,
+                              token='token')
+    new_token.save()
+
+    def teardown():
+        new_token.delete_instance()
+    request.addfinalizer(teardown)
+    return new_token
 
 
 @pytest.fixture
@@ -134,26 +145,12 @@ def complex_item(request, complex_type, complex_fields, dummy_admin):
 
 @pytest.fixture
 def token(request, dummy_admin):
-    new_token = EternalTokens(name='mytoken', user=dummy_admin.id,
-                              token='token')
-    new_token.save()
-
-    def teardown():
-        new_token.delete_instance()
-    request.addfinalizer(teardown)
-    return new_token
+    return build_token(request, dummy_admin)
 
 
 @pytest.fixture
 def user_token(request, dummy_user):
-    new_token = EternalTokens(name='mytoken', user=dummy_user.id,
-                              token='token')
-    new_token.save()
-
-    def teardown():
-        new_token.delete_instance()
-    request.addfinalizer(teardown)
-    return new_token
+    return build_token(request, dummy_user)
 
 
 @pytest.fixture(params=['client', 'server'])
