@@ -14,6 +14,18 @@ import pytest
 sys.path.insert(0, '')
 
 
+simple_items = [
+    {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
+                              'rank': 1}},
+    {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
+    {'model': AccessRules, 'args': {'level': 1}}
+]
+
+
+def pytest_namespace():
+    return {'simple_items': simple_items}
+
+
 def build_auth_header(request, token, user):
     """
     Builds an HTTP basic auth header for thte given user or token.
