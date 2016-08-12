@@ -26,6 +26,19 @@ def build_auth_header(request, token, user):
     encoded_token = token_string.encode('latin-1')
     string64 = base64.b64encode(encoded_token).decode('latin-1')
     return 'Basic %s' % (string64)
+    
+    
+def build_user(request, name, rank):
+    """
+    Builds an user with the specified name and rank.
+    """
+    user = Users(name=name, email='mail', password='sample', rank=rank)
+    user.save()
+
+    def teardown():
+        user.delete_instance()
+    request.addfinalizer(teardown)
+    return user
 
 
 @pytest.fixture
@@ -36,24 +49,12 @@ def app():
 
 @pytest.fixture(scope='session')
 def dummy_admin(request):
-    dummy = Users(name='dummyadmin', email='mail', password='sample', rank=10)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
+    return build_user(request, 'dummyadmin', 10)
 
 
 @pytest.fixture(scope='module')
 def dummy_user(request):
-    dummy = Users(name='dummyuser', email='mail', password='sample', rank=0)
-    dummy.save()
-
-    def teardown():
-        dummy.delete_instance()
-    request.addfinalizer(teardown)
-    return dummy
+    return build_user(request, 'dummyuser', 0)
 
 
 @pytest.fixture
