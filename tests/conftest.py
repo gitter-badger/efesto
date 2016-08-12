@@ -14,6 +14,20 @@ import pytest
 sys.path.insert(0, '')
 
 
+def build_auth_header(request, token, user):
+    """
+    Builds an HTTP basic auth header for thte given user or token.
+    """
+    if request.param == 'client':
+        token_string = '%s:' % (generate_token(decode=True,
+                                user=user.name))
+    else:
+        token_string = '%s:' % (generate_token(decode=True, token=token.token))
+    encoded_token = token_string.encode('latin-1')
+    string64 = base64.b64encode(encoded_token).decode('latin-1')
+    return 'Basic %s' % (string64)
+
+
 @pytest.fixture
 def app():
     application = falcon.API()
@@ -143,27 +157,12 @@ def user_token(request, dummy_user):
 
 @pytest.fixture(params=['client', 'server'])
 def admin_auth(request, token, dummy_admin):
-    if request.param == 'client':
-        token_string = '%s:' % (generate_token(decode=True,
-                                user=dummy_admin.name))
-    else:
-        token_string = '%s:' % (generate_token(decode=True, token=token.token))
-    encoded_token = token_string.encode('latin-1')
-    string64 = base64.b64encode(encoded_token).decode('latin-1')
-    return 'Basic %s' % (string64)
+    return build_auth_header(request, token, dummy_admin)
 
 
 @pytest.fixture(params=['client', 'server'])
 def user_auth(request, user_token, dummy_user):
-    if request.param == 'client':
-        token_string = '%s:' % (generate_token(decode=True,
-                                               user=dummy_user.name))
-    else:
-        token_string = '%s:' % (generate_token(decode=True,
-                                               token=user_token.token))
-    encoded_token = token_string.encode('latin-1')
-    string64 = base64.b64encode(encoded_token).decode('latin-1')
-    return 'Basic %s' % (string64)
+    return build_auth_header(request, user_token, dummy_user)
 
 
 @pytest.fixture(scope='function',params=[
