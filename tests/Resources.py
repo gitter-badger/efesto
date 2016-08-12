@@ -16,41 +16,6 @@ import pytest
 sys.path.insert(0, '')
 
 
-@pytest.fixture(params=[
-    {'model': Users, 'args': {'name': 'ud', 'email': 'mail', 'password': 'p',
-     'rank': 1}},
-    {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
-    {'model': AccessRules, 'args': {'level': 1}},
-    {
-        'model': Fields, 'args': {'name': 'f', 'field_type': 'string'},
-        'parent': Types, 'parent_args': {'name': 'd2', 'enabled': 0},
-        'parent_field': 'type'
-    },
-    {
-        'model': EternalTokens, 'args': {'name': 'mytoken', 'token': ''},
-        'parent': Users, 'parent_args': {'name': 'ud2', 'email': 'mail',
-                                         'password': 'p', 'rank': 1},
-        'parent_field': 'user'}
-])
-def deletable_item(request):
-    model = request.param['model']
-    item_dict = request.param['args']
-    if 'parent' in request.param:
-        parent_model = request.param['parent']
-        parent_item = parent_model(**request.param['parent_args'])
-        parent_item.save()
-        item_dict[request.param['parent_field']] = parent_item.id
-    item = model(**item_dict)
-    item.save()
-
-    def teardown():
-        item.delete_instance()
-        if 'parent' in request.param:
-            parent_item.delete_instance()
-    request.addfinalizer(teardown)
-    return item, model
-
-
 @pytest.mark.parametrize('model',
                          [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
@@ -164,14 +129,14 @@ def test_make_resource_patch_item(client, app, admin_auth, item_with_model):
         assert check[k] == response_body[k]
 
 
-def test_make_resource_delete_item(client, app, admin_auth, deletable_item):
+def test_make_resource_delete_item(client, app, admin_auth, item_with_model):
     """
     Tests the behaviour of a generated resource when a DELETE request that
     includes a basic auth header is performed and an item is deleted.
     """
     # setup
-    model = deletable_item[1]
-    item = deletable_item[0]
+    model = item_with_model[1]
+    item = item_with_model[0]
     item_id = item.id
     # test
     resource = make_resource(model)()
@@ -313,13 +278,13 @@ def test_make_resource_access_rules_patch(client, app, user_auth,
 
 
 def test_make_resource_access_rules_delete(client, app, user_auth,
-                                           deletable_item):
+                                           item_with_model):
     """
     Verifies that make_resource correctly implements permissions on DELETE
     requests.
     """
-    item = deletable_item[0]
-    model = deletable_item[1]
+    item = item_with_model[0]
+    model = item_with_model[1]
     item_id = item.id
     # test
     resource = make_resource(model)()
