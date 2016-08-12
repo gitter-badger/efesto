@@ -26,8 +26,8 @@ def build_auth_header(request, token, user):
     encoded_token = token_string.encode('latin-1')
     string64 = base64.b64encode(encoded_token).decode('latin-1')
     return 'Basic %s' % (string64)
-    
-    
+
+
 def build_user(request, name, rank):
     """
     Builds an user with the specified name and rank.
@@ -39,8 +39,8 @@ def build_user(request, name, rank):
         user.delete_instance()
     request.addfinalizer(teardown)
     return user
-    
-    
+
+
 def build_token(request, user):
     new_token = EternalTokens(name='mytoken', user=user.id, token='token')
     new_token.save()
@@ -162,7 +162,7 @@ def user_auth(request, user_token, dummy_user):
     return build_auth_header(request, user_token, dummy_user)
 
 
-@pytest.fixture(scope='function',params=[
+@pytest.fixture(scope='function', params=[
     {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
                               'rank': 1}},
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
