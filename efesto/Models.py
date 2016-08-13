@@ -123,6 +123,13 @@ class Fields(Base):
     """
     The fields are used to generate the columns for custom models/tables for
     the types specified in Types.
+
+    name: the name of the field
+    type: the type to which the field belongs
+    unique: whether the generated column should be unique
+    nullable: whether the generated column should have be nullable
+    label: a label for the column, for informative purposes
+    description: a description for the column, for infformative purposes
     """
     id = PrimaryKeyField(primary_key=True)
     name = CharField()
