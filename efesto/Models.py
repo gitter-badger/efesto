@@ -18,8 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
-from peewee import (BooleanField, CharField, DateTimeField, ForeignKeyField,
-                    IntegerField, PrimaryKeyField, TextField)
+from peewee import (BooleanField, CharField, DateTimeField, FloatField,
+                    ForeignKeyField, IntegerField, PrimaryKeyField, TextField)
 from playhouse.signals import Model, post_delete, pre_delete, pre_save
 
 
@@ -186,7 +186,8 @@ def make_model(custom_type):
         attributes = {}
         attributes['owner'] = ForeignKeyField(Users)
         fields_dict = {'string': TextField, 'int': IntegerField,
-                       'bool': BooleanField, 'date': DateTimeField}
+                       'float': FloatField, 'bool': BooleanField,
+                       'date': DateTimeField}
         columns = Fields.select().where(Fields.type == custom_type.id)
         for column in columns:
             if column.field_type in fields_dict:
