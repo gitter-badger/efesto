@@ -10,8 +10,8 @@ from efesto.Base import db
 from efesto.Crypto import compare_hash
 from efesto.Models import (AccessRules, EternalTokens, Fields, Types, Users,
                            make_model)
-from peewee import (BooleanField, CharField, DateTimeField, ForeignKeyField,
-                    IntegerField, PrimaryKeyField, TextField)
+from peewee import (BooleanField, CharField, DateTimeField, FloatField,
+                    ForeignKeyField, IntegerField, PrimaryKeyField, TextField)
 import pytest
 
 
@@ -283,7 +283,8 @@ def test_make_model_columns(complex_type, complex_fields):
     complex_type.enabled = 1
     model = make_model(complex_type)
     fields_dict = {'string': TextField, 'int': IntegerField,
-                   'bool': BooleanField, 'date': DateTimeField}
+                   'float': FloatField, 'bool': BooleanField,
+                   'date': DateTimeField}
     columns = Fields.select().where(Fields.type == complex_type.id)
     for column in columns:
         field = fields_dict[column.field_type]
@@ -330,8 +331,8 @@ def test_make_model_io(complex_type, complex_fields, dummy_admin):
     complex_type.enabled = 1
     complex_type.save()
     model = make_model(complex_type)
-    item_dict = {'owner': dummy_admin.id, 'intfield': 10, 'strfield': 'blah',
-                 'datefield': '2016-01-01', 'ufield': 'u'}
+    item_dict = {'owner': dummy_admin.id, 'intfield': 10, 'floatfield': 4.5,
+                 'strfield': 'blah', 'datefield': '2016-01-01', 'ufield': 'u'}
     item = model(**item_dict)
     item.save()
     assert getattr(item, 'id') != None
