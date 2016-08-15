@@ -11,7 +11,10 @@ setup(
     license='GPL3',
     version='0.4.0',
     packages=find_packages(),
-    tests_require=['pytest', 'pytest-falcon'],
+    tests_require=[
+        'pytest',
+        'pytest-falcon==0.3.3'
+    ],
     setup_requires=['pytest-runner'],
     install_requires=[
         'falcon==1.0.0',
