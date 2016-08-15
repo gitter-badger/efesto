@@ -20,5 +20,6 @@ to ecommerce.
    configuration
    tokens
    api
+   blueprints
    cookbook
    troubleshooting
