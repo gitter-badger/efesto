@@ -19,8 +19,9 @@
 """
 import os
 import sys
+from configparser import ConfigParser
 
-from efesto.Blueprints import load_blueprint
+from efesto.Blueprints import dump_blueprint, load_blueprint
 from efesto.Models import Fields, Types
 import pytest
 
@@ -86,6 +87,37 @@ def complex_blueprint(request, blueprint_file):
     request.addfinalizer(teardown)
 
 
+@pytest.fixture
+def simple_data(request, blueprint_file):
+    bands = Types(name='bands', enabled=0)
+    bands.save()
+    name = Fields(name='band_name', type=bands.id, field_type='string')
+    name.save()
+
+    def teardown():
+        name.delete_instance()
+        bands.delete_instance()
+        os.remove(blueprint_file)
+    request.addfinalizer(teardown)
+
+
+@pytest.fixture
+def complex_data(request, blueprint_file):
+    ships = Types(name='ships', enabled=0)
+    ships.save()
+    tonnage = Fields(name='tonnage', type=ships.id, field_type='int')
+    tonnage.save()
+    flag = Fields(name='flag', type=ships.id, field_type='string')
+    flag.save()
+
+    def teardown():
+        tonnage.delete_instance()
+        flag.delete_instance()
+        ships.delete_instance()
+        os.remove(blueprint_file)
+    request.addfinalizer(teardown)
+
+
 def test_load_simple_blueprint(simple_blueprint, blueprint_file):
     """
     Tests the loading of a simple blueprint that has only a list of fields.
@@ -116,3 +148,29 @@ def test_complex_blueprint(complex_blueprint, blueprint_file):
     field = Fields.get(Fields.name == 'colour')
     assert field.field_type == 'colours'
     assert field.type.id == type.id
+
+
+def test_dump_simple_blueprint(simple_data, blueprint_file):
+    """
+    Tests the dumping of a simple blueprint.
+    """
+    dump_blueprint(blueprint_file)
+    parser = ConfigParser()
+    parser.read(blueprint_file)
+    assert parser.sections() == ['bands']
+    assert parser.get('bands', 'fields') == 'band_name'
+
+
+def test_dump_complex_blueprint(complex_data, blueprint_file):
+    """
+    Tests the dumping of a complex blueprint.
+    """
+    dump_blueprint(blueprint_file)
+    parser = ConfigParser()
+    parser.read(blueprint_file)
+    assert parser.sections() == ['ships', 'ships.tonnage']
+    assert parser.get('ships.tonnage', 'type') is not None
+
+    fields = parser.get('ships', 'fields').split(',')
+    assert 'tonnage' in fields or ' tonnage' in fields
+    assert 'flag' in fields or ' flag' in fields
