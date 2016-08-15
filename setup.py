@@ -35,5 +35,6 @@ setup(
     entry_points='''
         [console_scripts]
         efesto-quickstart=efesto.scripts.quickstart:quickstart
+        efesto-blueprints=efesto.scripts.blueprints:blueprints
     '''
 )
