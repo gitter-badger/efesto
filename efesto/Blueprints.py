@@ -52,3 +52,25 @@ def load_blueprint(blueprint):
             new_field.save()
         new_type.enabled = 1
         new_type.save()
+
+
+def dump_blueprint(blueprint_file):
+    """
+    Dumps a blueprint, creating a blueprint file from the database data.
+    """
+    parser = ConfigParser()
+    types = Types.select()
+    for type in types:
+        parser.add_section(type.name)
+        fields = Fields.select().where(Fields.type == type.id)
+        fields_list = []
+        for field in fields:
+            if field.field_type != 'string':
+                field_section = '{}.{}'.format(type.name, field.name)
+                parser.add_section(field_section)
+                parser.set(field_section, 'type', field.field_type)
+            fields_list.append(field.name)
+        parser.set(type.name, 'fields', ', '.join(fields_list))
+
+    with open(blueprint_file, 'w') as blueprint:
+        parser.write(blueprint)
