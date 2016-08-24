@@ -38,6 +38,15 @@ def parse_header_links(value):
     return links
 
 
+def get_model_columns(model):
+    columns = []
+    for i in model.__dict__:
+        if isinstance(model.__dict__[i], FieldDescriptor):
+            if not isinstance(model.__dict__[i], RelationDescriptor):
+                columns.append(i)
+    return columns
+
+
 @pytest.fixture
 def pagination_items(request):
     model = Users
@@ -152,11 +161,7 @@ def test_make_collection_fields_argument(client, app, admin_auth,
     model = item_with_model[1]
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
-    columns = []
-    for i in model.__dict__:
-        if isinstance(model.__dict__[i], FieldDescriptor):
-            if not isinstance(model.__dict__[i], RelationDescriptor):
-                columns.append(i)
+    columns = get_model_columns(model)
     columns.remove('id')
     query = '_fields=%s' % (columns[0])
     url = '/endpoint?%s' % (query)
@@ -177,11 +182,7 @@ def test_make_collection_fields_argument_all(client, app, admin_auth,
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint?_fields=all',
                           headers={'authorization': admin_auth})
-    columns = []
-    for i in model.__dict__:
-        if isinstance(model.__dict__[i], FieldDescriptor):
-            if not isinstance(model.__dict__[i], RelationDescriptor):
-                columns.append(i)
+    columns = get_model_columns(model)
     body = json.loads(response.body)
     for item in body:
         for column in columns:
