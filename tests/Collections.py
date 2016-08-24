@@ -312,12 +312,7 @@ def test_make_collection_pagination_headers(client, app, pagination_items,
         assert k in rel_list
 
 
-@pytest.mark.parametrize('test_args', [
-    {'model': Users, 'data': {'name': 'test', 'password': 'passwd'}},
-    {'model': Types, 'data': {'name': 'sometype', 'enabled': 0}},
-    {'model': Fields, 'data': {'name': 'somefield', 'type': 1}},
-    {'model': AccessRules, 'data': {'user': 1, 'level': 5}}
-])
+@pytest.mark.parametrize('test_args', pytest.post_data)
 def test_make_collection_post(client, app, test_args):
     """
     Tests the behaviour of a generated resource when a simple POST request is
@@ -407,12 +402,7 @@ def test_make_collection_access_rules_get(client, app, user_auth,
     assert response.status == falcon.HTTP_NOT_FOUND
 
 
-@pytest.mark.parametrize('test_args', [
-    {'model': Users, 'data': {'name': 'test', 'password': 'passwd'}},
-    {'model': Types, 'data': {'name': 'sometype', 'enabled': 0}},
-    {'model': Fields, 'data': {'name': 'somefield', 'type': 1}},
-    {'model': AccessRules, 'data': {'user': 1, 'level': 5}}
-])
+@pytest.mark.parametrize('test_args', pytest.post_data)
 def test_make_collection_access_rules_post(client, app, user_auth, test_args):
     """
     Verifies that make_collection correctly applies access rules to POST
