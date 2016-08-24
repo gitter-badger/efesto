@@ -19,11 +19,11 @@ def blueprints():
         path = os.path.join(os.getcwd(), args.load)
         if os.path.isfile(path):
             load_blueprint(path)
-            print("Blueprint loaded successfully!")
+            print('Blueprint loaded successfully!')
         else:
-            print("The provided path is not a file.")
+            print('The provided path is not a file.')
 
     if args.dump:
         path = os.path.join(os.getcwd(), args.dump)
         dump_blueprint(path)
-        print("Blueprint dumped successfully!")
+        print('Blueprint dumped successfully!')
