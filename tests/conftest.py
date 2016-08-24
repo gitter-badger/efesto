@@ -20,10 +20,16 @@ simple_items = [
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
     {'model': AccessRules, 'args': {'level': 1}}
 ]
+post_data = [
+    {'model': Users, 'data': {'name': 'test', 'password': 'passwd'}},
+    {'model': Types, 'data': {'name': 'sometype', 'enabled': 0}},
+    {'model': Fields, 'data': {'name': 'somefield', 'type': 1}},
+    {'model': AccessRules, 'data': {'user': 1, 'level': 5}}
+]
 
 
 def pytest_namespace():
-    return {'simple_items': simple_items}
+    return {'simple_items': simple_items, 'post_data': post_data}
 
 
 def build_auth_header(request, token, user):
