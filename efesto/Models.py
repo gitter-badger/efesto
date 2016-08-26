@@ -174,6 +174,8 @@ class EternalTokens(Base):
 @pre_save(sender=EternalTokens)
 def on_token_save(model_class, instance, created):
     """
+    Peewee hook that generates a random token whenever an eternal token is
+    created.
     """
     dirty = getattr(instance, '_dirty')
     if 'token' in dirty:
