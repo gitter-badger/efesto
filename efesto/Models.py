@@ -159,8 +159,11 @@ class AccessRules(Base):
 
 class EternalTokens(Base):
     """
-    EternalTokens can be used to store server-side tokens that can need to be
-    revoked when needed.
+    EternalTokens are server-stored tokens used for authentication purposes.
+    Normally, Efesto would use client-stored tokens, but in some cases
+    server-stored tokens are necessary.
+    For example an application interacting with Efesto without requiring a
+    final user's credentials (public data, password recovery, etc.)
     """
     id = PrimaryKeyField(primary_key=True)
     name = CharField()
