@@ -16,7 +16,7 @@ sys.path.insert(0, '')
 
 simple_items = [
     {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                              'rank': 1}},
+                              'rank': 1, 'enabled': 1}},
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
     {'model': AccessRules, 'args': {'level': 1}}
 ]
@@ -50,7 +50,8 @@ def build_user(request, name, rank):
     """
     Builds an user with the specified name and rank.
     """
-    user = Users(name=name, email='mail', password='sample', rank=rank)
+    user = Users(name=name, email='mail', password='sample', rank=rank,
+                 enabled=1)
     user.save()
 
     def teardown():
@@ -186,7 +187,7 @@ def user_auth(request, user_token, dummy_user):
 
 @pytest.fixture(scope='function', params=[
     {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                              'rank': 1}},
+                              'rank': 1, 'enabled': 1}},
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
     {'model': AccessRules, 'args': {'level': 1}},
     {
@@ -197,7 +198,8 @@ def user_auth(request, user_token, dummy_user):
     {
         'model': EternalTokens, 'args': {'name': 'mytoken', 'token': ''},
         'parent': Users, 'parent_args': {'name': 'u2', 'email': 'mail',
-                                         'password': 'p', 'rank': 1},
+                                         'password': 'p', 'rank': 1,
+                                         'enabled': 1},
         'parent_field': 'user'
     }
 ])

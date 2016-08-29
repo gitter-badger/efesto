@@ -15,7 +15,7 @@ sys.path.insert(0, '')
 override_check_model_params = [
     {
         'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                                 'rank': 1},
+                                 'rank': 1, 'enabled': 1},
         'model2': Types, 'args2': {'name': 'mytype', 'enabled': 0}
     },
     {
@@ -24,15 +24,17 @@ override_check_model_params = [
     },
     {
         'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
-        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1}
+        'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1,
+                  'enabled': 1}
     }
 ]
 
 override_check_item_params = [
     {
         'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
-                                 'rank': 1},
-        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1}
+                                 'rank': 1, 'enabled': 1},
+        'args2': {'name': 'u2', 'email': 'mail', 'password': 'p', 'rank': 1,
+                  'enabled': 1}
     },
     {
         'model': Types, 'args': {'name': 'mytype', 'enabled': 0},

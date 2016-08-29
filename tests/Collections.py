@@ -54,7 +54,8 @@ def pagination_items(request):
     items_list = []
     for i in range(1, items):
         name = 'u%s' % (10 - i)
-        item_dict = {'name': name, 'email': 'mail', 'password': 'p', 'rank': 1}
+        item_dict = {'name': name, 'email': 'mail', 'password': 'p', 'rank': 1,
+                     'enabled': 1}
         item = model(**item_dict)
         item.save()
         items_list.append(item)
@@ -277,7 +278,7 @@ def test_make_collection_query_pagination(client, app, admin_auth):
     Verifies that make_collection supports pagination arguments.
     """
     new_user = Users(** {'name': 'test', 'password': 'passwd', 'email': 'mail',
-                         'rank': 1})
+                         'rank': 1, 'enabled': 1})
     new_user.save()
     resource = make_collection(Users)()
     app.add_route('/endpoint', resource)
@@ -329,7 +330,7 @@ def test_make_collection_post(client, app, test_args):
 
 @pytest.mark.parametrize('test_args', [
     {'model': Users, 'data': {'name': 'test', 'password': 'passwd',
-                              'email': 'mail', 'rank': 1}},
+                              'email': 'mail', 'rank': 1, 'enabled': 1}},
     {'model': Types, 'data': {'name': 't_one', 'enabled': 0}}
 ])
 def test_make_collection_post_auth(client, app, admin_auth, test_args):
