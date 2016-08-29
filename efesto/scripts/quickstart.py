@@ -67,7 +67,7 @@ def create_admin():
     admin_email = input('Administrator email: ')
     admin_password = getpass.getpass('Administrator password: ')
     admin = Users(name=admin_name, email=admin_email, rank=10,
-                  password=admin_password)
+                  password=admin_password, enabled=True)
     admin.save()
     print(Fore.GREEN + 'Admin created!')
 
