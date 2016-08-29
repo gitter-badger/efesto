@@ -47,6 +47,7 @@ def foreign_field(request, custom_type_two, complex_type):
     {'column': 'email', 'field': CharField},
     {'column': 'password', 'field': CharField},
     {'column': 'rank', 'field': IntegerField},
+    {'column': 'enabled', 'field': BooleanField},
     {'column': 'last_login', 'field': DateTimeField,
      'constraints': {'null': True}}
 ])
@@ -69,7 +70,8 @@ def test_users_signal():
     Verifies that the Users model hashes an user's password before saving it.
     """
     db.connect()
-    dummy = Users(name='dummy2', email='mail', password='sample', rank=0)
+    dummy = Users(name='dummy2', email='mail', password='sample', rank=0,
+                  enabled=1)
     dummy.save()
     dummy.delete_instance()
     assert dummy.password != 'sample'
@@ -82,7 +84,8 @@ def test_users_signal_on_update():
     when is not necessary.
     """
     db.connect()
-    dummy = Users(name='dummy2', email='mail', password='sample', rank=0)
+    dummy = Users(name='dummy2', email='mail', password='sample', rank=0,
+                  enabled=1)
     dummy.save()
     dummy.email = 'changesomeattr'
     dummy.save()
@@ -249,7 +252,7 @@ def test_eternal_tokens_io():
     """
     Verifies that is possible to create and delete an EternalTokens instance.
     """
-    user = Users(name='randuser', email='mail', password='p', rank=1)
+    user = Users(name='randuser', email='mail', password='p', rank=1, enabled=1)
     user.save()
     token = EternalTokens(name='mytoken', user=user.id, token='string')
     token.save()

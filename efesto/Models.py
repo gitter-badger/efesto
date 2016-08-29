@@ -43,6 +43,7 @@ class Users(Base):
     email = CharField()
     password = CharField()
     rank = IntegerField()
+    enabled = BooleanField()
     last_login = DateTimeField(null=True)
 
     def can(self, requested_action, item):
