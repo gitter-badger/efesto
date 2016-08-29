@@ -252,7 +252,8 @@ def test_eternal_tokens_io():
     """
     Verifies that is possible to create and delete an EternalTokens instance.
     """
-    user = Users(name='randuser', email='mail', password='p', rank=1, enabled=1)
+    user = Users(name='randuser', email='mail', password='p', rank=1,
+                 enabled=1)
     user.save()
     token = EternalTokens(name='mytoken', user=user.id, token='string')
     token.save()
