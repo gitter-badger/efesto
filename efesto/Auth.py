@@ -74,7 +74,9 @@ def authenticate_by_token(auth_header):
         if 'token' in auth_dict:
             auth_token = auth_dict['token']
             token = EternalTokens.get(EternalTokens.token == auth_token)
-            return token.user.name
+            if token.user.enabled == True:
+                return token.user.name
+            return None
         else:
             return auth_dict['user']
     except:
