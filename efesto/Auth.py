@@ -52,11 +52,12 @@ def authenticate_by_password(username, password):
     when an user needs a token.
     """
     try:
-        user = Users.get(Users.name == username and Users.enabled == True)
-        if compare_hash(password, user.password):
-            return user
+        user = Users.get(Users.name == username, Users.enabled == True)
     except:
         return None
+        
+    if compare_hash(password, user.password):
+        return user
 
 
 def parse_auth_header(auth_string):
@@ -71,13 +72,18 @@ def authenticate_by_token(auth_header):
     """
     try:
         auth_dict = read_token(parse_auth_header(auth_header)[:-1])
-        if 'token' in auth_dict:
-            auth_token = auth_dict['token']
-            token = EternalTokens.get(EternalTokens.token == auth_token)
-            if token.user.enabled == True:
-                return token.user
-            return None
-        else:
-            return auth_dict['user']
     except:
         return None
+        
+    if 'token' in auth_dict:
+        auth_token = auth_dict['token']
+        token = EternalTokens.get(EternalTokens.token == auth_token)
+        if token.user.enabled == True:
+            return token.user
+        return None
+    else:
+        try:
+            user = Users.get(Users.name == auth_dict['user'], Users.enabled == True)
+        except:
+            user = None
+        return user
