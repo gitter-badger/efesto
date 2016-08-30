@@ -86,6 +86,14 @@ def dummy_user(request):
     return build_user(request, 'dummyuser', 0)
 
 
+@pytest.fixture(scope='session')
+def disabled_user(request):
+    user = build_user(request, 'disabled_user', 0)
+    user.enabled = 0
+    user.save()
+    return user
+
+
 @pytest.fixture
 def dummy_type(request):
     custom_type = Types(name='mycustomtype', enabled=1)
