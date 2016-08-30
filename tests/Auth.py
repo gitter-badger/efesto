@@ -122,13 +122,14 @@ def test_token_authentication_disabled_user(disabled_user):
     assert result is None
 
 
-def test_token_authentication():
-    original_string = '%s:' % (generate_token(decode=True, user='user'))
+def test_token_authentication(dummy_user):
+    token = generate_token(decode=True, user=dummy_user.name)
+    original_string = '%s:' % (token)
     encoded_string = original_string.encode('latin-1')
     string64 = base64.b64encode(encoded_string).decode('latin-1')
     auth_string = 'Basic %s' % (string64)
     result = authenticate_by_token(auth_string)
-    assert result == 'user'
+    assert result == dummy_user
 
 
 def test_token_auth_eternal_disabled_user(disabled_user, disabled_token):
@@ -150,4 +151,4 @@ def test_token_authentication_eternal(dummy_admin, token):
     string64 = base64.b64encode(encoded_string).decode('latin-1')
     auth_string = 'Basic %s' % (string64)
     result = authenticate_by_token(auth_string)
-    assert result == dummy_admin.name
+    assert result == dummy_admin
