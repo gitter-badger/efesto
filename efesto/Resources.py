@@ -40,7 +40,6 @@ def make_collection(model):
         if user is None:
             raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                           ['Basic realm="Login Required"'])
-        user = Users.get(Users.name == user)
 
         columns = []
         for i in self.model.__dict__:
@@ -140,8 +139,6 @@ def make_collection(model):
             raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                           ['Basic realm="Login Required"'])
 
-        user = Users.get(Users.name == user)
-
         new_item = self.model(**request.params)
         if user.can('read', new_item):
             new_item.save()
@@ -167,7 +164,6 @@ def make_resource(model):
         if user is None:
             raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                           ['Basic realm="Login Required"'])
-        user = Users.get(Users.name == user)
 
         try:
             item = self.model.get(getattr(self.model, 'id') == id)
@@ -199,7 +195,6 @@ def make_resource(model):
         if user is None:
             raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                           ['Basic realm="Login Required"'])
-        user = Users.get(Users.name == user)
 
         try:
             item = self.model.get(getattr(self.model, 'id') == id)
@@ -220,7 +215,6 @@ def make_resource(model):
         if user is None:
             raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                           ['Basic realm="Login Required"'])
-        user = Users.get(Users.name == user)
 
         try:
             item = self.model.get(getattr(self.model, 'id') == id)
