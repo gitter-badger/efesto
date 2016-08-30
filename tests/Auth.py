@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     The Auth test case.
-    
+
     Contains tests for the Auth module or authentication-related tests.
 """
 import base64
@@ -138,7 +138,7 @@ def test_token_auth_eternal_disabled_user(disabled_user, disabled_token):
     """
     Verifies that eternal token authentication with a disabled user fails.
     """
-    token  = generate_token(token=disabled_token.token)
+    token = generate_token(token=disabled_token.token)
     original_string = '%s:' % (token)
     encoded_string = original_string.encode('latin-1')
     string64 = base64.b64encode(encoded_string).decode('latin-1')
