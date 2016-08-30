@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
     The Auth test case.
+    
+    Contains tests for the Auth module or authentication-related tests.
 """
 import base64
 import json
