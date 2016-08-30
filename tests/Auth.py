@@ -90,6 +90,9 @@ def test_password_authentication_disabled_user(disabled_user):
 
 
 def test_password_authentication(dummy_user):
+    """
+    Verifies that successful password authentication returns the user.
+    """
     assert authenticate_by_password(dummy_user.name, 'sample') == dummy_user
 
 
