@@ -52,7 +52,7 @@ def authenticate_by_password(username, password):
     when an user needs a token.
     """
     try:
-        user = Users.get(Users.name == username)
+        user = Users.get(Users.name == username and Users.enabled == True)
         if compare_hash(password, user.password):
             return user
     except:
