@@ -55,7 +55,7 @@ def authenticate_by_password(username, password):
         user = Users.get(Users.name == username, Users.enabled == True)
     except:
         return None
-        
+
     if compare_hash(password, user.password):
         return user
 
@@ -74,7 +74,7 @@ def authenticate_by_token(auth_header):
         auth_dict = read_token(parse_auth_header(auth_header)[:-1])
     except:
         return None
-        
+
     if 'token' in auth_dict:
         auth_token = auth_dict['token']
         token = EternalTokens.get(EternalTokens.token == auth_token)
@@ -83,7 +83,8 @@ def authenticate_by_token(auth_header):
         return None
     else:
         try:
-            user = Users.get(Users.name == auth_dict['user'], Users.enabled == True)
+            user = Users.get(Users.name == auth_dict['user'],
+                             Users.enabled == True)
         except:
             user = None
         return user
