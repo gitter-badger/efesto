@@ -89,7 +89,7 @@ def test_password_authentication_disabled_user(disabled_user):
     assert authenticate_by_password(disabled_user.name, 'sample') is None
 
 
-def test_password_authentication_failureauthentication(dummy_user):
+def test_password_authentication(dummy_user):
     assert authenticate_by_password(dummy_user.name, 'sample') == dummy_user
 
 
