@@ -25,7 +25,7 @@ import falcon
 from peewee import FieldDescriptor, RelationDescriptor
 from .Auth import (authenticate_by_password, authenticate_by_token,
                    generate_token)
-from .Models import EternalTokens, Users
+from .Models import EternalTokens
 
 
 def make_collection(model):
