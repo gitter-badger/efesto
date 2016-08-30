@@ -183,6 +183,11 @@ def user_token(request, dummy_user):
     return build_token(request, dummy_user)
 
 
+@pytest.fixture
+def disabled_token(request, disabled_user):
+    return build_token(request, disabled_user)
+
+
 @pytest.fixture(params=['client', 'server'])
 def admin_auth(request, token, dummy_admin):
     return build_auth_header(request, token, dummy_admin)
