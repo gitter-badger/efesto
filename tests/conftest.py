@@ -72,6 +72,19 @@ def build_type(request, name, enabled):
     request.addfinalizer(teardown)
     return custom_type
 
+
+def build_field(request, name, type_id, field_type, unique=None,
+                nullable=None):
+    custom_field = Fields(name=name, type=type_id, field_type=field_type,
+                          unique=unique, nullable=nullable)
+    custom_field.save()
+
+    def teardown():
+        custom_field.delete_instance()
+    request.addfinalizer(teardown)
+    return custom_field
+
+
 def build_token(request, user):
     new_token = EternalTokens(name='mytoken', user=user.id, token='token')
     new_token.save()
@@ -113,13 +126,7 @@ def dummy_type(request):
 
 @pytest.fixture
 def custom_field(request, dummy_type):
-    custom_field = Fields(name='f', type=dummy_type.id, field_type='string')
-    custom_field.save()
-
-    def teardown():
-        custom_field.delete_instance()
-    request.addfinalizer(teardown)
-    return custom_field
+    return build_field(request, 'f', dummy_type.id, 'string')
 
 
 @pytest.fixture
@@ -129,32 +136,14 @@ def complex_type(request):
 
 @pytest.fixture
 def complex_fields(request, complex_type):
-    str_field = Fields(name='strfield', type=complex_type.id,
-                       field_type='string')
-    str_field.save()
-    int_field = Fields(name='intfield', type=complex_type.id, field_type='int')
-    int_field.save()
-    float_field = Fields(name='floatfield', type=complex_type.id,
-                         field_type='float')
-    float_field.save()
-    date_field = Fields(name='datefield', type=complex_type.id,
-                        field_type='date')
-    date_field.save()
-    nfield = Fields(name='nfield', type=complex_type.id, field_type='string',
-                    nullable=True)
-    nfield.save()
-    ufield = Fields(name='ufield', type=complex_type.id, field_type='string',
-                    unique=True)
-    ufield.save()
-
-    def teardown():
-        str_field.delete_instance()
-        int_field.delete_instance()
-        float_field.delete_instance()
-        date_field.delete_instance()
-        nfield.delete_instance()
-        ufield.delete_instance()
-    request.addfinalizer(teardown)
+    str_field = build_field(request, 'strfield', complex_type.id, 'string')
+    int_field = build_field(request, 'intfield', complex_type.id, 'int')
+    float_field = build_field(request, 'floatfield', complex_type.id, 'float')
+    date_field = build_field(request, 'datefield', complex_type.id, 'date')
+    nfield = build_field(request, 'nfield', complex_type.id, 'string',
+                         nullable=True)
+    ufield = build_field(request, 'ufield', complex_type.id, 'string',
+                         unique=True)
     return str_field, int_field, float_field, date_field, nfield, ufield
 
 
