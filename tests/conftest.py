@@ -29,7 +29,8 @@ post_data = [
 
 
 def pytest_namespace():
-    return {'simple_items': simple_items, 'post_data': post_data}
+    return {'simple_items': simple_items, 'post_data': post_data,
+            'build_field': build_field}
 
 
 def build_auth_header(request, token, user):
