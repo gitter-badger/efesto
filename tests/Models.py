@@ -31,14 +31,8 @@ def custom_type_two(request):
 
 @pytest.fixture
 def foreign_field(request, custom_type_two, complex_type):
-    foreign_field = Fields(name='forfield', type=custom_type_two.id,
-                           field_type='mytype')
-    foreign_field.save()
-
-    def teardown():
-        foreign_field.delete_instance()
-    request.addfinalizer(teardown)
-    return foreign_field
+    return pytest.build_field(request, 'forfield', custom_type_two.id,
+                              'mytype')
 
 
 @pytest.mark.parametrize('column_dict', [
