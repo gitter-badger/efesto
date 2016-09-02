@@ -60,6 +60,18 @@ def build_user(request, name, rank):
     return user
 
 
+def build_type(request, name, enabled):
+    """
+    Builds a custom type with the given name and status.
+    """
+    custom_type = Types(name=name, enabled=enabled)
+    custom_type.save()
+
+    def teardown():
+        custom_type.delete_instance()
+    request.addfinalizer(teardown)
+    return custom_type
+
 def build_token(request, user):
     new_token = EternalTokens(name='mytoken', user=user.id, token='token')
     new_token.save()
@@ -96,13 +108,7 @@ def disabled_user(request):
 
 @pytest.fixture
 def dummy_type(request):
-    custom_type = Types(name='mycustomtype', enabled=1)
-    custom_type.save()
-
-    def teardown():
-        custom_type.delete_instance()
-    request.addfinalizer(teardown)
-    return custom_type
+    return build_type(request, 'mycustomtype', 1)
 
 
 @pytest.fixture
@@ -118,13 +124,7 @@ def custom_field(request, dummy_type):
 
 @pytest.fixture
 def complex_type(request):
-    new_type = Types(name='mytype', enabled=0)
-    new_type.save()
-
-    def teardown():
-        new_type.delete_instance()
-    request.addfinalizer(teardown)
-    return new_type
+    return build_type(request, 'mytype', 0)
 
 
 @pytest.fixture
