@@ -16,6 +16,19 @@ import pytest
 sys.path.insert(0, '')
 
 
+def model_body(model):
+    if model == Users:
+        return 'email=somrandommail&rank=2'
+    elif model == Types:
+        return 'enabled=1'
+    elif model == AccessRules:
+        return 'level=2&rank=3'
+    elif model == EternalTokens:
+        return 'name=patched!'
+    elif model == Fields:
+        return 'name=megafield'
+
+
 @pytest.mark.parametrize('model',
                          [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
@@ -106,17 +119,7 @@ def test_make_resource_patch_item(client, app, admin_auth, item_with_model):
     model = item_with_model[1]
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
-    body = ''
-    if model == Users:
-        body = 'email=somrandommail&rank=2'
-    elif model == Types:
-        body = 'enabled=1'
-    elif model == AccessRules:
-        body = 'level=2&rank=3'
-    elif model == EternalTokens:
-        body = 'name=patched!'
-    elif model == Fields:
-        body = 'name=megafield'
+    body = model_body(model)
     response = client.patch('/endpoint/%s' % (item.id), body=body,
                             headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_OK
@@ -260,17 +263,7 @@ def test_make_resource_access_rules_patch(client, app, user_auth,
     item = item_with_model[0]
     model = item_with_model[1]
     resource = make_resource(model)()
-    body = ''
-    if model == Users:
-        body = 'email=somrandommail&rank=2'
-    elif model == Types:
-        body = 'enabled=1'
-    elif model == AccessRules:
-        body = 'level=2&rank=3'
-    elif model == EternalTokens:
-        body = 'name=patched!'
-    elif model == Fields:
-        body = 'name=megafield'
+    body = model_body(model)
     app.add_route('/endpoint/{id}', resource)
     response = client.patch('/endpoint/%s' % (item.id), body=body,
                             headers={'authorization': user_auth})
