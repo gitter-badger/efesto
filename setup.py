@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     tests_require=[
         'pytest',
-        'pytest-falcon==0.3.3'
+        'pytest-falcon'
     ],
     setup_requires=['pytest-runner'],
     install_requires=[
