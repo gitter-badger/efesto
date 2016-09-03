@@ -2,6 +2,7 @@
 """
 """
 import base64
+import os
 import sys
 
 from efesto.Auth import generate_token
@@ -100,6 +101,18 @@ def build_token(request, user):
 def app():
     application = falcon.API()
     return application
+    
+    
+@pytest.fixture
+def config_file(request):
+    name = 'test.cfg'
+    f = open(name, 'w')
+    f.close()
+    
+    def teardown():
+        os.remove(name)
+    request.addfinalizer(teardown)
+    return name
 
 
 @pytest.fixture(scope='session')
