@@ -1,7 +1,7 @@
 # Efesto
-[![Pypi version](https://img.shields.io/pypi/v/efesto.svg?maxAge=2592000&style=flat-square)](https://pypi.python.org/pypi/efesto)
-[![Build status](https://img.shields.io/travis/Vesuvium/efesto.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/Vesuvium/efesto)
-[![Code Climate](https://img.shields.io/codeclimate/github/Vesuvium/efesto.svg?maxAge=2592000&style=flat-square)](https://codeclimate.com/github/Vesuvium/efesto)
+[![Pypi version](https://img.shields.io/pypi/v/efesto.svg?maxAge=3600&style=flat-square)](https://pypi.python.org/pypi/efesto)
+[![Build status](https://img.shields.io/travis/Vesuvium/efesto.svg?maxAge=3600&style=flat-square)](https://travis-ci.org/Vesuvium/efesto)
+[![Code Climate](https://img.shields.io/codeclimate/github/Vesuvium/efesto.svg?maxAge=3600&style=flat-square)](https://codeclimate.com/github/Vesuvium/efesto)
 
 Efesto is a RESTful API generator based on the Falcon framework. It allows you
 to build and deploy awesome relational APIs in minutes.
