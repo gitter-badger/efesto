@@ -1,3 +1,11 @@
+# Version 0.5 (2016-08-15)
+
+* Add blueprints to import and export custom data structures
+* Custom types support float fields
+* Performing a GET on a collection returns only the items' ids
+* Add a _fields parameter to GET requests on collections
+
+
 # Version 0.4 (2016-07-24)
 
 * Added efesto-quickstart
