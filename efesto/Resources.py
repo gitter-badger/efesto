@@ -28,6 +28,15 @@ from .Auth import (authenticate_by_password, authenticate_by_token,
 from .Models import EternalTokens
 
 
+def item_to_dictionary(model, item):
+    item_dict = {}
+    for k in model.__dict__:
+        if isinstance(model.__dict__[k], FieldDescriptor):
+            if not isinstance(model.__dict__[k], RelationDescriptor):
+                item_dict[k] = getattr(item, k)
+    return item_dict
+
+
 def make_collection(model):
     """
     The make_collection function acts as generator of collection for models.
@@ -171,13 +180,7 @@ def make_resource(model):
             raise falcon.HTTPNotFound()
 
         if user.can('read', item):
-            item_dict = {}
-            for k in self.model.__dict__:
-                if (
-                    isinstance(self.model.__dict__[k], FieldDescriptor) and
-                    not isinstance(self.model.__dict__[k], RelationDescriptor)
-                ):
-                    item_dict[k] = getattr(item, k)
+            item_dict = item_to_dictionary(self.model, item)
 
             def json_serial(obj):
                 if isinstance(obj, datetime):
@@ -229,13 +232,7 @@ def make_resource(model):
                     setattr(item, arg[0], arg[1])
                 item.save()
 
-            item_dict = {}
-            for k in self.model.__dict__:
-                if (
-                    isinstance(self.model.__dict__[k], FieldDescriptor) and
-                    not isinstance(self.model.__dict__[k], RelationDescriptor)
-                ):
-                    item_dict[k] = getattr(item, k)
+            item_dict = item_to_dictionary(self.model, item)
             response.body = json.dumps(item_dict)
         else:
             raise falcon.HTTPForbidden('forbidden', 'forbidden')
