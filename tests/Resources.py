@@ -29,6 +29,17 @@ def model_body(model):
         return 'name=megafield'
 
 
+def is_deleted(model, item_id):
+    """
+    Checks whether and item has been deleted.
+    """
+    try:
+        deleted = model.get(getattr(model, 'id') == item_id)
+    except:
+        deleted = True
+    return deleted
+
+
 @pytest.mark.parametrize('model',
                          [Users, Types, Fields, AccessRules, EternalTokens])
 @pytest.mark.parametrize('method',
@@ -147,11 +158,7 @@ def test_make_resource_delete_item(client, app, admin_auth, item_with_model):
     response = client.delete('/endpoint/%s' % (item_id),
                              headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_NO_CONTENT
-    try:
-        deleted = model.get(getattr(model, 'id') == item_id)
-    except:
-        deleted = True
-    assert deleted == True
+    assert is_deleted(model, item_id) == True
 
 
 @pytest.mark.parametrize('method',
@@ -232,11 +239,7 @@ def test_make_resource_make_model_delete(client, app, admin_auth, custom_field,
     response = client.delete('/endpoint/%s' % (item_id),
                              headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_NO_CONTENT
-    try:
-        deleted = model.get(getattr(model, 'id') == item_id)
-    except:
-        deleted = True
-    assert deleted == True
+    assert is_deleted(model, item_id) == True
 
 
 def test_make_resource_access_rules_get(client, app, user_auth,
