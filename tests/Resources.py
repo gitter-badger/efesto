@@ -29,6 +29,20 @@ def model_body(model):
         return 'name=megafield'
 
 
+def model_columns(model):
+    """
+    Finds a model's columns.
+    """
+    fields = []
+    attributes = model.__dict__
+    for key in attributes:
+        attribute = attributes[key]
+        if isinstance(attribute, FieldDescriptor):
+            if not isinstance(attribute, RelationDescriptor):
+                fields.append(key)
+    return fields
+
+
 def is_deleted(model, item_id):
     """
     Checks whether and item has been deleted.
@@ -107,15 +121,7 @@ def test_make_resource_get_item(client, app, admin_auth, item_with_model):
                           headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_OK
 
-    model_fields = []
-    attrs = model.__dict__
-    for k in attrs:
-        if (
-            isinstance(attrs[k], FieldDescriptor) and
-            not isinstance(attrs[k], RelationDescriptor)
-        ):
-            model_fields.append(k)
-
+    model_fields = model_columns(model)
     body = json.loads(response.body)
     for i in model_fields:
         assert body[i] == getattr(item, i)
@@ -190,15 +196,7 @@ def test_make_resource_make_model_get(client, app, admin_auth,
                           headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_OK
 
-    model_fields = []
-    attrs = model.__dict__
-    for k in attrs:
-        if (
-            isinstance(attrs[k], FieldDescriptor) and
-            not isinstance(attrs[k], RelationDescriptor)
-        ):
-            model_fields.append(k)
-
+    model_fields = model_columns(model)
     body = json.loads(response.body)
     for i in model_fields:
         assert body[i] == getattr(item, i)
