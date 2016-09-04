@@ -37,6 +37,81 @@ def item_to_dictionary(model, item):
     return item_dict
 
 
+def on_get_resource(self, request, response, id=0):
+    user = None
+    if request.auth:
+        user = authenticate_by_token(request.auth)
+
+    if user is None:
+        raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                      ['Basic realm="Login Required"'])
+
+    try:
+        item = self.model.get(getattr(self.model, 'id') == id)
+    except:
+        raise falcon.HTTPNotFound()
+
+    if user.can('read', item):
+        item_dict = item_to_dictionary(self.model, item)
+
+        def json_serial(obj):
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            raise TypeError('Type not serializable')
+        response.body = json.dumps(item_dict, default=json_serial)
+    else:
+        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+
+
+def on_patch_resource(self, request, response, id=0):
+    user = None
+    if request.auth:
+        user = authenticate_by_token(request.auth)
+
+    if user is None:
+        raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                      ['Basic realm="Login Required"'])
+
+    try:
+        item = self.model.get(getattr(self.model, 'id') == id)
+    except:
+        raise falcon.HTTPNotFound()
+
+    if user.can('edit', item):
+        stream = request.stream.read().decode('UTF-8')
+        if len(stream) > 0:
+            for i in stream.split('&'):
+                arg = i.split('=')
+                setattr(item, arg[0], arg[1])
+            item.save()
+
+        item_dict = item_to_dictionary(self.model, item)
+        response.body = json.dumps(item_dict)
+    else:
+        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+
+
+def on_delete_resource(self, request, response, id=0):
+    user = None
+    if request.auth:
+        user = authenticate_by_token(request.auth)
+
+    if user is None:
+        raise falcon.HTTPUnauthorized('Login required', 'Please login',
+                                      ['Basic realm="Login Required"'])
+
+    try:
+        item = self.model.get(getattr(self.model, 'id') == id)
+    except:
+        raise falcon.HTTPNotFound()
+
+    if user.can('eliminate', item):
+        item.delete_instance()
+        response.status = falcon.HTTP_NO_CONTENT
+    else:
+        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+
+
 def make_collection(model):
     """
     The make_collection function acts as generator of collection for models.
@@ -165,83 +240,11 @@ def make_collection(model):
 
 
 def make_resource(model):
-    def on_get(self, request, response, id=0):
-        user = None
-        if request.auth:
-            user = authenticate_by_token(request.auth)
-
-        if user is None:
-            raise falcon.HTTPUnauthorized('Login required', 'Please login',
-                                          ['Basic realm="Login Required"'])
-
-        try:
-            item = self.model.get(getattr(self.model, 'id') == id)
-        except:
-            raise falcon.HTTPNotFound()
-
-        if user.can('read', item):
-            item_dict = item_to_dictionary(self.model, item)
-
-            def json_serial(obj):
-                if isinstance(obj, datetime):
-                    return obj.isoformat()
-                raise TypeError('Type not serializable')
-            response.body = json.dumps(item_dict, default=json_serial)
-        else:
-            raise falcon.HTTPForbidden('forbidden', 'forbidden')
-
-    def on_delete(self, request, response, id=0):
-        user = None
-        if request.auth:
-            user = authenticate_by_token(request.auth)
-
-        if user is None:
-            raise falcon.HTTPUnauthorized('Login required', 'Please login',
-                                          ['Basic realm="Login Required"'])
-
-        try:
-            item = self.model.get(getattr(self.model, 'id') == id)
-        except:
-            raise falcon.HTTPNotFound()
-
-        if user.can('eliminate', item):
-            item.delete_instance()
-            response.status = falcon.HTTP_NO_CONTENT
-        else:
-            raise falcon.HTTPForbidden('forbidden', 'forbidden')
-
-    def on_patch(self, request, response, id=0):
-        user = None
-        if request.auth:
-            user = authenticate_by_token(request.auth)
-
-        if user is None:
-            raise falcon.HTTPUnauthorized('Login required', 'Please login',
-                                          ['Basic realm="Login Required"'])
-
-        try:
-            item = self.model.get(getattr(self.model, 'id') == id)
-        except:
-            raise falcon.HTTPNotFound()
-
-        if user.can('edit', item):
-            stream = request.stream.read().decode('UTF-8')
-            if len(stream) > 0:
-                for i in stream.split('&'):
-                    arg = i.split('=')
-                    setattr(item, arg[0], arg[1])
-                item.save()
-
-            item_dict = item_to_dictionary(self.model, item)
-            response.body = json.dumps(item_dict)
-        else:
-            raise falcon.HTTPForbidden('forbidden', 'forbidden')
-
     attributes = {
         'model': model,
-        'on_get': on_get,
-        'on_patch': on_patch,
-        'on_delete': on_delete
+        'on_get': on_get_resource,
+        'on_patch': on_patch_resource,
+        'on_delete': on_delete_resource
     }
     return type('mycollection', (object, ), attributes)
 
