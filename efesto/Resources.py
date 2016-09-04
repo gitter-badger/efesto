@@ -252,7 +252,8 @@ class TokensResource:
     """
     def on_post(self, request, response):
         request._parse_form_urlencoded()
-        if 'password' not in request.params or 'username' not in request.params:
+        if ('password' not in request.params or
+                'username' not in request.params):
             raise falcon.HTTPBadRequest('', '')
 
         authentication = authenticate_by_password(request.params['username'],
