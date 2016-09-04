@@ -56,12 +56,12 @@ class Users(Base):
                 action = requested_action
             model_name = getattr(item._meta, 'db_table')
             rules = AccessRules.select()\
-                .where(
-                    (AccessRules.user == self.id) | (AccessRules.rank == self.rank),
-                    AccessRules.model == model_name,
-                    (AccessRules.item == None) | (AccessRules.item == item.id),
-                    getattr(AccessRules, action) != None
-                )\
+                .where((AccessRules.user == self.id) |
+                       (AccessRules.rank == self.rank))\
+                .where(AccessRules.model == model_name)\
+                .where((AccessRules.item == None) |
+                       (AccessRules.item == item.id))\
+                .where(getattr(AccessRules, action) != None)\
                 .order_by(AccessRules.level.desc(), AccessRules.item.asc(),
                           AccessRules.rank.desc())\
                 .limit(1)
