@@ -8,6 +8,7 @@ import sys
 import efesto
 from efesto.Base import config
 from efesto.Models import Users
+from efesto.scripts.blueprints import dump, load
 from efesto.scripts.quickstart import create_admin, create_config, message
 from efesto.scripts.travis import create_travis_config
 import pytest
@@ -55,3 +56,14 @@ def test_create_travis_config(config_file):
     assert config.parser.get('db', 'name') == 'test'
     assert config.parser.get('db', 'user') == 'postgres'
     assert config.parser.get('db', 'password') == ''
+
+
+def test_blueprint_dump():
+    dump('test.cfg')
+    assert os.path.isfile('test.cfg')
+
+
+def test_blueprint_load(capsys):
+    load('empty')
+    output, error = capsys.readouterr()
+    assert output != None
