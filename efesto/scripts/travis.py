@@ -12,8 +12,13 @@ from efesto.Base import config
 sys.path.insert(0, '')
 
 
-config.parser.set('db', 'name', 'test')
-config.parser.set('db', 'user', 'postgres')
-config.parser.set('db', 'password', '')
-with open(config.path, 'w') as configfile:
-    config.parser.write(configfile)
+def create_travis_config():
+    config.parser.set('db', 'name', 'test')
+    config.parser.set('db', 'user', 'postgres')
+    config.parser.set('db', 'password', '')
+    with open(config.path, 'w') as configfile:
+        config.parser.write(configfile)
+
+
+if __name__ == '__main__':
+    create_travis_config()
