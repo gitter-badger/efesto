@@ -7,9 +7,8 @@ import sys
 
 from efesto.Models import (AccessRules, EternalTokens, Fields, Types, Users,
                            make_model)
-from efesto.Resources import make_collection
+from efesto.Resources import make_collection, model_columns
 import falcon
-from peewee import FieldDescriptor, RelationDescriptor
 import pytest
 
 
@@ -36,15 +35,6 @@ def parse_header_links(value):
             link[key.strip(replace_chars)] = value.strip(replace_chars)
         links.append(link)
     return links
-
-
-def get_model_columns(model):
-    columns = []
-    for i in model.__dict__:
-        if isinstance(model.__dict__[i], FieldDescriptor):
-            if not isinstance(model.__dict__[i], RelationDescriptor):
-                columns.append(i)
-    return columns
 
 
 @pytest.fixture
@@ -162,7 +152,7 @@ def test_make_collection_fields_argument(client, app, admin_auth,
     model = item_with_model[1]
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
-    columns = get_model_columns(model)
+    columns = model_columns(model)
     columns.remove('id')
     query = '_fields=%s' % (columns[0])
     url = '/endpoint?%s' % (query)
@@ -183,7 +173,7 @@ def test_make_collection_fields_argument_all(client, app, admin_auth,
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint?_fields=all',
                           headers={'authorization': admin_auth})
-    columns = get_model_columns(model)
+    columns = model_columns(model)
     body = json.loads(response.body)
     for item in body:
         for column in columns:
