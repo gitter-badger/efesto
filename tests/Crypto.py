@@ -8,7 +8,7 @@ import sys
 
 
 from efesto.Base import config
-from efesto.Crypto import compare_hash, generate_hash
+from efesto.Crypto import compare_hash, generate_hash, safe_str_cmp
 
 
 sys.path.insert(0, '')
@@ -17,6 +17,13 @@ sys.path.insert(0, '')
 def random_string(length):
     lowercases = string.ascii_lowercase
     return ''.join(random.choice(lowercases) for i in range(length))
+    
+    
+def test_safe_str_cmp_failure():
+    """
+    Verifies that safe_str_cmp returns False with strings of different length.
+    """
+    assert safe_str_cmp('fire', 'water') == False
 
 
 def test_hash_generation():
