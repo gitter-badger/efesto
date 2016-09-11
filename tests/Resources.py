@@ -122,7 +122,7 @@ def test_make_resource_get_item(client, app, admin_auth, item_with_model):
     assert response.status == falcon.HTTP_OK
 
     model_fields = model_columns(model)
-    body = json.loads(response.body)
+    body = json.loads(response.body)['properties']
     for i in model_fields:
         assert body[i] == getattr(item, i)
 
@@ -144,7 +144,7 @@ def test_make_resource_patch_item(client, app, admin_auth, item_with_model):
     for i in body.split('&'):
         arg = i.split('=')
         check[arg[0]] = arg[1]
-    response_body = json.loads(response.body)
+    response_body = json.loads(response.body)['properties']
     for k in check:
         assert check[k] == response_body[k]
 
@@ -197,7 +197,7 @@ def test_make_resource_make_model_get(client, app, admin_auth,
     assert response.status == falcon.HTTP_OK
 
     model_fields = model_columns(model)
-    body = json.loads(response.body)
+    body = json.loads(response.body)['properties']
     for i in model_fields:
         assert body[i] == getattr(item, i)
     # teardown
@@ -217,7 +217,7 @@ def test_make_resource_make_model_patch(client, app, admin_auth, custom_field,
     response = client.patch('/endpoint/%s' % (item.id), body=body,
                             headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_OK
-    response_body = json.loads(response.body)
+    response_body = json.loads(response.body)['properties']
     for k in check:
         assert check[k] == response_body[k]
     # teardown

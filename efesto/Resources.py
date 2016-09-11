@@ -26,6 +26,7 @@ from peewee import FieldDescriptor, RelationDescriptor
 from .Auth import (authenticate_by_password, authenticate_by_token,
                    generate_token)
 from .Models import EternalTokens
+from .Siren import hinder
 
 
 def model_columns(model):
@@ -201,7 +202,8 @@ def on_get_resource(self, request, response, id=0):
             if isinstance(obj, datetime):
                 return obj.isoformat()
             raise TypeError('Type not serializable')
-        response.body = json.dumps(item_dict, default=json_serial)
+        s = hinder(item_dict, path=request.path)
+        response.body = json.dumps(s, default=json_serial)
     else:
         raise falcon.HTTPForbidden('forbidden', 'forbidden')
 
@@ -229,7 +231,8 @@ def on_patch_resource(self, request, response, id=0):
             item.save()
 
         item_dict = item_to_dictionary(self.model, item)
-        response.body = json.dumps(item_dict)
+        s = hinder(item_dict, path=request.path)
+        response.body = json.dumps(s)
     else:
         raise falcon.HTTPForbidden('forbidden', 'forbidden')
 
