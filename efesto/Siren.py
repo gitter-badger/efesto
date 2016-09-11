@@ -24,8 +24,7 @@ def hinder(data, cls=None, path=None, page=None, last_page=None):
     if type(data) == dict:
         siren['properties'] = data
         if path:
-            current_path = '{}/{}'.format(path, data['id'])
-            siren['links'] = [{'rel': ['self'], 'href': current_path}]
+            siren['links'] = [{'rel': ['self'], 'href': path}]
     elif type(data) == list:
         siren['properties'] = {'count': len(data)}
         if path:

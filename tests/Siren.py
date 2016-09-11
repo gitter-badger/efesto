@@ -44,7 +44,7 @@ def test_hinder_resource_links(siren_resource):
     result = hinder(siren_resource, path='/captains')
     assert 'links' in result
     assert result['links'][0]['rel'] == ['self']
-    assert result['links'][0]['href'] == '/captains/1'
+    assert result['links'][0]['href'] == '/captains'
 
 
 def test_hinder_resource_class(siren_resource):
