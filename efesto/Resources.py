@@ -156,7 +156,8 @@ def on_get(self, request, response):
         if isinstance(obj, datetime):
             return obj.isoformat()
         raise TypeError('Type not serializable')
-    response.body = json.dumps(body, default=json_serial)
+    s = hinder(body, path=request.path, page=page)
+    response.body = json.dumps(s, default=json_serial)
 
     if count > items:
         build_link_headers(request, response, count, items, page)
@@ -176,7 +177,8 @@ def on_post(self, request, response):
     if user.can('read', new_item):
         new_item.save()
         response.status = falcon.HTTP_CREATED
-        response.body = json.dumps(new_item.__dict__['_data'])
+        s = hinder(new_item.__dict__['_data'], path=request.path)
+        response.body = json.dumps(s)
     else:
         raise falcon.HTTPForbidden('forbidden', 'forbidden')
 

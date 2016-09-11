@@ -91,8 +91,9 @@ def test_make_collection_get_auth(client, app, admin_auth, item_with_model):
     app.add_route('/endpoint', resource)
 
     response = client.get('/endpoint', headers={'authorization': admin_auth})
+    items = json.loads(response.body)['entities']
     assert response.status == falcon.HTTP_OK
-    assert len(json.loads(response.body)) == model.select().limit(20).count()
+    assert len(items) == model.select().limit(20).count()
 
 
 def test_make_collection_make_model(client, app, dummy_type, custom_field):
@@ -121,8 +122,9 @@ def test_make_collection_make_model_get_auth(client, app, admin_auth,
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint', headers={'authorization': admin_auth})
+    items = json.loads(response.body)['entities']
     assert response.status == falcon.HTTP_OK
-    assert len(json.loads(response.body)) == model.select().limit(20).count()
+    assert len(items) == model.select().limit(20).count()
     # teardown
     item.delete_instance()
 
@@ -137,10 +139,10 @@ def test_make_collection_response_fields(client, app, admin_auth,
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint', headers={'authorization': admin_auth})
-    body = json.loads(response.body)
-    for item in body:
-        assert 'id' in item
-        assert len(item.keys()) == 1
+    entities = json.loads(response.body)['entities']
+    for item in entities:
+        assert 'id' in item['properties']
+        assert len(item['properties'].keys()) == 1
 
 
 def test_make_collection_fields_argument(client, app, admin_auth,
@@ -157,9 +159,9 @@ def test_make_collection_fields_argument(client, app, admin_auth,
     query = '_fields=%s' % (columns[0])
     url = '/endpoint?%s' % (query)
     response = client.get(url, headers={'authorization': admin_auth})
-    body = json.loads(response.body)
+    body = json.loads(response.body)['entities']
     for item in body:
-        assert columns[0] in item
+        assert columns[0] in item['properties']
 
 
 def test_make_collection_fields_argument_all(client, app, admin_auth,
@@ -174,10 +176,10 @@ def test_make_collection_fields_argument_all(client, app, admin_auth,
     response = client.get('/endpoint?_fields=all',
                           headers={'authorization': admin_auth})
     columns = model_columns(model)
-    body = json.loads(response.body)
+    body = json.loads(response.body)['entities']
     for item in body:
         for column in columns:
-            assert column in item
+            assert column in item['properties']
 
 
 @pytest.mark.parametrize('query', [
@@ -192,10 +194,11 @@ def test_make_collection_query(client, app, admin_auth, pagination_items,
     app.add_route('/endpoint', resource)
     url = '/endpoint?%s' % (query)
     response = client.get(url, headers={'authorization': admin_auth})
-    response_items = json.loads(response.body)
+    response_items = json.loads(response.body)['entities']
     params = query.split('&')
     for i in response_items:
-        item = Users.get(Users.id == i['id'])
+        properties = i['properties']
+        item = Users.get(Users.id == properties['id'])
         for k in params:
             value = k.split('=')[1]
             if value[0] == '<':
@@ -239,10 +242,10 @@ def test_make_collection_order_arg_asc(client, app, admin_auth,
     app.add_route('/endpoint', resource)
     url = '/endpoint?%s' % (query)
     response = client.get(url, headers={'authorization': admin_auth})
-    response_items = json.loads(response.body)
+    response_items = json.loads(response.body)['entities']
     previous = None
     for i in response_items:
-        item = Users.get(Users.id == i['id'])
+        item = Users.get(Users.id == i['properties']['id'])
         if previous != None:
             assert item.name > previous
         previous = item.name
@@ -254,10 +257,10 @@ def test_make_collection_order_arg_desc(client, app, admin_auth,
     app.add_route('/endpoint', resource)
     url = '/endpoint?%s' % ('order_by=<name')
     response = client.get(url, headers={'authorization': admin_auth})
-    response_items = json.loads(response.body)
+    response_items = json.loads(response.body)['entities']
     previous = None
     for i in response_items:
-        item = Users.get(Users.id == i['id'])
+        item = Users.get(Users.id == i['properties']['id'])
         if previous != None:
             assert item.name < previous
         previous = item.name
@@ -274,9 +277,9 @@ def test_make_collection_query_pagination(client, app, admin_auth):
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint?page=2&items=1',
                           headers={'authorization': admin_auth})
-    items = json.loads(response.body)
+    items = json.loads(response.body)['entities']
     assert len(items) == 1
-    assert items[0]['id'] == Users.select().paginate(2, 1)[0].id
+    assert items[0]['properties']['id'] == Users.select().paginate(2, 1)[0].id
     new_user.delete_instance()
 
 
@@ -336,7 +339,7 @@ def test_make_collection_post_auth(client, app, admin_auth, test_args):
     response = client.post('/endpoint', data=data,
                            headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_CREATED
-    body = json.loads(response.body)
+    body = json.loads(response.body)['properties']
     assert 'id' in body
     for key in data:
         assert key in body
@@ -373,7 +376,7 @@ def test_make_collection_make_model_post_auth(client, app, dummy_admin,
     response = client.post('/endpoint', data=data,
                            headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_CREATED
-    body = json.loads(response.body)
+    body = json.loads(response.body)['properties']
     assert 'id' in body
     for key in data:
         assert key in body
