@@ -93,8 +93,9 @@ def test_hinder_collection_last_page(siren_collection):
 
 
 def test_hinder_collection_entities_properties(siren_collection):
-    result = hinder(siren_collection, path='/captains', page=3, last_page=3)
-    properties = siren_collection[0].keys
+    result = hinder(siren_collection)
+    properties = siren_collection[0].keys()
+    assert len(result['entities']) == len(siren_collection)
     for item in result['entities']:
         assert item['properties'].keys() == properties
 
@@ -108,4 +109,5 @@ def test_hinder_collection_entities_rel(siren_collection):
 def test_hinder_collection_entities_href(siren_collection):
     result = hinder(siren_collection, path='/captains', page=3, last_page=3)
     for item in result['entities']:
-        assert '/captains' in item['href']
+        item_id = item['properties']['id']
+        assert '/captains/' + str(item_id) in item['href']

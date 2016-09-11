@@ -46,6 +46,11 @@ def hinder(data, cls=None, path=None, page=None, last_page=None):
         for item in data:
             entity = {}
             entity['properties'] = item
+            if path:
+                href = '{}/{}'.format(path, item['id'])
+                entity['href'] = href
+            entity['rel'] = ['item']
+            entities.append(entity)
         siren['entities'] = entities
 
     if cls:
