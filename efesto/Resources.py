@@ -177,7 +177,8 @@ def on_post(self, request, response):
     if user.can('read', new_item):
         new_item.save()
         response.status = falcon.HTTP_CREATED
-        s = hinder(new_item.__dict__['_data'], path=request.path)
+        path = '{}/{}'.format(request.path, new_item.id)
+        s = hinder(new_item.__dict__['_data'], path=path)
         response.body = json.dumps(s)
     else:
         raise falcon.HTTPForbidden('forbidden', 'forbidden')

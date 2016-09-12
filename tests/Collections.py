@@ -339,12 +339,14 @@ def test_make_collection_post_auth(client, app, admin_auth, test_args):
     response = client.post('/endpoint', data=data,
                            headers={'authorization': admin_auth})
     assert response.status == falcon.HTTP_CREATED
-    body = json.loads(response.body)['properties']
-    assert 'id' in body
+    body = json.loads(response.body)
+    properties = body['properties']
+    assert 'id' in properties
     for key in data:
-        assert key in body
+        assert key in properties
+    assert body['links'][0]['href'] == '/endpoint/' + str(properties['id'])
     # teardown
-    item = model.get(getattr(model, 'id') == int(body['id']))
+    item = model.get(getattr(model, 'id') == int(properties['id']))
     item.delete_instance()
 
 
