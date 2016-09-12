@@ -32,6 +32,8 @@ def hinder(data, cls=None, path=None, page=None, last_page=None):
                 siren['links'] = [{'rel': ['self'], 'href': path}]
             elif page > 0:
                 current_path = '{}?page={}'.format(path, page)
+                if page == 1:
+                    current_path = path
                 siren['links'] = [{'rel': ['self'], 'href': current_path}]
                 if page > 1:
                     prev_path = '{}?page={}'.format(path, page - 1)
