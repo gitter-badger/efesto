@@ -69,6 +69,7 @@ def parse_auth_header(auth_string):
 
 def authenticate_by_token(auth_header):
     """
+    Authenticates a user with a token or an eternal token.
     """
     try:
         auth_dict = read_token(parse_auth_header(auth_header)[:-1])
