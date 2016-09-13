@@ -109,6 +109,13 @@ def item_to_dictionary(model, item):
     return item_dict
 
 
+def last_page(count, items):
+    pages = int(count / items)
+    if pages == 0:
+        return 1
+    return pages
+
+
 def on_get(self, request, response):
     user = None
     if request.auth:
@@ -156,7 +163,8 @@ def on_get(self, request, response):
         if isinstance(obj, datetime):
             return obj.isoformat()
         raise TypeError('Type not serializable')
-    s = hinder(body, path=request.path, page=page)
+    pages = last_page(count, items)
+    s = hinder(body, path=request.path, page=page, last_page=pages)
     response.body = json.dumps(s, default=json_serial)
 
     if count > items:
