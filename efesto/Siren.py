@@ -39,7 +39,14 @@ def hinder(data, cls=None, path=None, page=None, last_page=None):
                     prev_path = '{}?page={}'.format(path, page - 1)
                     prev = {'rel': ['previous'], 'href': prev_path}
                     siren['links'].append(prev)
-                if page != last_page:
+                if last_page:
+                    last_path = '{}?page={}'.format(path, last_page)
+                    siren['links'].append({'rel': ['last'], 'href': last_path})
+                    if last_page > page:
+                        next_path = '{}?page={}'.format(path, page + 1)
+                        next = {'rel': ['next'], 'href': next_path}
+                        siren['links'].append(next)
+                else:
                     next_path = '{}?page={}'.format(path, page + 1)
                     siren['links'].append({'rel': ['next'], 'href': next_path})
 

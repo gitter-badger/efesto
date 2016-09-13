@@ -89,7 +89,14 @@ def test_hinder_collection_last_page(siren_collection):
     rels = [i['rel'] for i in result['links']]
     assert ['self'] in rels
     assert ['previous'] in rels
+    assert ['last'] in rels
     assert ['next'] not in rels
+
+
+def test_hinder_collection_last_page_next(siren_collection):
+    result = hinder(siren_collection, path='/captains', page=1, last_page=3)
+    rels = [i['rel'] for i in result['links']]
+    assert ['next'] in rels
 
 
 def test_hinder_collection_entities_properties(siren_collection):
