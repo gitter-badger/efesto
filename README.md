@@ -63,6 +63,6 @@ username.
 
 ```
 GET http://myhost.com/users
-Authorization: Basic someverylongtoken:
+Authorization: Basic anystring:someverylongtoken
 # [ ... list of users ]
 ```
