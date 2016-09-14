@@ -14,5 +14,5 @@ Efesto will respond with::
 
 Now you are authenticated, and can make requests to endpoints::
 
-    Header HTTP Basic mytoken:
+    Header HTTP Basic anystring:mytoken
     GET/POST/PATCH/DELETE http://example.com/{my_endpoint}
