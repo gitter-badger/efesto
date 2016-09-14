@@ -1,3 +1,9 @@
+# Version 0.6 (2016-09-14)
+
+* Add HATEOAS support using [siren](https://github.com/kevinswiber/siren) as hypermedia type
+* Users have an enabled column that can be used to enable/disable them
+* Authentication with tokens expects the token in the password field
+
 # Version 0.5 (2016-08-15)
 
 * Add blueprints to import and export custom data structures
