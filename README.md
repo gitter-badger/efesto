@@ -4,9 +4,13 @@
 [![Coverage](https://img.shields.io/codeclimate/coverage/github/Vesuvium/efesto.svg?maxAge=3600&style=flat-square)](https://codeclimate.com/github/Vesuvium/efesto)
 [![Code Climate](https://img.shields.io/codeclimate/github/Vesuvium/efesto.svg?maxAge=3600&style=flat-square)](https://codeclimate.com/github/Vesuvium/efesto)
 
-Efesto is a RESTful API generator based on the Falcon framework. It allows you
-to build and deploy awesome relational APIs in minutes.
+Efesto is a RESTful (micro)server that can be used for building restful APIs in
+minutes. It takes care of authentication, permissions and kickstarts you by
+providing a simple way to build a data structure and the means to expose it.
 
+Efesto follows the UNIX principle of doing one thing and well, leaving you the
+freedom of choice about other components (e.g. caching, rate-limiting,
+load balancer).
 
 ## Features
 
