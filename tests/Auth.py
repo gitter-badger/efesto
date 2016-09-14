@@ -116,7 +116,7 @@ def test_token_authentication_disabled_user(disabled_user):
     Verifies that token authentication with a disabled user fails.
     """
     token = generate_token(decode=True, user=disabled_user.name)
-    original_string = '%s:' % (token)
+    original_string = ':{}'.format(token)
     encoded_string = original_string.encode('latin-1')
     string64 = base64.b64encode(encoded_string).decode('latin-1')
     auth_string = 'Basic %s' % (string64)
@@ -126,7 +126,7 @@ def test_token_authentication_disabled_user(disabled_user):
 
 def test_token_authentication(dummy_user):
     token = generate_token(decode=True, user=dummy_user.name)
-    original_string = '%s:' % (token)
+    original_string = 'dank:{}'.format(token)
     encoded_string = original_string.encode('latin-1')
     string64 = base64.b64encode(encoded_string).decode('latin-1')
     auth_string = 'Basic %s' % (string64)
@@ -139,7 +139,7 @@ def test_token_auth_eternal_disabled_user(disabled_user, disabled_token):
     Verifies that eternal token authentication with a disabled user fails.
     """
     token = generate_token(token=disabled_token.token)
-    original_string = '%s:' % (token)
+    original_string = ':{}'.format(token)
     encoded_string = original_string.encode('latin-1')
     string64 = base64.b64encode(encoded_string).decode('latin-1')
     auth_string = 'Basic %s' % (string64)
@@ -148,7 +148,7 @@ def test_token_auth_eternal_disabled_user(disabled_user, disabled_token):
 
 
 def test_token_authentication_eternal(dummy_admin, token):
-    original_string = '%s:' % (generate_token(token=token.token))
+    original_string = ':{}'.format(generate_token(token=token.token))
     encoded_string = original_string.encode('latin-1')
     string64 = base64.b64encode(encoded_string).decode('latin-1')
     auth_string = 'Basic %s' % (string64)

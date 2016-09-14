@@ -72,7 +72,8 @@ def authenticate_by_token(auth_header):
     Authenticates a user with a token or an eternal token.
     """
     try:
-        auth_dict = read_token(parse_auth_header(auth_header)[:-1])
+        parsed = parse_auth_header(auth_header)
+        auth_dict = read_token(parsed.split(':')[1])
     except:
         return None
 
