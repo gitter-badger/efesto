@@ -39,10 +39,10 @@ def build_auth_header(request, token, user):
     Builds an HTTP basic auth header for thte given user or token.
     """
     if request.param == 'client':
-        token_string = '%s:' % (generate_token(decode=True,
-                                user=user.name))
+        generated_token = generate_token(decode=True, user=user.name)
     else:
-        token_string = '%s:' % (generate_token(decode=True, token=token.token))
+        generated_token = generate_token(decode=True, token=token.token)
+    token_string = ':{}'.format(generated_token)
     encoded_token = token_string.encode('latin-1')
     string64 = base64.b64encode(encoded_token).decode('latin-1')
     return 'Basic %s' % (string64)
