@@ -373,7 +373,7 @@ def test_make_collection_make_model_post_auth(client, app, dummy_admin,
     model = make_model(dummy_type)
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
-    data = {'owner': dummy_admin.id}
+    data = {}
     data[custom_field.name] = 'someval'
     response = client.post('/endpoint', data=data,
                            headers={'authorization': admin_auth})
@@ -385,6 +385,26 @@ def test_make_collection_make_model_post_auth(client, app, dummy_admin,
     # teardown
     item = model.get(getattr(model, 'id') == int(body['id']))
     item.delete_instance()
+
+
+def test_make_collection_make_model_post_ownership(client, app, dummy_user,
+                                                   admin_auth, dummy_type,
+                                                   custom_field):
+    """
+    Verifies that is possible to overwrite an item's owner.
+    """
+    model = make_model(dummy_type)
+    resource = make_collection(model)()
+    app.add_route('/endpoint', resource)
+    data = {'owner': dummy_user.id}
+    data[custom_field.name] = 'someval'
+    response = client.post('/endpoint', data=data,
+                           headers={'authorization': admin_auth})
+    body = json.loads(response.body)['properties']
+    # teardown
+    item = model.get(getattr(model, 'id') == int(body['id']))
+    item.delete_instance()
+    assert int(body['owner']) == dummy_user.id
 
 
 def test_make_collection_access_rules_get(client, app, user_auth,

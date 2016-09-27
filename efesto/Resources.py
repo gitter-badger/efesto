@@ -181,6 +181,8 @@ def on_post(self, request, response):
         raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                       ['Basic realm="Login Required"'])
 
+    if 'owner' not in request.params:
+        request.params['owner'] = user.id
     new_item = self.model(**request.params)
     if user.can('read', new_item):
         new_item.save()
