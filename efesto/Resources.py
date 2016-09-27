@@ -318,7 +318,9 @@ class TokensResource:
                     EternalTokens.user == authentication.id
                 ).token
             except:
-                raise falcon.HTTPNotFound()
+                raise falcon.HTTPForbidden('Forbidden access',
+                                           'The credentials provided are \
+invalid')
             token = generate_token(token=t)
         else:
             expiration = config.parser.getint('security', 'token_expiration')
