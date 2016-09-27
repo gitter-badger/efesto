@@ -207,7 +207,8 @@ def on_get_resource(self, request, response, id=0):
     try:
         item = self.model.get(getattr(self.model, 'id') == id)
     except:
-        raise falcon.HTTPNotFound()
+        description = 'The resource you are looking for does not exist'
+        raise falcon.HTTPNotFound(title='Not found', description=description)
 
     if user.can('read', item):
         item_dict = item_to_dictionary(self.model, item)
@@ -235,7 +236,8 @@ def on_patch_resource(self, request, response, id=0):
     try:
         item = self.model.get(getattr(self.model, 'id') == id)
     except:
-        raise falcon.HTTPNotFound()
+        description = 'The resource you are looking for does not exist'
+        raise falcon.HTTPNotFound(title='Not found', description=description)
 
     if user.can('edit', item):
         stream = request.stream.read().decode('UTF-8')
@@ -265,7 +267,8 @@ def on_delete_resource(self, request, response, id=0):
     try:
         item = self.model.get(getattr(self.model, 'id') == id)
     except:
-        raise falcon.HTTPNotFound()
+        description = 'The resource you are looking for does not exist'
+        raise falcon.HTTPNotFound(title='Not found', description=description)
 
     if user.can('eliminate', item):
         item.delete_instance()

@@ -105,7 +105,11 @@ def test_make_resource_not_found(client, app, admin_auth, model, method):
     elif method == 'patch':
         response = client.patch('/endpoint/1234',
                                 headers={'authorization': admin_auth}, body='')
+    body = json.loads(response.body)
+    description = 'The resource you are looking for does not exist'
     assert response.status == falcon.HTTP_NOT_FOUND
+    assert body['title'] == 'Not found'
+    assert body['description'] == description
 
 
 def test_make_resource_get_item(client, app, admin_auth, item_with_model):
