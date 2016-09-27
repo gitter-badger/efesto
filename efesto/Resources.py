@@ -25,6 +25,7 @@ import falcon
 from peewee import FieldDescriptor, RelationDescriptor
 from .Auth import (authenticate_by_password, authenticate_by_token,
                    generate_token)
+from .Base import config
 from .Models import EternalTokens
 from .Siren import hinder
 
@@ -319,7 +320,9 @@ class TokensResource:
                 raise falcon.HTTPNotFound()
             token = generate_token(token=t)
         else:
-            token = generate_token(user=request.params['username'])
+            expiration = config.parser.getint('security', 'token_expiration')
+            token = generate_token(expiration=expiration,
+                                   user=request.params['username'])
         response.status = falcon.HTTP_OK
         response.body = json.dumps({'token': token})
 
