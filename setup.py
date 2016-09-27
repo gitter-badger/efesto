@@ -13,7 +13,7 @@ setup(
     author='Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
     license='GPL3',
-    version='0.6.1',
+    version='0.6.2',
     packages=find_packages(),
     tests_require=[
         'pytest',

@@ -1,6 +1,11 @@
 # Version 0.6
 
+## Version 0.6.2 (2016-09-28)
+
+* Various updates to documentation and setup
+
 ## Version 0.6.1 (2016-09-27)
+
 * Improved error messages
 * Fix a bug concerning attributes referencing foreign resources not being displayed
 * Fix tokens generated with the default expiration regardless of configuration
