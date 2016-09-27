@@ -347,7 +347,7 @@ def test_tokens_resource_bad_request(client, app, data):
 def test_tokens_resource_failure(client, app):
     """
     Verifies that sending wrong credentials to TokensResource results
-    in a unauthorized response.
+    in a forbidden response.
     """
     resource = TokensResource()
     data = {'username': 'name', 'password': 'passwd'}
@@ -362,7 +362,7 @@ def test_tokens_resource_failure(client, app):
 def test_tokens_resource_passwd_failure(client, app, dummy_user):
     """
     Verifies that sending a wrong password to TokensResource results
-    in a unauthorized response.
+    in a forbidden response.
     """
     resource = TokensResource()
     data = {'username': dummy_user.name, 'password': 'passwd'}
