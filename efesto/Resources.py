@@ -306,7 +306,7 @@ class TokensResource:
         authentication = authenticate_by_password(request.params['username'],
                                                   request.params['password'])
         if authentication is None:
-            raise falcon.HTTPUnauthorized('Login required', 'Pleas login',
+            raise falcon.HTTPUnauthorized('Login required', 'Please login',
                                           ['Basic realm="Login Required"'])
 
         if 'token_name' in request.params:
