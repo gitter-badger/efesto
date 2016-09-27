@@ -74,3 +74,7 @@ Authorization: Basic anystring:someverylongtoken
 
 # [ ... list of users ]
 ```
+
+## More
+
+Read the documentation at http://efesto.readthedocs.io for extra internet points!
