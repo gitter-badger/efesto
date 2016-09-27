@@ -51,27 +51,26 @@ Done! Now you can run your server and launch Efesto:
 gunicorn efesto:app
 ```
 
-## Making actual requests
+## The first request
 
-Efesto only allows authenticated users to make requests. By default, all users
-have no permissions, except for the administrators.
+Efesto only allows authenticated users to make requests, so first authenticate
+yourself using the /auth endpoint. You will receive an access token that 
+should be sent in the Auth header.
 
-Use the /auth endpoint to get a authentication token.
-Note that this is a timed token that will expire after some time. If you want
-a non-expiring token, use an eternal token.
 
 ```
 POST http://myhost.com/auth
 username=myuser&password=mypasswd
 
-# {'token':'someverylongtoken'}
+{'token':'someverylongtoken'}
 ```
 
-Then, use the token to authenticate with HTTP Basic, sending the token as
-username.
+Now that you have a token, you can make requests! For example, to get a list
+of users:
 
 ```
 GET http://myhost.com/users
 Authorization: Basic anystring:someverylongtoken
+
 # [ ... list of users ]
 ```
