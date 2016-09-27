@@ -22,7 +22,7 @@ from datetime import datetime
 import falcon
 
 
-from peewee import FieldDescriptor, RelationDescriptor
+from peewee import FieldDescriptor, ObjectIdDescriptor, RelationDescriptor
 from .Auth import (authenticate_by_password, authenticate_by_token,
                    generate_token)
 from .Base import config
@@ -36,6 +36,9 @@ def model_columns(model):
         if isinstance(model.__dict__[i], FieldDescriptor):
             if not isinstance(model.__dict__[i], RelationDescriptor):
                 columns.append(i)
+
+        if isinstance(model.__dict__[i], ObjectIdDescriptor):
+            columns.append(i)
     return columns
 
 
