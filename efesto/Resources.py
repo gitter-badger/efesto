@@ -308,8 +308,8 @@ class TokensResource:
         authentication = authenticate_by_password(request.params['username'],
                                                   request.params['password'])
         if authentication is None:
-            raise falcon.HTTPUnauthorized('Login required', 'Please login',
-                                          ['Basic realm="Login Required"'])
+            raise falcon.HTTPForbidden('Forbidden access',
+                                       'The credentials provided are invalid')
 
         if 'token_name' in request.params:
             try:

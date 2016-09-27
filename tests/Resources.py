@@ -337,7 +337,10 @@ def test_tokens_resource_failure(client, app):
     data = {'username': 'name', 'password': 'passwd'}
     app.add_route('/token', resource)
     response = client.post('/token', data)
-    assert response.status == falcon.HTTP_UNAUTHORIZED
+    body = json.loads(response.body)
+    assert response.status == falcon.HTTP_FORBIDDEN
+    assert body['title'] == 'Forbidden access'
+    assert body['description'] == 'The credentials provided are invalid'
 
 
 def test_tokens_resource_passwd_failure(client, app, dummy_user):
@@ -349,7 +352,10 @@ def test_tokens_resource_passwd_failure(client, app, dummy_user):
     data = {'username': dummy_user.name, 'password': 'passwd'}
     app.add_route('/token', resource)
     response = client.post('/token', data)
-    assert response.status == falcon.HTTP_UNAUTHORIZED
+    body = json.loads(response.body)
+    assert response.status == falcon.HTTP_FORBIDDEN
+    assert body['title'] == 'Forbidden access'
+    assert body['description'] == 'The credentials provided are invalid'
 
 
 def test_tokens_resource(client, app, dummy_user):
