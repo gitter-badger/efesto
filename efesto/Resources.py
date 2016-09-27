@@ -110,6 +110,8 @@ def item_to_dictionary(model, item):
         if isinstance(model.__dict__[k], FieldDescriptor):
             if not isinstance(model.__dict__[k], RelationDescriptor):
                 item_dict[k] = getattr(item, k)
+        if isinstance(model.__dict__[k], ObjectIdDescriptor):
+            item_dict[k] = getattr(item, k)
     return item_dict
 
 
