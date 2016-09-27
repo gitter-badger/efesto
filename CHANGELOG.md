@@ -1,4 +1,12 @@
-# Version 0.6 (2016-09-14)
+# Version 0.6
+
+## Version 0.6.1 (2016-09-27)
+* Improved error messages
+* Fix a bug concerning attributes referencing foreign resources not being displayed
+* Fix tokens generated with the default expiration regardless of configuration
+* Fix on_post required the owner of an item as parameter
+
+## Version 0.6.0 (2016-09-14)
 
 * Add HATEOAS support using [siren](https://github.com/kevinswiber/siren) as hypermedia type
 * Users have an enabled column that can be used to enable/disable them
