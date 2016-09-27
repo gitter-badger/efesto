@@ -12,12 +12,16 @@ Efesto follows the UNIX principle of doing one thing and well, leaving you the
 freedom of choice about other components (e.g. caching, rate-limiting,
 load balancer).
 
-## Features
+## When do I use this?
 
-* Custom data types
-* Client-side and server-side tokens
-* A powerful and simple permissions system
-* PostgreSQL based
+* You need a full-fledged ReST API
+* You are fine using Siren as hypermedia specification
+* You need authentication and permissions but want the work already done
+* You are fine with using PostgreSQL
+* You want to be able to create models without writing code (Python or SQL)
+* You need to easily import and export the models you created
+* You have Python3.4+ on your production server :)
+
 
 ## Installing
 
