@@ -219,7 +219,8 @@ def on_get_resource(self, request, response, id=0):
         s = hinder(item_dict, path=request.path)
         response.body = json.dumps(s, default=json_serial)
     else:
-        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+        raise falcon.HTTPForbidden('Forbidden access', 'You do not have the \
+required permissions for this action')
 
 
 def on_patch_resource(self, request, response, id=0):
@@ -248,7 +249,8 @@ def on_patch_resource(self, request, response, id=0):
         s = hinder(item_dict, path=request.path)
         response.body = json.dumps(s)
     else:
-        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+        raise falcon.HTTPForbidden('Forbidden access', 'You do not have the \
+required permissions for this action')
 
 
 def on_delete_resource(self, request, response, id=0):
@@ -269,7 +271,8 @@ def on_delete_resource(self, request, response, id=0):
         item.delete_instance()
         response.status = falcon.HTTP_NO_CONTENT
     else:
-        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+        raise falcon.HTTPForbidden('Forbidden access', 'You do not have the \
+required permissions for this action')
 
 
 def make_collection(model):

@@ -252,7 +252,11 @@ def test_make_resource_access_rules_get(client, app, user_auth,
     app.add_route('/endpoint/{id}', resource)
     response = client.get('/endpoint/%s' % (item.id),
                           headers={'authorization': user_auth})
+    body = json.loads(response.body)
+    description = 'You do not have the required permissions for this action'
     assert response.status == falcon.HTTP_FORBIDDEN
+    assert body['title'] == 'Forbidden access'
+    assert body['description'] == description
 
 
 def test_make_resource_access_rules_patch(client, app, user_auth,
@@ -268,7 +272,11 @@ def test_make_resource_access_rules_patch(client, app, user_auth,
     app.add_route('/endpoint/{id}', resource)
     response = client.patch('/endpoint/%s' % (item.id), body=body,
                             headers={'authorization': user_auth})
+    body = json.loads(response.body)
+    description = 'You do not have the required permissions for this action'
     assert response.status == falcon.HTTP_FORBIDDEN
+    assert body['title'] == 'Forbidden access'
+    assert body['description'] == description
 
 
 def test_make_resource_access_rules_delete(client, app, user_auth,
@@ -285,7 +293,11 @@ def test_make_resource_access_rules_delete(client, app, user_auth,
     app.add_route('/endpoint/{id}', resource)
     response = client.delete('/endpoint/%s' % (item_id),
                              headers={'authorization': user_auth})
+    body = json.loads(response.body)
+    description = 'You do not have the required permissions for this action'
     assert response.status == falcon.HTTP_FORBIDDEN
+    assert body['title'] == 'Forbidden access'
+    assert body['description'] == description
 
 
 def test_make_resource_serialization_get(client, app, admin_auth, complex_type,
