@@ -416,7 +416,7 @@ def test_make_collection_access_rules_get(client, app, user_auth,
     resource = make_collection(model)()
     app.add_route('/endpoint', resource)
     response = client.get('/endpoint', headers={'authorization': user_auth})
-    assert response.status == falcon.HTTP_NOT_FOUND
+    assert response.status == falcon.HTTP_NO_CONTENT
 
 
 @pytest.mark.parametrize('test_args', pytest.post_data)

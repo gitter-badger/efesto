@@ -158,7 +158,8 @@ def on_get(self, request, response):
             body.append(item)
 
     if len(body) == 0:
-        raise falcon.HTTPNotFound()
+        response.status = falcon.HTTP_NO_CONTENT
+        return response
 
     def json_serial(obj):
         if isinstance(obj, datetime):
