@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='efesto',
-    description='Efesto is a RESTful API generator based on the Falcon.',
+    description='RESTful (micro)server that can build an API in minutes.',
     url='https://github.com/vesuvium/efesto',
     author='Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
