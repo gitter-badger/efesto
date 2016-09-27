@@ -1,10 +1,14 @@
 #!/usr/bin/env python
+import io
 from setuptools import find_packages, setup
 
+
+readme = io.open('README.md', 'r', encoding='utf-8').read()
 
 setup(
     name='efesto',
     description='RESTful (micro)server that can build an API in minutes.',
+    long_description=readme,
     url='https://github.com/vesuvium/efesto',
     author='Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
