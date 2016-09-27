@@ -25,26 +25,27 @@ load balancer).
 
 ## Installing
 
-Efesto currently supports only Python3. You will also need to install and
-configure PostgreSQL, and a server like uwsgi or gunicorn.
+You will need to install and configure PostgreSQL, and a server like uwsgi or
+gunicorn.
 
 ```
 pip3 install efesto
 ```
 
-Create the configuration for efesto. Have a look at the provided efesto.cfg
-for an example.
-At the very minimum you will need to edit the db details (host, db, user,
-password).
-
-Then use efesto-quickstart:
+Configure Efesto, editing the configuration file. At the very minimum you
+will need to provide the database details.
 
 ```
-vim efesto.cfg # edit the configuration to your needs
+vim efesto.cfg
+```
+
+Use efesto-quickstart to have tables and admin created:
+
+```
 efesto-quickstart
 ```
 
-Efesto is installed and set up; if you use gunicorn you can run it with:
+Done! Now you can run your server and launch Efesto:
 
 ```
 gunicorn efesto:app
