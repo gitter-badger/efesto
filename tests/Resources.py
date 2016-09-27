@@ -322,7 +322,10 @@ def test_tokens_resource_bad_request(client, app, data):
     resource = TokensResource()
     app.add_route('/token', resource)
     response = client.post('/token', data)
+    body = json.loads(response.body)
     assert response.status == falcon.HTTP_BAD_REQUEST
+    assert body['title'] == 'Bad request'
+    assert body['description'] == 'A required parameter is missing'
 
 
 def test_tokens_resource_failure(client, app):

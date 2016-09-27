@@ -302,7 +302,8 @@ class TokensResource:
         request._parse_form_urlencoded()
         if ('password' not in request.params or
                 'username' not in request.params):
-            raise falcon.HTTPBadRequest('', '')
+            raise falcon.HTTPBadRequest('Bad request',
+                                        'A required parameter is missing')
 
         authentication = authenticate_by_password(request.params['username'],
                                                   request.params['password'])
