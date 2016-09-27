@@ -431,7 +431,11 @@ def test_make_collection_access_rules_post(client, app, user_auth, test_args):
     app.add_route('/endpoint', resource)
     response = client.post('/endpoint', data=data,
                            headers={'authorization': user_auth})
+    body = json.loads(response.body)
+    description = 'You do not have the required permissions for this action'
     assert response.status == falcon.HTTP_FORBIDDEN
+    assert body['title'] == 'Forbidden access'
+    assert body['description'] == description
 
 
 def test_make_collection_serialization_get(client, app, admin_auth,

@@ -192,7 +192,8 @@ def on_post(self, request, response):
         s = hinder(new_item.__dict__['_data'], path=path)
         response.body = json.dumps(s)
     else:
-        raise falcon.HTTPForbidden('forbidden', 'forbidden')
+        raise falcon.HTTPForbidden('Forbidden access', 'You do not have the \
+required permissions for this action')
 
 
 def on_get_resource(self, request, response, id=0):
