@@ -4,7 +4,7 @@
 [![Coverage](https://img.shields.io/codeclimate/coverage/github/Vesuvium/efesto.svg?maxAge=3600&style=flat-square)](https://codeclimate.com/github/Vesuvium/efesto)
 [![Code Climate](https://img.shields.io/codeclimate/github/Vesuvium/efesto.svg?maxAge=3600&style=flat-square)](https://codeclimate.com/github/Vesuvium/efesto)
 
-Efesto is a RESTful (micro)server that can be used for building restful APIs in
+Efesto is a RESTful (micro)server that can be used for building an API in
 minutes. It takes care of authentication, permissions and kickstarts you by
 providing a simple way to build a data structure and the means to expose it.
 
