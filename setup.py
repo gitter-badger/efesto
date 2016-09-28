@@ -3,7 +3,7 @@ import io
 from setuptools import find_packages, setup
 
 
-readme = io.open('README.md', 'r', encoding='utf-8').read()
+readme = io.open('README.rst', 'r', encoding='utf-8').read()
 
 setup(
     name='efesto',
