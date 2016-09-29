@@ -19,6 +19,19 @@
 """
 
 
+def make_entities(data, path=None):
+    entities = []
+    for item in data:
+        entity = {}
+        entity['properties'] = item
+        if path:
+            href = '{}/{}'.format(path, item['id'])
+            entity['href'] = href
+        entity['rel'] = ['item']
+        entities.append(entity)
+    return entities
+
+
 def hinder(data, cls=None, path=None, page=None, last_page=None):
     siren = {}
     if type(data) == dict:
@@ -50,16 +63,7 @@ def hinder(data, cls=None, path=None, page=None, last_page=None):
                     next_path = '{}?page={}'.format(path, page + 1)
                     siren['links'].append({'rel': ['next'], 'href': next_path})
 
-        entities = []
-        for item in data:
-            entity = {}
-            entity['properties'] = item
-            if path:
-                href = '{}/{}'.format(path, item['id'])
-                entity['href'] = href
-            entity['rel'] = ['item']
-            entities.append(entity)
-        siren['entities'] = entities
+        siren['entities'] = make_entities(data, path)
 
     if cls:
         siren['class'] = [cls]
