@@ -44,7 +44,9 @@ def model_columns(model):
 
 def build_embeds(params):
     if 'embeds' in params:
-        return params['embeds'].split(',')
+        if type(params['embeds']) is str:
+            return [params['embeds']]
+        return params['embeds']
     return []
 
 
