@@ -42,6 +42,12 @@ def model_columns(model):
     return columns
 
 
+def build_embeds(params):
+    if 'embeds' in params:
+        return params['embeds'].split(',')
+    return []
+
+
 def build_fields(request):
     fields = ['id']
     if '_fields' in request.params:
@@ -67,11 +73,14 @@ def build_query(model, params):
     return query
 
 
-def build_item(columns, fields, currrent_item):
+def build_item(columns, fields, currrent_item, embeds):
     item = {}
     for column in columns:
         if column in fields or fields == 'all':
             item[column] = getattr(currrent_item, column)
+    for embed in embeds:
+        column_to_embed = getattr(currrent_item, embed)
+        item[embed] = getattr(column_to_embed, '_data')
     return item
 
 
@@ -149,6 +158,7 @@ def on_get(self, request, response):
     if 'order_by' in request.params:
         order = request.params['order_by']
 
+    embeds = build_embeds(request.params)
     fields = build_fields(request)
 
     query = build_query(self.model, params)
@@ -159,7 +169,7 @@ def on_get(self, request, response):
     body = []
     for i in query.paginate(page, items):
         if user.can('read', i):
-            item = build_item(columns, fields, i)
+            item = build_item(columns, fields, i, embeds)
             body.append(item)
 
     if len(body) == 0:
