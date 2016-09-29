@@ -59,6 +59,7 @@ def test_make_entities_with_path(siren_collection):
 def test_make_entities_with_subentities(siren_subentities):
     result = make_entities(siren_subentities)
     for item in result:
+        assert 'nation' not in item['properties']
         assert 'entities' in item
 
 

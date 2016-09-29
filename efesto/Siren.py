@@ -30,7 +30,7 @@ def make_entities(data, path=None):
                 new[i] = item[i]
             else:
                 subentities.append(item[i])
-        entity['properties'] = item
+        entity['properties'] = new
         if len(subentities) > 0:
             entity['entities'] = make_entities(subentities)
         if path:
