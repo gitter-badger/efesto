@@ -23,7 +23,16 @@ def make_entities(data, path=None):
     entities = []
     for item in data:
         entity = {}
+        new = {}
+        subentities = []
+        for i in item:
+            if type(item[i]) is not dict:
+                new[i] = item[i]
+            else:
+                subentities.append(item[i])
         entity['properties'] = item
+        if len(subentities) > 0:
+            entity['entities'] = make_entities(subentities)
         if path:
             href = '{}/{}'.format(path, item['id'])
             entity['href'] = href

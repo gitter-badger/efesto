@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from efesto.Siren import hinder
+from efesto.Siren import hinder, make_entities
 import pytest
 
 
@@ -31,6 +31,35 @@ def siren_collection(siren_resource):
     john = {'id': 2, 'name': 'John', 'surname': 'Hawkins'}
     jack = {'id': 3, 'name': 'Jack', 'surname': 'Sparrow'}
     return [siren_resource, john, jack]
+
+
+@pytest.fixture
+def siren_subentities(siren_collection):
+    subentities = []
+    for item in siren_collection:
+        item['nation'] = {'name': 'Britain', 'region': 'Europe'}
+        subentities.append(item)
+    return subentities
+
+
+def test_make_entities(siren_collection):
+    result = make_entities(siren_collection)
+    properties = []
+    for k in result:
+        properties.append(k['properties'])
+    assert properties == siren_collection
+
+
+def test_make_entities_with_path(siren_collection):
+    result = make_entities(siren_collection, path='/random')
+    for item in result:
+        assert 'href' in item
+
+
+def test_make_entities_with_subentities(siren_subentities):
+    result = make_entities(siren_subentities)
+    for item in result:
+        assert 'entities' in item
 
 
 def test_hinder_resource_properties(siren_resource):
