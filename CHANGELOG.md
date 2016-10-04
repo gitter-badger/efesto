@@ -1,3 +1,10 @@
+# Version 0.7 (2016-10-04)
+
+* Added an *embeds* parameter
+* The _fields parameter supports comma-separated values
+* Custom types support self-referencing fields
+* Blueprints assume columns to be nullable by default
+
 # Version 0.6
 
 ## Version 0.6.2 (2016-09-28)
