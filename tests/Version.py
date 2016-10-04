@@ -10,4 +10,4 @@ sys.path.insert(0, '')
 
 
 def test_version():
-    assert type(efesto.__version__) == str
+    assert type(efesto.version) == str
