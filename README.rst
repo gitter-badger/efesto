@@ -68,7 +68,7 @@ More
 ----
 Read the documentation at http://efesto.readthedocs.io for extra internet points!
 
-.. |Build Status| image:: https://img.shields.io/travis/Vesuvium/efesto.svg?maxAge=3600&style=flat-square
+.. |Build Status| image:: https://img.shields.io/travis/getefesto/efesto.svg?maxAge=3600&style=flat-square
    :target: https://travis-ci.org/Vesuvium/efesto
 .. |Coverage| image:: https://img.shields.io/codeclimate/coverage/github/Vesuvium/efesto.svg?maxAge=3600&style=flat-square
    :target: https://codeclimate.com/github/Vesuvium/efesto
