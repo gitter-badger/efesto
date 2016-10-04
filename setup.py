@@ -9,7 +9,7 @@ setup(
     name='efesto',
     description='RESTful (micro)server that can build an API in minutes.',
     long_description=readme,
-    url='https://github.com/vesuvium/efesto',
+    url='https://github.com/getefesto/efesto',
     author='Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
     license='GPL3',
