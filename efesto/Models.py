@@ -183,6 +183,28 @@ def on_token_save(model_class, instance, created):
         instance.token = hexlify_(os.urandom(24))
 
 
+def make_field(type, column):
+    """
+    Builds a field instance from a column.
+    """
+    default_fields = {'string': TextField, 'int': IntegerField,
+                      'float': FloatField, 'bool': BooleanField,
+                      'date': DateTimeField}
+    if column.field_type in default_fields:
+        args_dict = {}
+        if column.nullable:
+            args_dict['null'] = True
+        if column.unique:
+            args_dict['unique'] = True
+        #field_instance = default_fields[column.field_type]
+        return default_fields[column.field_type](**args_dict)
+    parent_type = Types.get(Types.name == column.field_type)
+    if parent_type.id != type.id:
+        parent_model = make_model(parent_type)
+        return ForeignKeyField(parent_model)
+    return ForeignKeyField('self', null=True)
+
+
 def make_model(custom_type):
     """
     Generates a model based on a Type entry, using the columns specified in
@@ -191,24 +213,9 @@ def make_model(custom_type):
     if custom_type.enabled:
         attributes = {}
         attributes['owner'] = ForeignKeyField(Users)
-        fields_dict = {'string': TextField, 'int': IntegerField,
-                       'float': FloatField, 'bool': BooleanField,
-                       'date': DateTimeField}
         columns = Fields.select().where(Fields.type == custom_type.id)
         for column in columns:
-            if column.field_type in fields_dict:
-                args_dict = {}
-                if column.nullable:
-                    args_dict['null'] = True
-
-                if column.unique:
-                    args_dict['unique'] = True
-                field_instance = fields_dict[column.field_type]
-                attributes[column.name] = field_instance(**args_dict)
-            else:
-                parent_type = Types.get(Types.name == column.field_type)
-                parent_model = make_model(parent_type)
-                attributes[column.name] = ForeignKeyField(parent_model)
+            attributes[column.name] = make_field(custom_type, column)
         model = type('%s' % (custom_type.name), (Base, ), attributes)
         db.create_tables([model], safe=True)
         return model

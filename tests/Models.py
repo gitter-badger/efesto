@@ -312,6 +312,14 @@ def test_make_model_foreign_column(complex_type, custom_type_two,
         assert isinstance(field_object, ForeignKeyField)
 
 
+def test_make_model_foreign_self(referencing_type, referencing_fields):
+    referencing_type.enabled = 1
+    referencing_type.save()
+    model = make_model(referencing_type)
+    parent_field = getattr(model, 'parent')
+    assert isinstance(parent_field, ForeignKeyField)
+
+
 def test_make_model_ownership(complex_type, complex_fields):
     """
     Verifies that the make_model generated model has an owner attribute.

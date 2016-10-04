@@ -162,6 +162,18 @@ def complex_fields(request, complex_type):
 
 
 @pytest.fixture
+def referencing_type(request):
+    return build_type(request, 'autotype', 0)
+
+
+@pytest.fixture
+def referencing_fields(request, referencing_type):
+    name = build_field(request, 'name', referencing_type.id, 'string')
+    reference = build_field(request, 'parent', referencing_type.id, 'autotype')
+    return name, reference
+
+
+@pytest.fixture
 def complex_item(request, complex_type, complex_fields, dummy_admin):
     complex_type.enabled = 1
     complex_type.save()
