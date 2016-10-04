@@ -156,12 +156,13 @@ def test_make_collection_fields_argument(client, app, admin_auth,
     app.add_route('/endpoint', resource)
     columns = model_columns(model)
     columns.remove('id')
-    query = '_fields=%s' % (columns[0])
+    query = '_fields={},{}'.format(columns[0], columns[1])
     url = '/endpoint?%s' % (query)
     response = client.get(url, headers={'authorization': admin_auth})
     body = json.loads(response.body)['entities']
     for item in body:
         assert columns[0] in item['properties']
+        assert columns[1] in item['properties']
 
 
 def test_make_collection_fields_argument_all(client, app, admin_auth,

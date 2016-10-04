@@ -50,15 +50,16 @@ def build_embeds(params):
     return []
 
 
-def build_fields(request):
-    fields = ['id']
-    if '_fields' in request.params:
-        if request.params['_fields'] != 'all':
-            fields = request.params['_fields'].split(',')
-            fields.append('id')
-        else:
-            fields = 'all'
-    return fields
+def build_fields(params):
+    if '_fields' in params:
+        fields = params['_fields']
+        if type(fields) is str:
+            if fields == 'all':
+                return fields
+            return ['id', fields]
+        fields.append('id')
+        return fields
+    return ['id']
 
 
 def build_query(model, params):
@@ -161,7 +162,7 @@ def on_get(self, request, response):
         order = request.params['order_by']
 
     embeds = build_embeds(request.params)
-    fields = build_fields(request)
+    fields = build_fields(request.params)
 
     query = build_query(self.model, params)
     if order is not None:
