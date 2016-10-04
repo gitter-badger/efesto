@@ -39,7 +39,7 @@ Use efesto-quickstart to have tables and admin created::
 
 Done! Now you can run your server and launch Efesto::
 
-    gunicorn efesto:app
+    gunicorn efesto.App:app
 
 
 The first request
