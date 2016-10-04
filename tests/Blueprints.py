@@ -175,6 +175,7 @@ def test_load_simple_blueprint(simple_blueprint, blueprint_file):
         field = Fields.get(Fields.name == field_name)
         assert field.field_type == 'string'
         assert field.type.id == type.id
+        assert field.nullable == True
 
 
 def test_complex_blueprint(complex_blueprint, blueprint_file):

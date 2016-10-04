@@ -75,6 +75,7 @@ def load_blueprint(blueprint):
         for field in fields:
             field_dict = {'name': field.strip(), 'type': new_type.id}
             field_dict['field_type'] = 'string'
+            field_dict['nullable'] = True
             field_section = '{}.{}'.format(type, field_dict['name'])
             if parser.has_section(field_section):
                 parse_section(parser, field_section, field_dict)
