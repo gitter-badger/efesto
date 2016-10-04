@@ -115,12 +115,15 @@ def complex_data(request, blueprint_file):
     tonnage.save()
     flag = Fields(name='flag', type=ships.id, field_type='string')
     flag.save()
+    launch_date = Fields(name='launch_date', type=ships.id, field_type='date')
+    launch_date.save()
     builder = Fields(name='builder', type=ships.id, field_type='builders')
     builder.save()
 
     def teardown():
         tonnage.delete_instance()
         flag.delete_instance()
+        launch_date.delete_instance()
         builder.delete_instance()
         ships.delete_instance()
         builders.delete_instance()
@@ -182,12 +185,14 @@ def test_dump_complex_blueprint(complex_data, blueprint_file):
     dump_blueprint(blueprint_file)
     parser = ConfigParser()
     parser.read(blueprint_file)
-    expected_sections = ['ships', 'ships.tonnage', 'builders']
+    expected_sections = ['ships', 'ships.tonnage', 'ships.launch_date', 'builders']
     for expected in expected_sections:
         assert expected in parser.sections()
     assert parser.get('ships.tonnage', 'type') is not None
+    assert parser.get('ships.launch_date', 'type') == 'date'
     assert parser.get('ships.builder', 'type') == 'builders'
 
     fields = parser.get('ships', 'fields').split(',')
     assert 'tonnage' in fields or ' tonnage' in fields
     assert 'flag' in fields or ' flag' in fields
+    assert 'launch_date' in fields or ' launch_date' in fields
