@@ -196,7 +196,6 @@ def make_field(type, column):
             args_dict['null'] = True
         if column.unique:
             args_dict['unique'] = True
-        #field_instance = default_fields[column.field_type]
         return default_fields[column.field_type](**args_dict)
     parent_type = Types.get(Types.name == column.field_type)
     if parent_type.id != type.id:
