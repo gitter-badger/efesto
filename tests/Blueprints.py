@@ -61,9 +61,11 @@ def complex_blueprint(request, blueprint_file):
     fields = name
 
     [plants]
-    fields = name, colour, weight
+    fields = name, colour, weight, age
     [plants.weight]
     type = int
+    [plants.age]
+    type = date
     [plants.colour]
     type = colours
     """
@@ -77,6 +79,8 @@ def complex_blueprint(request, blueprint_file):
         field = Fields.get(Fields.name == 'name')
         field.delete_instance()
         field = Fields.get(Fields.name == 'weight')
+        field.delete_instance()
+        field = Fields.get(Fields.name == 'age')
         field.delete_instance()
         field = Fields.get(Fields.name == 'colour')
         field.delete_instance()
@@ -149,6 +153,10 @@ def test_complex_blueprint(complex_blueprint, blueprint_file):
 
     field = Fields.get(Fields.name == 'weight')
     assert field.field_type == 'int'
+    assert field.type.id == type.id
+
+    field = Fields.get(Fields.name == 'age')
+    assert field.field_type == 'date'
     assert field.type.id == type.id
 
     field = Fields.get(Fields.name == 'colour')
