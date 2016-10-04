@@ -131,6 +131,18 @@ def complex_data(request, blueprint_file):
     request.addfinalizer(teardown)
 
 
+@pytest.fixture
+def nullable_field(request, complex_data):
+    ships = Types.get(Types.name == 'ships')
+    sails = Fields(name='sails', type=ships.id, field_type='string',
+                   nullable=True)
+    sails.save()
+
+    def teardown():
+        sails.delete_instance()
+    request.addfinalizer(teardown)
+
+
 def test_load_simple_blueprint(simple_blueprint, blueprint_file):
     """
     Tests the loading of a simple blueprint that has only a list of fields.
@@ -185,7 +197,8 @@ def test_dump_complex_blueprint(complex_data, blueprint_file):
     dump_blueprint(blueprint_file)
     parser = ConfigParser()
     parser.read(blueprint_file)
-    expected_sections = ['ships', 'ships.tonnage', 'ships.launch_date', 'builders']
+    expected_sections = ['ships', 'ships.tonnage', 'ships.launch_date',
+                         'builders']
     for expected in expected_sections:
         assert expected in parser.sections()
     assert parser.get('ships.tonnage', 'type') is not None
@@ -196,3 +209,14 @@ def test_dump_complex_blueprint(complex_data, blueprint_file):
     assert 'tonnage' in fields or ' tonnage' in fields
     assert 'flag' in fields or ' flag' in fields
     assert 'launch_date' in fields or ' launch_date' in fields
+
+
+def test_dump_nullable_field(nullable_field, blueprint_file):
+    """
+    Tests whether dump_blueprint can handle nullable fields.
+    """
+    dump_blueprint(blueprint_file)
+    parser = ConfigParser()
+    parser.read(blueprint_file)
+    assert 'ships.sails' in parser.sections()
+    assert parser.getboolean('ships.sails', 'nullable') == True

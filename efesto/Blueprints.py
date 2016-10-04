@@ -23,6 +23,27 @@ from configparser import ConfigParser
 from .Models import Fields, Types
 
 
+def write_field(type, field, parser):
+    """
+    Writes a field in the blueprint file, if it has any field that differs
+    from the default values expected for a field.
+    """
+    special_values = {}
+    if field.field_type != 'string':
+        special_values['type'] = field.field_type
+    if field.nullable == True:
+        special_values['nullable'] = field.nullable
+
+    if len(special_values) > 0:
+        field_section = '{}.{}'.format(type.name, field.name)
+        parser.add_section(field_section)
+
+        for key in special_values:
+            value = special_values[key]
+            parser.set(field_section, key, str(value))
+        parser.set(field_section, 'type', field.field_type)
+
+
 def load_blueprint(blueprint):
     """
     Loads a blueprint in to the database from a blueprint file.
@@ -65,10 +86,7 @@ def dump_blueprint(blueprint_file):
         fields = Fields.select().where(Fields.type == type.id)
         fields_list = []
         for field in fields:
-            if field.field_type != 'string':
-                field_section = '{}.{}'.format(type.name, field.name)
-                parser.add_section(field_section)
-                parser.set(field_section, 'type', field.field_type)
+            write_field(type, field, parser)
             fields_list.append(field.name)
         parser.set(type.name, 'fields', ', '.join(fields_list))
 
