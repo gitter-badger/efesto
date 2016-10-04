@@ -23,6 +23,17 @@ from configparser import ConfigParser
 from .Models import Fields, Types
 
 
+def parse_section(parser, field_section, field_dict):
+    """
+    Parses a blueprint field section.
+    """
+    options = parser.options(field_section)
+    if 'type' in options:
+        field_dict['field_type'] = parser.get(field_section, 'type')
+    if 'nullable' in options:
+        field_dict['nullable'] = parser.getboolean(field_section, 'nullable')
+
+
 def write_field(type, field, parser):
     """
     Writes a field in the blueprint file, if it has any field that differs
@@ -62,14 +73,12 @@ def load_blueprint(blueprint):
         new_type.save()
         fields = parser.get(type, 'fields').split(',')
         for field in fields:
-            field_name = field.strip()
-            try:
-                field_section = '{}.{}'.format(type, field_name)
-                field_type = parser.get(field_section, 'type')
-            except:
-                field_type = 'string'
-            new_field = Fields(name=field_name, type=new_type.id,
-                               field_type=field_type)
+            field_dict = {'name': field.strip(), 'type': new_type.id}
+            field_dict['field_type'] = 'string'
+            field_section = '{}.{}'.format(type, field_dict['name'])
+            if parser.has_section(field_section):
+                parse_section(parser, field_section, field_dict)
+            new_field = Fields(**field_dict)
             new_field.save()
         new_type.enabled = 1
         new_type.save()

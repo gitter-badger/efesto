@@ -71,6 +71,7 @@ def complex_blueprint(request, blueprint_file):
     """
     with open(blueprint_file, 'w') as f:
         f.write(blueprint)
+        f.close()
 
     def teardown():
         os.remove(blueprint_file)
@@ -88,6 +89,24 @@ def complex_blueprint(request, blueprint_file):
         type.delete_instance()
         type = Types.get(Types.name == 'plants')
         type.delete_instance()
+    request.addfinalizer(teardown)
+
+
+@pytest.fixture
+def nullable_blueprint(request, complex_blueprint, blueprint_file):
+    parser = ConfigParser()
+    parser.read(blueprint_file)
+    parser.add_section('plants.children')
+    parser.set('plants.children', 'nullable', 'True')
+    fields = parser.get('plants', 'fields').split(',')
+    fields.append(' children')
+    parser.set('plants', 'fields', ','.join(fields))
+    with open(blueprint_file, 'w') as f:
+        parser.write(f)
+
+    def teardown():
+        field = Fields.get(Fields.name == 'children')
+        field.delete_instance()
     request.addfinalizer(teardown)
 
 
@@ -177,6 +196,12 @@ def test_complex_blueprint(complex_blueprint, blueprint_file):
     field = Fields.get(Fields.name == 'colour')
     assert field.field_type == 'colours'
     assert field.type.id == type.id
+
+
+def test_nullable_blueprint(nullable_blueprint, blueprint_file):
+    load_blueprint(blueprint_file)
+    field = Fields.get(Fields.name == 'children')
+    assert field.nullable == True
 
 
 def test_dump_simple_blueprint(simple_data, blueprint_file):
