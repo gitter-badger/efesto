@@ -154,7 +154,7 @@ def complex_data(request, blueprint_file):
 def nullable_field(request, complex_data):
     ships = Types.get(Types.name == 'ships')
     sails = Fields(name='sails', type=ships.id, field_type='string',
-                   nullable=True)
+                   nullable=False)
     sails.save()
 
     def teardown():
@@ -245,4 +245,4 @@ def test_dump_nullable_field(nullable_field, blueprint_file):
     parser = ConfigParser()
     parser.read(blueprint_file)
     assert 'ships.sails' in parser.sections()
-    assert parser.getboolean('ships.sails', 'nullable') == True
+    assert parser.getboolean('ships.sails', 'nullable') == False

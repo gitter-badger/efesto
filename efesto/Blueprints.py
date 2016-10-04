@@ -42,7 +42,7 @@ def write_field(type, field, parser):
     special_values = {}
     if field.field_type != 'string':
         special_values['type'] = field.field_type
-    if field.nullable == True:
+    if field.nullable == False:
         special_values['nullable'] = field.nullable
 
     if len(special_values) > 0:
