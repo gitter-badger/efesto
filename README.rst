@@ -69,10 +69,10 @@ More
 Read the documentation at http://efesto.readthedocs.io for extra internet points!
 
 .. |Build Status| image:: https://img.shields.io/travis/getefesto/efesto.svg?maxAge=3600&style=flat-square
-   :target: https://travis-ci.org/Vesuvium/efesto
+   :target: https://travis-ci.org/getefesto/efesto
 .. |Coverage| image:: https://img.shields.io/codeclimate/coverage/github/getefesto/efesto.svg?maxAge=3600&style=flat-square
-   :target: https://codeclimate.com/github/Vesuvium/efesto
+   :target: https://codeclimate.com/github/getefesto/efesto
 .. |Pypi| image:: https://img.shields.io/pypi/v/efesto.svg?maxAge=3600&style=flat-square
    :target: https://pypi.python.org/pypi/efesto
 .. |Code Climate| image:: https://img.shields.io/codeclimate/github/getefesto/efesto.svg?maxAge=3600&style=flat-square
-   :target: https://codeclimate.com/github/Vesuvium/efesto
+   :target: https://codeclimate.com/github/getefesto/efesto
