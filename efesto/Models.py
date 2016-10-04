@@ -212,5 +212,4 @@ def make_model(custom_type):
         model = type('%s' % (custom_type.name), (Base, ), attributes)
         db.create_tables([model], safe=True)
         return model
-    else:
-        raise ValueError('Cannot generate a model for a disabled type')
+    raise ValueError('Cannot generate a model for a disabled type')
