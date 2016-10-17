@@ -22,6 +22,7 @@ setup(
     setup_requires=['pytest-runner'],
     install_requires=[
         'falcon==1.0.0',
+        'falcon-cors>=1.0.1',
         'psycopg2>=2.6.1',
         'peewee>=2.8.0',
         'itsdangerous>=0.24',
