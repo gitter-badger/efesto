@@ -18,15 +18,15 @@ sys.path.insert(0, '')
 
 def model_body(model):
     if model == Users:
-        return 'email=somrandommail&rank=2'
+        return {'email': 'random', 'rank': 2}
     elif model == Types:
-        return 'enabled=1'
+        return {'enabled': 1}
     elif model == AccessRules:
-        return 'level=2&rank=3'
+        return {'level': 2, 'rank': 3}
     elif model == EternalTokens:
-        return 'name=patched!'
+        return {'name': 'patched'}
     elif model == Fields:
-        return 'name=megafield'
+        return {'name': 'megafield'}
 
 
 def model_columns(model):
@@ -141,16 +141,13 @@ def test_make_resource_patch_item(client, app, admin_auth, item_with_model):
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
     body = model_body(model)
-    response = client.patch('/endpoint/%s' % (item.id), body=body,
-                            headers={'authorization': admin_auth})
+    response = client.patch('/endpoint/%s' % (item.id), body,
+                            headers={'authorization': admin_auth,
+                                     'Content-Type': 'application/json'})
     assert response.status == falcon.HTTP_OK
-    check = {}
-    for i in body.split('&'):
-        arg = i.split('=')
-        check[arg[0]] = arg[1]
     response_body = json.loads(response.body)['properties']
-    for k in check:
-        assert check[k] == response_body[k]
+    for key in body:
+        assert body[key] == response_body[key]
 
 
 def test_make_resource_delete_item(client, app, admin_auth, item_with_model):
@@ -215,15 +212,17 @@ def test_make_resource_make_model_patch(client, app, admin_auth, custom_field,
     item.save()
     resource = make_resource(model)()
     app.add_route('/endpoint/{id}', resource)
-    body = '%s=myval' % (custom_field.name)
+    body = {}
+    body[custom_field.name] = 'myval'
     check = {}
     check[custom_field.name] = 'myval'
     response = client.patch('/endpoint/%s' % (item.id), body=body,
-                            headers={'authorization': admin_auth})
+                            headers={'authorization': admin_auth,
+                                     'Content-Type': 'application/json'})
     assert response.status == falcon.HTTP_OK
     response_body = json.loads(response.body)['properties']
-    for k in check:
-        assert check[k] == response_body[k]
+    for key in body:
+        assert body[key] == response_body[key]
     # teardown
     item.delete_instance()
 
@@ -318,10 +317,11 @@ def test_make_resource_serialization_patch(client, app, admin_auth,
                                            complex_type, complex_item):
     model = make_model(complex_type)
     resource = make_resource(model)()
-    body = 'datefield=2016-12-30&intfield=5'
+    body = {'datefield': '2016-12-30', 'intfield': 5}
     app.add_route('/endpoint/{id}', resource)
     response = client.patch('/endpoint/%s' % (complex_item.id), body=body,
-                            headers={'authorization': admin_auth})
+                            headers={'authorization': admin_auth,
+                                     'Content-Type': 'application/json'})
     assert response.status == falcon.HTTP_OK
 
 

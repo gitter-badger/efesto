@@ -261,12 +261,10 @@ def on_patch_resource(self, request, response, id=0):
 
     if user.can('edit', item):
         stream = request.stream.read().decode('UTF-8')
-        if len(stream) > 0:
-            for i in stream.split('&'):
-                arg = i.split('=')
-                setattr(item, arg[0], arg[1])
-            item.save()
-
+        parsed_stream = json.loads(stream)
+        for key in parsed_stream:
+            setattr(item, key, parsed_stream[key])
+        item.save()
         item_dict = item_to_dictionary(self.model, item)
         s = hinder(item_dict, path=request.path)
         response.body = json.dumps(s)
