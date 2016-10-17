@@ -68,7 +68,9 @@ def test_config_has_parser(config):
     ['main', 'installed'],
     ['db', 'name', 'user', 'password', 'host'],
     ['security', 'secret', 'token_expiration', 'salt_length', 'iterations',
-     'key_length']
+     'key_length'],
+    ['cors', 'all_origins', 'all_methods', 'all_headers',
+     'all_credentials']
 ])
 def test_default_config(config, options):
     """
