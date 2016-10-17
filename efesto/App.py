@@ -18,6 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import falcon
+from falcon_cors import CORS
 
 from .Base import config
 from .Models import (AccessRules, EternalTokens, Fields, Types, Users,
@@ -27,8 +28,16 @@ from .Resources import (RootResource, TokensResource, make_collection,
 from .Version import __version__
 
 
+cors = CORS(
+    allow_all_origins=config.parser.getboolean('cors', 'all_origins'),
+    allow_all_methods=config.parser.getboolean('cors', 'all_methods'),
+    allow_all_headers=config.parser.getboolean('cors', 'all_headers'),
+    allow_credentials_all_origins=config.parser.getboolean('cors',
+                                                           'all_credentials')
+)
+
 if config.parser.getboolean('main', 'installed'):
-    app = falcon.API()
+    app = falcon.API(middleware=[cors.middleware])
     root_message = 'Running efesto %s' % (__version__)
     root_data = {'message': root_message}
     app.add_route('/', RootResource(root_data))
