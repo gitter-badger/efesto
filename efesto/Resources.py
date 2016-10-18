@@ -128,9 +128,7 @@ def item_to_dictionary(model, item):
 
 
 def last_page(count, items):
-    pages = int(count / items)
-    if pages == 0:
-        return 1
+    pages = int(count / items) + 1
     return pages
 
 
