@@ -71,6 +71,8 @@ def build_query(model, params):
             query = query.where(getattr(model, key) >= argument[1:])
         elif argument[0] == '!':
             query = query.where(getattr(model, key) != argument[1:])
+        elif argument[0] == '-':
+            query = query.where(getattr(model, key) >> None)
         else:
             query = query.where(getattr(model, key) == argument)
     return query
