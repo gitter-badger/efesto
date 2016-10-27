@@ -25,7 +25,7 @@ import falcon
 from peewee import FieldDescriptor, ObjectIdDescriptor, RelationDescriptor
 from .Auth import (authenticate_by_password, authenticate_by_token,
                    generate_token)
-from .Base import config
+from .Base import config, db
 from .Models import EternalTokens
 from .Siren import hinder
 
@@ -287,7 +287,12 @@ def on_delete_resource(self, request, response, id=0):
         raise falcon.HTTPNotFound(title='Not found', description=description)
 
     if user.can('eliminate', item):
-        item.delete_instance()
+        try:
+            with db.atomic():
+                item.delete_instance()
+        except:
+            raise falcon.HTTPInternalServerError('Internal error', 'The \
+requested operation cannot be completed')
         response.status = falcon.HTTP_NO_CONTENT
     else:
         raise falcon.HTTPForbidden('Forbidden access', 'You do not have the \
