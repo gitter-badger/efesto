@@ -262,7 +262,12 @@ def on_patch_resource(self, request, response, id=0):
         parsed_stream = json.loads(stream)
         for key in parsed_stream:
             setattr(item, key, parsed_stream[key])
-        item.save()
+        with db.atomic():
+            try:
+                item.save()
+            except:
+                raise falcon.HTTPInternalServerError('Internal error', 'The \
+    requested operation cannot be completed')
         item_dict = item_to_dictionary(self.model, item)
         s = hinder(item_dict, path=request.path)
         response.body = json.dumps(s)
