@@ -205,7 +205,12 @@ def on_post(self, request, response):
         request.params['owner'] = user.id
     new_item = self.model(**request.params)
     if user.can('read', new_item):
-        new_item.save()
+        with db.atomic():
+            try:
+                new_item.save()
+            except:
+                raise falcon.HTTPInternalServerError('Internal error', 'The \
+    requested operation cannot be completed')
         response.status = falcon.HTTP_CREATED
         path = '{}/{}'.format(request.path, new_item.id)
         s = hinder(new_item.__dict__['_data'], path=path)
