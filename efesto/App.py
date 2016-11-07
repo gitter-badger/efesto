@@ -65,3 +65,5 @@ if config.parser.getboolean('main', 'installed'):
         representation = exception.to_json()
         return (preferred, representation)
     app.set_error_serializer(error_serializer)
+else:
+    print('Cannot run efesto')
