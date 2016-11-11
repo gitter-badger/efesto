@@ -55,7 +55,7 @@ def write_field(type, field, parser):
         parser.set(field_section, 'type', field.field_type)
 
 
-def load_blueprint(blueprint):
+def load_blueprint(blueprint, mode='default'):
     """
     Loads a blueprint in to the database from a blueprint file.
     """
@@ -69,6 +69,10 @@ def load_blueprint(blueprint):
             types.append(section)
 
     for type in types:
+        if mode == 'safe':
+            result = Types.select().where(Types.name == type)
+            if (len(result) > 0):
+                break
         new_type = Types(name=type, enabled=0)
         new_type.save()
         fields = parser.get(type, 'fields').split(',')
