@@ -31,26 +31,6 @@ class Types(Base):
     name = CharField(unique=True)
     enabled = BooleanField()
 
-    def make_field(type, column):
-        """
-        Builds a field instance from a column.
-        """
-        default_fields = {'string': TextField, 'int': IntegerField,
-                          'float': FloatField, 'bool': BooleanField,
-                          'date': DateTimeField}
-        if column.field_type in default_fields:
-            args_dict = {}
-            if column.nullable:
-                args_dict['null'] = True
-            if column.unique:
-                args_dict['unique'] = True
-            return default_fields[column.field_type](**args_dict)
-        parent_type = Types.get(Types.name == column.field_type)
-        if parent_type.id != type.id:
-            parent_model = make_model(parent_type)
-            return ForeignKeyField(parent_model)
-        return ForeignKeyField('self', null=True)
-
     def make_model(custom_type):
         """
         Generates a model based on a Type entry, using the columns specified in
