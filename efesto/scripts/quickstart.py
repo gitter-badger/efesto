@@ -14,7 +14,7 @@ from binascii import hexlify
 from colorama import Fore, Style
 import efesto
 from efesto.Base import config, db
-from efesto.Models import AccessRules, EternalTokens, Fields, Types, Users
+from efesto.Models import AccessRules, Fields, Types, Users
 from peewee import OperationalError, ProgrammingError
 
 
@@ -34,7 +34,7 @@ def create_tables():
     Creates the tables.
     """
     try:
-        db.create_tables([Users, Types, Fields, AccessRules, EternalTokens])
+        db.create_tables([Users, Types, Fields, AccessRules])
         message('Tables created!', 'green')
     except OperationalError:
         message(('An error occured during tables creation. '

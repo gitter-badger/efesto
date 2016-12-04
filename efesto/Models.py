@@ -158,31 +158,6 @@ class AccessRules(Base):
     eliminate = IntegerField(null=True)
 
 
-class EternalTokens(Base):
-    """
-    EternalTokens are server-stored tokens used for authentication purposes.
-    Normally, Efesto would use client-stored tokens, but in some cases
-    server-stored tokens are necessary.
-    For example an application interacting with Efesto without requiring a
-    final user's credentials (public data, password recovery, etc.)
-    """
-    id = PrimaryKeyField(primary_key=True)
-    name = CharField()
-    user = ForeignKeyField(Users)
-    token = CharField()
-
-
-@pre_save(sender=EternalTokens)
-def on_token_save(model_class, instance, created):
-    """
-    Peewee hook that generates a random token whenever an eternal token is
-    created.
-    """
-    dirty = getattr(instance, '_dirty')
-    if 'token' in dirty:
-        instance.token = hexlify_(os.urandom(24))
-
-
 def make_field(type, column):
     """
     Builds a field instance from a column.

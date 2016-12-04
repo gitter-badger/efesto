@@ -8,7 +8,7 @@ import sys
 
 from efesto.Base import db
 from efesto.Crypto import compare_hash
-from efesto.Models import (AccessRules, EternalTokens, Fields, Types, Users,
+from efesto.Models import (AccessRules, Fields, Types, Users,
                            make_model)
 from peewee import (BooleanField, CharField, DateTimeField, FloatField,
                     ForeignKeyField, IntegerField, PrimaryKeyField, TextField)
@@ -185,37 +185,6 @@ def test_access_rules_model(column_dict):
             assert getattr(field_object, constraint) == constraints[constraint]
 
 
-@pytest.mark.parametrize('column_dict', [
-    {'column': 'id', 'field': PrimaryKeyField},
-    {'column': 'name', 'field': CharField},
-    {'column': 'user', 'field': ForeignKeyField},
-    {'column': 'token', 'field': CharField}
-])
-def test_eternal_tokens(column_dict):
-    """
-    Tests the EternalTokens model
-    """
-    column = column_dict['column']
-    field = column_dict['field']
-    field_object = getattr(EternalTokens, column)
-    assert isinstance(field_object, field)
-    if 'constraints' in column_dict:
-        constraints = column_dict['constraints']
-        for constraint in constraints:
-            assert getattr(field_object, constraint) == constraints[constraint]
-
-
-def test_eternal_tokens_signal(dummy_user):
-    """
-    Tests the EternalTokens pre_save signal.
-    """
-    token = EternalTokens(name='randomtoken', user=dummy_user, token='')
-    token.save()
-    assert len(token.token) == 48
-    # teardown
-    token.delete_instance()
-
-
 @pytest.mark.parametrize('item_dict', pytest.simple_items)
 def test_items_io(item_dict):
     """
@@ -240,20 +209,6 @@ def test_fields_io():
     assert getattr(field, 'id') != None
     field.delete_instance()
     custom_type.delete_instance()
-
-
-def test_eternal_tokens_io():
-    """
-    Verifies that is possible to create and delete an EternalTokens instance.
-    """
-    user = Users(name='randuser', email='mail', password='p', rank=1,
-                 enabled=1)
-    user.save()
-    token = EternalTokens(name='mytoken', user=user.id, token='string')
-    token.save()
-    assert getattr(token, 'id') != None
-    token.delete_instance()
-    user.delete_instance()
 
 
 def test_make_model_disabled(complex_type, complex_fields):

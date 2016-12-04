@@ -23,7 +23,7 @@ from itsdangerous import (JSONWebSignatureSerializer as Serializer,
 
 from .Base import config
 from .Crypto import compare_hash
-from .Models import EternalTokens, Users
+from .Models import Users
 
 
 def generate_token(expiration=600, **kwargs):
@@ -77,16 +77,9 @@ def authenticate_by_token(auth_header):
     except:
         return None
 
-    if 'token' in auth_dict:
-        auth_token = auth_dict['token']
-        token = EternalTokens.get(EternalTokens.token == auth_token)
-        if token.user.enabled == True:
-            return token.user
-        return None
-    else:
-        try:
-            user = Users.get(Users.name == auth_dict['user'],
-                             Users.enabled == True)
-        except:
-            user = None
-        return user
+    try:
+        user = Users.get(Users.name == auth_dict['user'],
+                         Users.enabled == True)
+    except:
+        user = None
+    return user

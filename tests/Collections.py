@@ -5,7 +5,7 @@ import json
 import re
 import sys
 
-from efesto.Models import (AccessRules, EternalTokens, Fields, Types, Users,
+from efesto.Models import (AccessRules, Fields, Types, Users,
                            make_model)
 from efesto.Resources import make_collection, model_columns
 import falcon
@@ -56,8 +56,7 @@ def pagination_items(request):
     request.addfinalizer(teardown)
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules,
-                                   EternalTokens])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 @pytest.mark.parametrize('method', ['on_get', 'on_post', 'model'])
 def test_make_collection(model, method):
     """
@@ -67,8 +66,7 @@ def test_make_collection(model, method):
     assert hasattr(resource, method)
 
 
-@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules,
-                                   EternalTokens])
+@pytest.mark.parametrize('model', [Users, Types, Fields, AccessRules])
 def test_make_collection_get(client, app, model):
     """
     Tests the behaviour of a generated resource when a simple GET request is

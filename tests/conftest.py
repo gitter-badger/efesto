@@ -6,8 +6,9 @@ import os
 import sys
 
 from efesto.Auth import generate_token
-from efesto.Models import (AccessRules, EternalTokens, Fields, Types, Users,
+from efesto.Models import (AccessRules, Fields, Types, Users,
                            make_model)
+from itsdangerous import (TimedJSONWebSignatureSerializer as TimedSerializer)
 import falcon
 import pytest
 
@@ -87,14 +88,9 @@ def build_field(request, name, type_id, field_type, unique=None,
     return custom_field
 
 
-def build_token(request, user):
-    new_token = EternalTokens(name='mytoken', user=user.id, token='token')
-    new_token.save()
-
-    def teardown():
-        new_token.delete_instance()
-    request.addfinalizer(teardown)
-    return new_token
+def build_token(user):
+    signed_token = TimedSerializer('secret', expires_in=600)
+    return s.dumps({user: user}).decode('UTF-8')s
 
 
 @pytest.fixture
@@ -190,17 +186,17 @@ def complex_item(request, complex_type, complex_fields, dummy_admin):
 
 @pytest.fixture
 def token(request, dummy_admin):
-    return build_token(request, dummy_admin)
+    return build_token(dummy_admin)
 
 
 @pytest.fixture
 def user_token(request, dummy_user):
-    return build_token(request, dummy_user)
+    return build_token(dummy_user)
 
 
 @pytest.fixture
 def disabled_token(request, disabled_user):
-    return build_token(request, disabled_user)
+    return build_token(disabled_user)
 
 
 @pytest.fixture(params=['client', 'server'])
@@ -222,13 +218,6 @@ def user_auth(request, user_token, dummy_user):
         'model': Fields, 'args': {'name': 'f', 'field_type': 'string'},
         'parent': Types, 'parent_args': {'name': 't2', 'enabled': 0},
         'parent_field': 'type'
-    },
-    {
-        'model': EternalTokens, 'args': {'name': 'mytoken', 'token': ''},
-        'parent': Users, 'parent_args': {'name': 'u2', 'email': 'mail',
-                                         'password': 'p', 'rank': 1,
-                                         'enabled': 1},
-        'parent_field': 'user'
     }
 ])
 def item_with_model(request):

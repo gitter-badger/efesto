@@ -26,7 +26,6 @@ from peewee import FieldDescriptor, ObjectIdDescriptor, RelationDescriptor
 from .Auth import (authenticate_by_password, authenticate_by_token,
                    generate_token)
 from .Base import config, db
-from .Models import EternalTokens
 from .Siren import hinder
 
 
@@ -350,21 +349,9 @@ class TokensResource:
             raise falcon.HTTPForbidden('Forbidden access',
                                        'The credentials provided are invalid')
 
-        if 'token_name' in request.params:
-            try:
-                t = EternalTokens.get(
-                    EternalTokens.name == request.params['token_name'],
-                    EternalTokens.user == authentication.id
-                ).token
-            except:
-                raise falcon.HTTPForbidden('Forbidden access',
-                                           'The credentials provided are \
-invalid')
-            token = generate_token(token=t)
-        else:
-            expiration = config.parser.getint('security', 'token_expiration')
-            token = generate_token(expiration=expiration,
-                                   user=request.params['username'])
+        expiration = config.parser.getint('security', 'token_expiration')
+        token = generate_token(expiration=expiration,
+                               user=request.params['username'])
         response.status = falcon.HTTP_OK
         response.body = json.dumps({'token': token})
 
