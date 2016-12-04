@@ -18,9 +18,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from .Base import Base
-from peewee import BooleanField, CharField, DateTimeField, IntegerField, PrimaryKeyField
+from peewee import (BooleanField, CharField, DateTimeField, IntegerField,
+                    PrimaryKeyField)
 from efesto.Crypto import generate_hash
 from playhouse.signals import pre_save
+from .Crypto import compare_hash
 
 
 class Users(Base):
@@ -34,6 +36,19 @@ class Users(Base):
     rank = IntegerField()
     enabled = BooleanField()
     last_login = DateTimeField(null=True)
+
+    def authenticate_by_password(username, password):
+        """
+        Authenticates a user by username and password. Usually this occurs only
+        when an user needs a token.
+        """
+        try:
+            user = Users.get(Users.name == username, Users.enabled == True)
+        except:
+            return None
+
+        if compare_hash(password, user.password):
+            return user
 
     def can(self, requested_action, item):
         if self.rank == 10:
@@ -66,7 +81,6 @@ class Users(Base):
                     else:
                         return False
             return False
-
 
 
 @pre_save(sender=Users)

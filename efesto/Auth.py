@@ -22,14 +22,7 @@ from itsdangerous import (JSONWebSignatureSerializer as Serializer,
                           TimedJSONWebSignatureSerializer as TimedSerializer)
 
 from .Base import config
-from .Crypto import compare_hash
 from .Models import Users
-
-
-def generate_token(expiration=600, **kwargs):
-    s = TimedSerializer(config.parser.get('security', 'secret'),
-                        expires_in=expiration)
-    return s.dumps(kwargs).decode('UTF-8')
 
 
 def read_token(token):
@@ -44,20 +37,6 @@ def read_token(token):
         return t.loads(token)
     else:
         return result
-
-
-def authenticate_by_password(username, password):
-    """
-    Authenticates a user by username and password. Usually this occurs only
-    when an user needs a token.
-    """
-    try:
-        user = Users.get(Users.name == username, Users.enabled == True)
-    except:
-        return None
-
-    if compare_hash(password, user.password):
-        return user
 
 
 def parse_auth_header(auth_string):

@@ -19,14 +19,20 @@
 """
 import json
 import falcon
-from efesto.Auth import authenticate_by_password, generate_token
+from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer
 from efesto.Base import config
+from efesto.models import Users
 
 
 class TokensResource:
     """
     The TokensResource resource handles tokens requests.
     """
+    def generate_token(expiration=600, **kwargs):
+        s = TimedSerializer(config.parser.get('security', 'secret'),
+                            expires_in=expiration)
+        return s.dumps(kwargs).decode('UTF-8')
+
     def on_post(self, request, response):
         request._parse_form_urlencoded()
         if ('password' not in request.params or
@@ -34,7 +40,7 @@ class TokensResource:
             raise falcon.HTTPBadRequest('Bad request',
                                         'A required parameter is missing')
 
-        authentication = authenticate_by_password(request.params['username'],
+        authentication = Users.authenticate_by_password(request.params['username'],
                                                   request.params['password'])
         if authentication is None:
             raise falcon.HTTPForbidden('Forbidden access',
