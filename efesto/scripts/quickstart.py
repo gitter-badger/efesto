@@ -14,7 +14,7 @@ from binascii import hexlify
 from colorama import Fore, Style
 import efesto
 from efesto.Base import config, db
-from efesto.Models import AccessRules, Fields, Types, Users
+from efesto.models import AccessRules, Fields, Types, Users
 from peewee import OperationalError, ProgrammingError
 
 
