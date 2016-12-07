@@ -28,9 +28,9 @@ class AccessRules(Base):
     on a single item or on a group of items.
     """
     id = PrimaryKeyField(primary_key=True)
-    user = ForeignKeyField(Users, null=True)
+    user_id = ForeignKeyField(Users, null=True)
     rank = IntegerField(null=True)
-    item = IntegerField(null=True)
+    item_id = IntegerField(null=True)
     model = CharField(null=True)
     level = IntegerField()
     read = IntegerField(null=True)
