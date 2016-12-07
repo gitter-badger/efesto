@@ -36,7 +36,7 @@ class Fields(Base):
     """
     id = PrimaryKeyField(primary_key=True)
     name = CharField()
-    type = ForeignKeyField(Types)
+    type_id = ForeignKeyField(Types)
     field_type = CharField()
     unique = BooleanField(null=True)
     nullable = BooleanField(null=True)
