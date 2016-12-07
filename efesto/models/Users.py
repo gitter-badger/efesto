@@ -20,9 +20,8 @@
 from .Base import Base
 from peewee import (BooleanField, CharField, DateTimeField, IntegerField,
                     PrimaryKeyField)
-from efesto.Crypto import generate_hash
+from efesto.Crypto import generate_hash, compare_hash
 from playhouse.signals import pre_save
-from .Crypto import compare_hash
 
 
 class Users(Base):
