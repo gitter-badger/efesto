@@ -31,7 +31,7 @@ class Permissions(Base):
     item_id  = IntegerField(null=True)
     item_type = CharField()
     user_permission = IntegerField(default=0)
-    group = IntegerField()
     group_permission = IntegerField(default=0)
     others_permission = IntegerField(default=0)
+    group = IntegerField()
     user_id = ForeignKeyField(Users)
