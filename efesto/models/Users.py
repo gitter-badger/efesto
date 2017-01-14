@@ -34,7 +34,6 @@ class Users(Base):
     password = CharField()
     rank = IntegerField()
     enabled = BooleanField()
-    last_login = DateTimeField(null=True)
 
     def authenticate_by_password(username, password):
         """
