@@ -28,11 +28,10 @@ class AccessRules(Base):
     on a single item or on a group of items.
     """
     id = PrimaryKeyField(primary_key=True)
-    user_id = ForeignKeyField(Users, null=True)
-    rank = IntegerField(null=True)
-    item_id = IntegerField(null=True)
-    model = CharField(null=True)
-    level = IntegerField()
-    read = IntegerField(null=True)
-    edit = IntegerField(null=True)
-    eliminate = IntegerField(null=True)
+    item_id  = IntegerField()
+    item_type = CharField()
+    user_permission = IntegerField()
+    group = IntegerField()
+    group_permission = IntegerField()
+    others_permission = IntegerField()
+    user_id = ForeignKeyField(Users)
