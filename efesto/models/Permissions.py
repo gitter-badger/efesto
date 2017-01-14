@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    The AccessRules model.
+    The Permissions model.
 
     Copyright (C) 2016 Jacopo Cascioli
 
@@ -22,9 +22,9 @@ from .Users import Users
 from peewee import CharField, ForeignKeyField, IntegerField, PrimaryKeyField
 
 
-class AccessRules(Base):
+class Permissions(Base):
     """
-    AccessRules define the permissions that an users or a group of users have
+    Permissions define the permissions that an users or a group of users have
     on a single item or on a group of items.
     """
     id = PrimaryKeyField(primary_key=True)
