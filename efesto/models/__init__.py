@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .AccessRules import AccessRules
+from .Permissions import Permissions
 from .Fields import Fields
 from .Types import Types
 from .Users import Users

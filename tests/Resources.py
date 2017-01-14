@@ -5,7 +5,7 @@ import json
 import sys
 
 from efesto.Auth import read_token
-from efesto.Models import (AccessRules, Fields, Types, Users,
+from efesto.Models import (Permissions, Fields, Types, Users,
                            make_model)
 from efesto.Resources import RootResource, TokensResource, make_resource
 import falcon
@@ -21,7 +21,7 @@ def model_body(model):
         return {'email': 'random', 'rank': 2}
     elif model == Types:
         return {'enabled': 1}
-    elif model == AccessRules:
+    elif model == Permissions:
         return {'level': 2, 'rank': 3}
     elif model == Fields:
         return {'name': 'megafield'}
@@ -53,7 +53,7 @@ def is_deleted(model, item_id):
 
 
 @pytest.mark.parametrize('model',
-                         [Users, Types, Fields, AccessRules])
+                         [Users, Types, Fields, Permissions])
 @pytest.mark.parametrize('method',
                          ['on_get', 'on_patch', 'on_delete', 'model'])
 def test_make_resource(model, method):
@@ -65,7 +65,7 @@ def test_make_resource(model, method):
 
 
 @pytest.mark.parametrize('model',
-                         [Users, Types, Fields, AccessRules])
+                         [Users, Types, Fields, Permissions])
 @pytest.mark.parametrize('method', ['get', 'delete', 'patch'])
 def test_make_resource_unathorized(client, app, model, method):
     """
@@ -85,7 +85,7 @@ def test_make_resource_unathorized(client, app, model, method):
 
 
 @pytest.mark.parametrize('model',
-                         [Users, Types, Fields, AccessRules])
+                         [Users, Types, Fields, Permissions])
 @pytest.mark.parametrize('method', ['get', 'patch', 'delete'])
 def test_make_resource_not_found(client, app, admin_auth, model, method):
     """

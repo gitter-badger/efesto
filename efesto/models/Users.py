@@ -58,15 +58,15 @@ class Users(Base):
             else:
                 action = requested_action
             model_name = getattr(item._meta, 'db_table')
-            rules = AccessRules.select()\
-                .where((AccessRules.user == self.id) |
-                       (AccessRules.rank == self.rank))\
-                .where(AccessRules.model == model_name)\
-                .where((AccessRules.item == None) |
-                       (AccessRules.item == item.id))\
-                .where(getattr(AccessRules, action) != None)\
-                .order_by(AccessRules.level.desc(), AccessRules.item.asc(),
-                          AccessRules.rank.desc())\
+            rules = Permissions.select()\
+                .where((Permissions.user == self.id) |
+                       (Permissions.rank == self.rank))\
+                .where(Permissions.model == model_name)\
+                .where((Permissions.item == None) |
+                       (Permissions.item == item.id))\
+                .where(getattr(Permissions, action) != None)\
+                .order_by(Permissions.level.desc(), Permissions.item.asc(),
+                          Permissions.rank.desc())\
                 .limit(1)
             if len(rules) > 0:
                 if requested_action == 'create':

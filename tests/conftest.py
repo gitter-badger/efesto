@@ -6,7 +6,7 @@ import os
 import sys
 
 from efesto.Auth import generate_token
-from efesto.Models import (AccessRules, Fields, Types, Users,
+from efesto.Models import (Permissions, Fields, Types, Users,
                            make_model)
 from itsdangerous import (TimedJSONWebSignatureSerializer as TimedSerializer)
 import falcon
@@ -20,13 +20,13 @@ simple_items = [
     {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
                               'rank': 1, 'enabled': 1}},
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
-    {'model': AccessRules, 'args': {'level': 1}}
+    {'model': Permissions, 'args': {'level': 1}}
 ]
 post_data = [
     {'model': Users, 'data': {'name': 'test', 'password': 'passwd'}},
     {'model': Types, 'data': {'name': 'sometype', 'enabled': 0}},
     {'model': Fields, 'data': {'name': 'somefield', 'type': 1}},
-    {'model': AccessRules, 'data': {'user': 1, 'level': 5}}
+    {'model': Permissions, 'data': {'user': 1, 'level': 5}}
 ]
 
 
@@ -213,7 +213,7 @@ def user_auth(request, user_token, dummy_user):
     {'model': Users, 'args': {'name': 'u', 'email': 'mail', 'password': 'p',
                               'rank': 1, 'enabled': 1}},
     {'model': Types, 'args': {'name': 'mytype', 'enabled': 0}},
-    {'model': AccessRules, 'args': {'level': 1}},
+    {'model': Permissions, 'args': {'level': 1}},
     {
         'model': Fields, 'args': {'name': 'f', 'field_type': 'string'},
         'parent': Types, 'parent_args': {'name': 't2', 'enabled': 0},

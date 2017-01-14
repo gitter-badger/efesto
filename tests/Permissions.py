@@ -4,7 +4,7 @@
 """
 import sys
 
-from efesto.Models import AccessRules, Types, Users
+from efesto.Models import Permissions, Types, Users
 
 import pytest
 
@@ -20,10 +20,10 @@ override_check_model_params = [
     },
     {
         'model': Types, 'args': {'name': 'mytype', 'enabled': 0},
-        'model2': AccessRules, 'args2': {'level': 1}
+        'model2': Permissions, 'args2': {'level': 1}
     },
     {
-        'model': AccessRules, 'args': {'level': 1}, 'model2': Users,
+        'model': Permissions, 'args': {'level': 1}, 'model2': Users,
         'args2': {'name': 'u', 'email': 'mail', 'password': 'p', 'rank': 1,
                   'enabled': 1}
     }
@@ -41,7 +41,7 @@ override_check_item_params = [
         'args2': {'name': 'mytype2', 'enabled': 0}
     },
     {
-        'model': AccessRules, 'args': {'level': 1}, 'args2': {'level': 1}
+        'model': Permissions, 'args': {'level': 1}, 'args2': {'level': 1}
     }
 ]
 
@@ -65,7 +65,7 @@ def item(request):
 
 @pytest.fixture(scope='function')
 def rule(request):
-    rule = AccessRules(level=0)
+    rule = Permissions(level=0)
     rule.save()
 
     def teardown():
@@ -146,7 +146,7 @@ def test_users_override_stack_by_model(dummy_user, action, item, rule):
     rule.update_from_test(rule_dict, action, 1)
     new_dict = {'user': dummy_user, 'level': 3, 'model': model_name}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False
@@ -165,7 +165,7 @@ def test_users_override_by_item(dummy_user, action, item, rule):
     rule.update_from_test(rule_dict, action, 1)
     second_dict = {'user': dummy_user, 'level': 2, 'model': model_name}
     second_dict[action] = 0
-    second_rule = AccessRules(**second_dict)
+    second_rule = Permissions(**second_dict)
     second_rule.save()
     actions = ['read', 'edit', 'eliminate']
     actions.remove(action)
@@ -215,7 +215,7 @@ def test_users_override_stack_by_item(dummy_user, action, item, rule):
     new_dict = {'user': dummy_user, 'level': 3, 'model': model_name,
                 'item': item.id}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False
@@ -275,7 +275,7 @@ def test_rank_override_stack_by_model(dummy_user, action, item, rule):
     rule.update_from_test(rule_dict, action, 1)
     new_dict = {'rank': dummy_user.rank, 'level': 3, 'model': model_name}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False
@@ -295,7 +295,7 @@ def test_rank_override_by_item(dummy_user, action, item, rule):
     rule.update_from_test(rule_dict, action, 1)
     second_dict = {'rank': dummy_user.rank, 'level': 2, 'model': model_name}
     second_dict[action] = 0
-    second_rule = AccessRules(**second_dict)
+    second_rule = Permissions(**second_dict)
     second_rule.save()
     actions = ['read', 'edit', 'eliminate']
     actions.remove(action)
@@ -344,7 +344,7 @@ def test_rank_override_stack_by_item(dummy_user, action, item, rule):
     new_dict = {'rank': dummy_user.rank, 'level': 3, 'model': model_name,
                 'item': item.id}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False
@@ -364,7 +364,7 @@ def test_users_override_stack_by_item_on_model(dummy_user, action, item, rule):
     new_dict = {'user': dummy_user, 'level': 3, 'model': model_name,
                 'item': item.id}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False
@@ -384,7 +384,7 @@ def test_rank_override_stack_by_item_on_model(dummy_user, action, item, rule):
     new_dict = {'rank': dummy_user.rank, 'level': 3, 'model': model_name,
                 'item': item.id}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False
@@ -404,7 +404,7 @@ def test_users_override_mixed_stack_by_item(dummy_user, action, item, rule):
     new_dict = {'user': dummy_user, 'level': 2, 'model': model_name,
                 'item': item.id}
     new_dict[action] = 0
-    new_rule = AccessRules(**new_dict)
+    new_rule = Permissions(**new_dict)
     new_rule.save()
     # test
     assert dummy_user.can(action, item) == False

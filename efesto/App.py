@@ -21,7 +21,7 @@ import falcon
 from falcon_cors import CORS
 
 from .Base import config
-from .Models import (AccessRules, Fields, Types, Users, make_model)
+from .Models import (Permissions, Fields, Types, Users, make_model)
 from .Resources import (RootResource, TokensResource, make_collection,
                         make_resource)
 from .Version import __version__
@@ -42,7 +42,7 @@ if config.parser.getboolean('main', 'installed'):
     app.add_route('/', RootResource(root_data))
 
     for i in [['/users', Users], ['/types', Types], ['/fields', Fields],
-              ['/rules', AccessRules]]:
+              ['/rules', Permissions]]:
         collection = make_collection(i[1])()
         resource = make_resource(i[1])()
         app.add_route(i[0], collection)

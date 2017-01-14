@@ -8,7 +8,7 @@ import sys
 
 from efesto.Base import db
 from efesto.Crypto import compare_hash
-from efesto.Models import (AccessRules, Fields, Types, Users,
+from efesto.Models import (Permissions, Fields, Types, Users,
                            make_model)
 from peewee import (BooleanField, CharField, DateTimeField, FloatField,
                     ForeignKeyField, IntegerField, PrimaryKeyField, TextField)
@@ -173,11 +173,11 @@ def test_fields_model(column_dict):
 ])
 def test_access_rules_model(column_dict):
     """
-    Tests the AccessRules model.
+    Tests the Permissions model.
     """
     column = column_dict['column']
     field = column_dict['field']
-    field_object = getattr(AccessRules, column)
+    field_object = getattr(Permissions, column)
     assert isinstance(field_object, field)
     if 'constraints' in column_dict:
         constraints = column_dict['constraints']
