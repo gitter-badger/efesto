@@ -90,7 +90,7 @@ def build_field(request, name, type_id, field_type, unique=None,
 
 def build_token(user):
     signed_token = TimedSerializer('secret', expires_in=600)
-    return s.dumps({user: user}).decode('UTF-8')s
+    return s.dumps({user: user}).decode('UTF-8')
 
 
 @pytest.fixture
