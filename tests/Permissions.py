@@ -4,7 +4,7 @@
 """
 import sys
 
-from efesto.Models import Permissions, Types, Users
+from efesto.models import Permissions, Types, Users
 
 import pytest
 

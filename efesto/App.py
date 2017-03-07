@@ -21,7 +21,7 @@ import falcon
 from falcon_cors import CORS
 
 from .Base import config
-from .Models import (Permissions, Fields, Types, Users, make_model)
+from .models import (Permissions, Fields, Types, Users)
 from .Resources import (RootResource, TokensResource, make_collection,
                         make_resource)
 from .Version import __version__

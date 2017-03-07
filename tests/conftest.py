@@ -5,9 +5,7 @@ import base64
 import os
 import sys
 
-from efesto.Auth import generate_token
-from efesto.Models import (Permissions, Fields, Types, Users,
-                           make_model)
+from efesto.models import (Permissions, Fields, Types, Users)
 from itsdangerous import (TimedJSONWebSignatureSerializer as TimedSerializer)
 import falcon
 import pytest

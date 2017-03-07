@@ -22,7 +22,7 @@ from itsdangerous import (JSONWebSignatureSerializer as Serializer,
                           TimedJSONWebSignatureSerializer as TimedSerializer)
 
 from .Base import config
-from .Models import Users
+from .models import Users
 
 
 def read_token(token):

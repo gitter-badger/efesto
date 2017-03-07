@@ -5,9 +5,7 @@ import json
 import re
 import sys
 
-from efesto.Models import (Permissions, Fields, Types, Users,
-                           make_model)
-from efesto.Resources import make_collection, model_columns
+from efesto.models import (Permissions, Fields, Types, Users)
 import falcon
 import pytest
 

@@ -5,9 +5,8 @@ import json
 import sys
 
 from efesto.Auth import read_token
-from efesto.Models import (Permissions, Fields, Types, Users,
-                           make_model)
-from efesto.Resources import RootResource, TokensResource, make_resource
+from efesto.models import (Permissions, Fields, Types, Users)
+from efesto.resources import RootResource, TokensResource
 import falcon
 from peewee import FieldDescriptor, RelationDescriptor
 import pytest

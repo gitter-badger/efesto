@@ -20,7 +20,7 @@
 import os
 from configparser import ConfigParser
 
-from .Models import Fields, Types
+from .models import Fields, Types
 
 
 def parse_section(parser, field_section, field_dict):

@@ -22,7 +22,7 @@ import sys
 from configparser import ConfigParser
 
 from efesto.Blueprints import dump_blueprint, load_blueprint
-from efesto.Models import Fields, Types
+from efesto.models import Fields, Types
 import pytest
 
 

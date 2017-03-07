@@ -9,8 +9,7 @@ import json
 import sys
 import time
 
-from efesto.Auth import (authenticate_by_password, authenticate_by_token,
-                         generate_token, parse_auth_header, read_token)
+from efesto.Auth import (authenticate_by_token, parse_auth_header, read_token)
 from efesto.Base import config
 from itsdangerous import (JSONWebSignatureSerializer as Serializer,
                           SignatureExpired,

@@ -8,8 +8,7 @@ import sys
 
 from efesto.Base import db
 from efesto.Crypto import compare_hash
-from efesto.Models import (Permissions, Fields, Types, Users,
-                           make_model)
+from efesto.models import (Permissions, Fields, Types, Users)
 from peewee import (BooleanField, CharField, DateTimeField, FloatField,
                     ForeignKeyField, IntegerField, PrimaryKeyField, TextField)
 import pytest
