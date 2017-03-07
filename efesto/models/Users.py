@@ -31,8 +31,7 @@ class Users(Base):
     id = PrimaryKeyField(primary_key=True)
     name = CharField(unique=True)
     email = CharField()
-    password = CharField()
-    rank = IntegerField()
+    group = IntegerField()
     enabled = BooleanField()
 
     def authenticate_by_password(username, password):
