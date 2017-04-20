@@ -1,5 +1,9 @@
 Efesto
 ======
+
+.. image:: https://badges.gitter.im/efesto-microservice/Lobby.svg
+   :alt: Join the chat at https://gitter.im/efesto-microservice/Lobby
+   :target: https://gitter.im/efesto-microservice/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 |Pypi| |Build Status| |Coverage| |Code Climate|
 
 Efesto is a RESTful (micro)server that can be used for building an API in
